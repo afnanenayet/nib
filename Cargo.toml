@@ -5,3 +5,5 @@ authors = ["Afnan Enayet <afnan@afnan.io>"]
 edition = "2018"
 
 [dependencies]
+num = "0.2.0"
+cgmath = "0.17.0"
