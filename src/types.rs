@@ -15,16 +15,16 @@ use num;
 /// ```
 ///
 /// This macro just helps you avoid the boilerplate.
-macro_rules! combined_trait {
+macro_rules! aggregate_trait {
     ( $i:ident; $($t:path),+ ) => {
         pub trait $i: $($t +)+ {}
         impl<T> $i for T where T: $($t +)+ {}
     };
 }
 
-combined_trait!(GenInteger; num::NumCast, num::Integer, Copy);
-combined_trait!(GenFloat; num::NumCast, num::Float, Copy);
-combined_trait!(GenReal; num::NumCast, Copy);
+aggregate_trait!(GenInteger; num::NumCast, num::Integer, Copy);
+aggregate_trait!(GenFloat; num::NumCast, num::Float, Copy);
+aggregate_trait!(GenReal; num::NumCast, Copy);
 
 /// The particular floating point type that is going to be used in this program. If you want to
 /// switch the float type to another type, simply change the type here.
