@@ -5,6 +5,7 @@
 //! the scene (like skyboxes and ambient lighting), as well as interfaces for acceleration
 //! structures so that they can be used generically.
 
+use crate::types::{GenFloat, GenReal, Ray};
 use cgmath::Vector3;
 
 /// An interface for any object that can intersect with a ray coming from the camera
@@ -13,18 +14,18 @@ use cgmath::Vector3;
 /// objects. It doesn't matter, as long as you have some way to resolve which object was hit by an
 /// outgoing ray.
 pub trait Hittable {
-    /// Having an associated type allows for different numeric types to be easily swapped in an
+    /// Having an associated type allows for different numeric types to be easily swapped in and
     /// out. This defines the numeric type of the ray and consequently, the hit record.
-    type NumType: Sync;
+    type NumType: GenFloat;
 
     /// A method that returns a hit record if the object was hit
-    fn hit(&self, ray: &Ray<Self::Numtype>) -> Option<HitRecord<Self::NumType>>;
+    fn hit(&self, ray: &Ray<Self::NumType>) -> Option<HitRecord<Self::NumType>>;
 }
 
 /// Information pertaining to a ray intersection
 ///
 /// The hit record has information on where the object was hit and the normal for that hit
-pub struct HitRecord<T> {
+pub struct HitRecord<T: GenReal> {
     /// The point in space where the object was hit
     p: Vector3<T>,
 
