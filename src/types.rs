@@ -46,6 +46,6 @@ pub struct Ray<T> {
     /// The normalized direction of the ray
     ///
     /// The direction of the ray is represented as a normalized 3D vector, which means that every
-    /// dimension must be between 0 and 1.
+    /// component of the vector must be between 0 and 1.
     pub direction: Vector3<T>,
 }
