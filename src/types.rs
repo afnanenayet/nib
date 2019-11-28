@@ -23,9 +23,9 @@ macro_rules! aggregate_trait {
     };
 }
 
-aggregate_trait!(GenInteger; num::NumCast, num::Integer, Copy, Sync);
-aggregate_trait!(GenFloat; num::NumCast, num::Float, Copy, Sync);
-aggregate_trait!(GenReal; num::NumCast, num::traits::real::Real, Copy, Sync);
+aggregate_trait!(GenInteger; num::NumCast, num::Integer, Copy, Sync, Ord);
+aggregate_trait!(GenFloat; num::NumCast, num::Float, Copy, Sync, Ord);
+aggregate_trait!(GenReal; num::NumCast, num::traits::real::Real, Copy, Sync, Ord);
 
 /// The particular floating point type that is going to be used in this program. If you want to
 /// switch the float type to another type, simply change the type here.
