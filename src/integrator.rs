@@ -2,7 +2,7 @@
 //! integrators that can be extended so that other integrators can be easily added.
 
 use crate::scene::Scene;
-use crate::types::{GenFloat, GenInteger};
+use crate::types::{GenFloat, GenInteger, Ray};
 use cgmath::Vector3;
 
 /// A struct representing the various options and parameters that can be configured for the
@@ -14,12 +14,12 @@ use cgmath::Vector3;
 ///
 /// You should pass this struct by value since it's simply a struct of references to objects, which
 /// is pretty cheap.
-pub struct RenderParams<'a, I> {
-    /// The origination point of the outgoing ray
+pub struct RenderParams<'a, T> {
+    /// The outgoing ray
     ///
     /// In rendering, we trace rays or paths, and they originate at a certain point and extend
     /// until the next collision, or go on forever.
-    origin: &'a Vector3<I>,
+    origin: &'a Ray<T>,
 
     /// A reference to the scene
     ///
