@@ -14,7 +14,7 @@ use cgmath::Vector3;
 ///
 /// You should pass this struct by value since it's simply a struct of references to objects, which
 /// is pretty cheap.
-pub struct RenderParams<'a, T> {
+pub struct RenderParams<'a, T, S> {
     /// The outgoing ray
     ///
     /// In rendering, we trace rays or paths, and they originate at a certain point and extend
@@ -22,9 +22,7 @@ pub struct RenderParams<'a, T> {
     origin: &'a Ray<T>,
 
     /// A reference to the scene
-    ///
-    /// This is necessary so the render
-    scene: &'a Scene,
+    scene: &'a Scene<S>,
 }
 
 /// A trait that defines an integrator. An integrator defines the operations that are responsible
@@ -32,5 +30,5 @@ pub struct RenderParams<'a, T> {
 pub trait Integrator<I: GenInteger, F: GenFloat> {
     /// Given certain input parameters, output the color values at a particular point. This method
     /// takes a sampler to generate random numbers and a pixel location.
-    fn render(params: RenderParams<I>) -> Vector3<F>;
+    fn render(params: RenderParams<I, F>) -> Vector3<F>;
 }

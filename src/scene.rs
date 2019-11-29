@@ -3,4 +3,17 @@
 //! camera information, amongst other things. The scene primarily interacts with the deserializer
 //! and the integrator.
 
-pub struct Scene {}
+use crate::hittable::Hittable;
+
+/// A scene with objects, lighting information, and other configuration options for rendering
+///
+/// The `Scene` struct contains all of the information that an integrator needs to generate an
+/// image.
+pub struct Scene<T> {
+    /// A list of all of the objects in the scene
+    objects: Vec<Box<dyn Hittable<NumType = T>>>,
+
+    /// An acceleration structure containing all of the visible objects in the scene that can be
+    /// queried to calculate a ray intersecion.
+    acceleration_struct: Box<dyn Hittable<NumType = T>>,
+}
