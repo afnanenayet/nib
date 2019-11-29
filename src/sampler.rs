@@ -3,6 +3,7 @@
 //! This module defines a generic sampling interface that can be extended to various sampling
 //! implementations.
 
+use crate::types::GenFloat;
 use thiserror::Error;
 
 /// The possible errors that a `Sampler` can return
@@ -42,7 +43,7 @@ pub type SamplerResult<T> = Result<T, SamplerError>;
 ///
 /// The `Sampler` method defines a number of convenience methods that are repetitive that can be
 /// derived from the methods of the `BaseSampler` trait.
-pub trait Sequential<T> {
+pub trait Sequential<T: GenFloat> {
     /// Retrieve the next sample
     ///
     /// This retrieves the next sample with all of the dimensions.
@@ -55,7 +56,7 @@ pub trait Sequential<T> {
 /// This is meant for samplers that can generate any sample in O(1)/on-the-fly with negligible
 /// overhead without requiring information about previous samples. These types of samplers tend to
 /// be the most performant.
-pub trait InPlace<T> {
+pub trait InPlace<T: GenFloat> {
     /// Sample a particular dimension and index
     fn sample(&self, index: u32, dim: u32) -> SamplerResult<Vec<T>>;
 }
@@ -65,7 +66,7 @@ pub trait InPlace<T> {
 /// This method automatically derives these methods for any sampler that implements the
 /// `BaseSampler` trait. Users should use this trait and *not* the `BaseSampler` trait as an
 /// interface.
-pub trait Sampler<T> {
+pub trait Sampler<T: GenFloat> {
     /// Sample all of the dimensions for a particular index
     // TODO(afnan) should we use `&mut self` instead?
     fn sample_idx(&self, index: u32) -> SamplerResult<Vec<T>>;
