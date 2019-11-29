@@ -9,10 +9,6 @@
 use crate::types::{GenFloat, GenReal, Ray};
 use cgmath::Vector3;
 
-mod list;
-
-pub use list::ObjectList;
-
 /// An interface for any object that can intersect with a ray coming from the camera
 ///
 /// NOTE: This method can be used with entire acceleration structures or individual hittable
@@ -33,8 +29,8 @@ pub trait Hittable {
 #[derive(Clone, Copy, Eq, PartialEq, Debug)]
 pub struct HitRecord<T: GenReal> {
     /// The point in space where the object was hit
-    p: Vector3<T>,
+    pub p: Vector3<T>,
 
     /// The normal vector for the intersection
-    normal: Vector3<T>,
+    pub normal: Vector3<T>,
 }
