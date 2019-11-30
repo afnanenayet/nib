@@ -2,9 +2,9 @@
 
 use super::{AccelError, AccelResult};
 use crate::hittable::HitRecord;
-use crate::math::vec3_dist;
 use crate::types::Ray;
 use crate::{hittable::Hittable, types::GenFloat};
+use cgmath::prelude::*;
 
 /// A naive list "acceleration structure" for computing ray intersections in a scene
 ///
@@ -13,13 +13,14 @@ use crate::{hittable::Hittable, types::GenFloat};
 /// structures off the bat. To compute the intersection, this will traverse every object in the
 /// scene and check whether the object was hit. This will return the intersection point that is
 /// closest to the origin point of the ray.
+#[derive(Debug)]
 pub struct ObjectList<'a, T: GenFloat> {
     /// A list of every object in the scene
-    objects: Vec<&'a dyn Hittable<NumType = T>>,
+    objects: Vec<&'a dyn Hittable<T>>,
 }
 
 impl<'a, T: GenFloat> ObjectList<'a, T> {
-    pub fn new(objects: Vec<&'a dyn Hittable<NumType = T>>) -> AccelResult<Self> {
+    pub fn new(objects: Vec<&'a dyn Hittable<T>>) -> AccelResult<Self> {
         if objects.is_empty() {
             return Err(AccelError::NoObjects);
         }
@@ -27,12 +28,11 @@ impl<'a, T: GenFloat> ObjectList<'a, T> {
     }
 }
 
-impl<'a, T: GenFloat> Hittable for ObjectList<'a, T> {
-    type NumType = T;
-    fn hit(&self, ray: &Ray<Self::NumType>) -> Option<HitRecord<Self::NumType>> {
+impl<'a, T: GenFloat> Hittable<T> for ObjectList<'a, T> {
+    fn hit(&self, ray: &Ray<T>) -> Option<HitRecord<T>> {
         // Collect every object that was hit so we can sort them out and find the closest
         // intersection to the origin point of the ray after every object has been traversed.
-        let mut intersections: Vec<HitRecord<Self::NumType>> =
+        let mut intersections: Vec<HitRecord<T>> =
             self.objects.iter().filter_map(|obj| obj.hit(ray)).collect();
 
         // If there are no intersections, there is no hit. If there's only one, it is by definition
@@ -43,9 +43,9 @@ impl<'a, T: GenFloat> Hittable for ObjectList<'a, T> {
         } else if intersections.len() == 1 {
             return Some(intersections[0]);
         }
-        intersections.sort_by(|a, b| {
-            let a_dist: T = vec3_dist(&ray.origin, &a.p);
-            let b_dist: T = vec3_dist(&ray.origin, &b.p);
+        intersections.sort_by(|&a, &b| {
+            let a_dist: T = ray.origin.distance(a.p);
+            let b_dist: T = ray.origin.distance(b.p);
             a_dist.cmp(&b_dist)
         });
         Some(intersections[0])

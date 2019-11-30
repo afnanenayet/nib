@@ -8,19 +8,19 @@
 
 use crate::types::{GenFloat, GenReal, Ray};
 use cgmath::Vector3;
+use std::{
+    fmt::Debug,
+    hash::{Hash, Hasher},
+};
 
 /// An interface for any object that can intersect with a ray coming from the camera
 ///
-/// NOTE: This method can be used with entire acceleration structures or individual hittable
+/// NOTE: This method can be used with entire acceleration structures or individual geometric
 /// objects. It doesn't matter, as long as you have some way to resolve which object was hit by an
 /// outgoing ray.
-pub trait Hittable {
-    /// Having an associated type allows for different numeric types to be easily swapped in and
-    /// out. This defines the numeric type of the ray and consequently, the hit record.
-    type NumType: GenFloat;
-
+pub trait Hittable<F: GenFloat>: Debug {
     /// A method that returns a hit record if the object was hit
-    fn hit(&self, ray: &Ray<Self::NumType>) -> Option<HitRecord<Self::NumType>>;
+    fn hit(&self, ray: &Ray<F>) -> Option<HitRecord<F>>;
 }
 
 /// Information pertaining to a ray intersection

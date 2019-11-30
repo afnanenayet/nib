@@ -11,9 +11,9 @@ use crate::hittable::Hittable;
 /// image.
 pub struct Scene<T> {
     /// A list of all of the objects in the scene
-    objects: Vec<Box<dyn Hittable<NumType = T>>>,
+    objects: Vec<Box<dyn Hittable<T>>>,
 
     /// An acceleration structure containing all of the visible objects in the scene that can be
     /// queried to calculate a ray intersecion.
-    acceleration_struct: Box<dyn Hittable<NumType = T>>,
+    acceleration_struct: Box<dyn Hittable<T>>,
 }
