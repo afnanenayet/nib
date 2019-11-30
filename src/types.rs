@@ -1,7 +1,7 @@
 //! Defines generic numeric types for the integrator so that operations can be done with generic
 //! integers or floating point numbers.
 
-use cgmath::Vector3;
+use cgmath::{BaseFloat, BaseNum, Vector3};
 use num;
 
 /// Generate a trait that is the sum of other trait bounds
@@ -23,9 +23,9 @@ macro_rules! aggregate_trait {
     };
 }
 
-aggregate_trait!(GenInteger; num::NumCast, num::Integer, Copy, Sync, Ord);
-aggregate_trait!(GenFloat; num::NumCast, num::Float, Copy, Sync, Ord);
-aggregate_trait!(GenReal; num::NumCast, num::traits::real::Real, Copy, Sync, Ord);
+aggregate_trait!(GenReal; BaseNum, Sync, Ord, Eq, PartialEq, PartialOrd);
+aggregate_trait!(GenInteger; num::Integer, GenReal);
+aggregate_trait!(GenFloat; BaseFloat, GenReal);
 
 /// The particular floating point type that is going to be used in this program. If you want to
 /// switch the float type to another type, simply change the type here.
