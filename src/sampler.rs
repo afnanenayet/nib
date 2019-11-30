@@ -6,6 +6,10 @@
 use crate::types::GenFloat;
 use thiserror::Error;
 
+mod random;
+
+pub use random::Random;
+
 /// The possible errors that a `Sampler` can return
 #[derive(Error, Debug, Eq, PartialEq)]
 pub enum SamplerError {
@@ -58,7 +62,7 @@ pub trait Sequential<T: GenFloat> {
 /// be the most performant.
 pub trait InPlace<T: GenFloat> {
     /// Sample a particular dimension and index
-    fn sample(&self, index: u32, dim: u32) -> SamplerResult<Vec<T>>;
+    fn sample(&mut self, index: u32, dim: u32) -> SamplerResult<T>;
 }
 
 /// The generic interface for a rendering sampler

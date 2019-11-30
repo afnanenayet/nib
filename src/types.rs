@@ -3,6 +3,7 @@
 
 use cgmath::{BaseFloat, BaseNum, Vector3};
 use num;
+use rand::Rand;
 
 /// Generate a trait that is the sum of other trait bounds
 ///
@@ -23,7 +24,7 @@ macro_rules! aggregate_trait {
     };
 }
 
-aggregate_trait!(GenReal; BaseNum, Sync, Ord, Eq, PartialEq, PartialOrd);
+aggregate_trait!(GenReal; BaseNum, Sync, Ord, Eq, PartialEq, PartialOrd, Rand);
 aggregate_trait!(GenInteger; num::Integer, GenReal);
 aggregate_trait!(GenFloat; BaseFloat, GenReal);
 
