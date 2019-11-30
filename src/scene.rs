@@ -9,6 +9,7 @@ use crate::hittable::Hittable;
 ///
 /// The `Scene` struct contains all of the information that an integrator needs to generate an
 /// image.
+#[derive(Debug)]
 pub struct Scene<T> {
     /// A list of all of the objects in the scene
     objects: Vec<Box<dyn Hittable<T>>>,
