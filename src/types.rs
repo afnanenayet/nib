@@ -10,7 +10,7 @@ use rand::Rand;
 /// This is a shortcut to take multiple traits, say `A` and `B`, and create a new trait, `C = A +
 /// B`, that implements the other traits automatically.
 ///
-/// For example, `add_traits!(A; B, C)` is the equivalent of doing:
+/// For example, `add_traits!(A; B, C)` generates:
 /// ```
 /// pub trait A: B + C {}
 /// impl<T> A for T where T: B + C {}
@@ -50,4 +50,11 @@ pub struct Ray<T> {
     /// The direction of the ray is represented as a normalized 3D vector, which means that every
     /// component of the vector must be between 0 and 1.
     pub direction: Vector3<T>,
+}
+
+/// An enum type describing the possible output filetypes for the resulting image
+#[derive(Debug, PartialEq, Eq)]
+pub enum OuputFType {
+    PNG,
+    PPM,
 }
