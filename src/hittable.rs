@@ -8,10 +8,7 @@
 
 use crate::types::{GenFloat, GenReal, Ray};
 use cgmath::Vector3;
-use std::{
-    fmt::Debug,
-    hash::{Hash, Hasher},
-};
+use std::fmt::Debug;
 
 /// An interface for any object that can intersect with a ray coming from the camera
 ///
