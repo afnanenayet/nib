@@ -36,8 +36,8 @@ impl<'a, T: GenFloat> Hittable<T> for ObjectList<'a, T> {
             self.objects.iter().filter_map(|obj| obj.hit(ray)).collect();
 
         // If there are no intersections, there is no hit. If there's only one, it is by definition
-        // the closest intersection and we can return that directly. Otherwise, we will need to
-        // find the closest intersection to the incoming ray.
+        // the closest intersection and we can return that directly without wasting extra CPU
+        // cycles. Otherwise, we will need to find the closest intersection to the incoming ray.
         if intersections.is_empty() {
             return None;
         } else if intersections.len() == 1 {
