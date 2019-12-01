@@ -47,7 +47,7 @@ impl<'a, T: GenFloat> Hittable<T> for ObjectList<'a, T> {
             // useless anyway and there are other issues that have propagated to this point.
             a_dist.partial_cmp(&b_dist).unwrap_or(Equal)
         });
-        // Need to dereference the interior type. If the list is empty, this will return `None`.
-        intersections.first().map(|&x| x)
+        // Option<&HitRecord> -> Option<HitRecord>
+        intersections.first().map(|x| *x)
     }
 }
