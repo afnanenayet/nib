@@ -1,9 +1,10 @@
 //! The "list" acceleration structure for computing intersections.
 
-use super::{AccelError, AccelResult};
-use crate::hittable::HitRecord;
-use crate::types::Ray;
-use crate::{hittable::Hittable, types::GenFloat};
+use crate::{
+    accel::{AccelError, AccelResult},
+    hittable::{HitRecord, Hittable},
+    types::{GenFloat, Ray},
+};
 use cgmath::prelude::*;
 use std::cmp::Ordering::Equal;
 
@@ -36,19 +37,17 @@ impl<'a, T: GenFloat> Hittable<T> for ObjectList<'a, T> {
         let mut intersections: Vec<HitRecord<T>> =
             self.objects.iter().filter_map(|obj| obj.hit(ray)).collect();
 
-        // If there are no intersections, there is no hit. If there's only one, it is by definition
-        // the closest intersection and we can return that directly without wasting extra CPU
-        // cycles. Otherwise, we will need to find the closest intersection to the incoming ray.
-        if intersections.is_empty() {
-            return None;
-        } else if intersections.len() == 1 {
-            return Some(intersections[0]);
-        }
-        intersections.sort_by(|&a, &b| {
+        // If the list is empty, then the sort method will be a no-op
+
+        // we don't need to preserve the order of elements, so we can use the fast unstable sort
+        intersections.sort_unstable_by(|&a, &b| {
             let a_dist: T = ray.origin.distance(a.p);
             let b_dist: T = ray.origin.distance(b.p);
+            // We treat NaN values as equal. If we hit NaNs by this point the entire list is likely
+            // useless anyway and there are other issues that have propagated to this point.
             a_dist.partial_cmp(&b_dist).unwrap_or(Equal)
         });
-        Some(intersections[0])
+        // Need to dereference the interior type. If the list is empty, this will return `None`.
+        intersections.first().map(|&x| x)
     }
 }
