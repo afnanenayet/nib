@@ -10,14 +10,18 @@ use crate::types::{GenFloat, GenReal, Ray};
 use cgmath::Vector3;
 use std::fmt::Debug;
 
+mod sphere;
+
+pub use sphere::Sphere;
+
 /// An interface for any object that can intersect with a ray coming from the camera
 ///
 /// NOTE: This method can be used with entire acceleration structures or individual geometric
 /// objects. It doesn't matter, as long as you have some way to resolve which object was hit by an
 /// outgoing ray.
-pub trait Hittable<F: GenFloat>: Debug {
+pub trait Hittable<T: GenFloat>: Debug {
     /// A method that returns a hit record if the object was hit
-    fn hit(&self, ray: &Ray<F>) -> Option<HitRecord<F>>;
+    fn hit(&self, ray: &Ray<T>) -> Option<HitRecord<T>>;
 }
 
 /// Information pertaining to a ray intersection
