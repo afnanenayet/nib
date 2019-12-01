@@ -24,7 +24,7 @@ macro_rules! aggregate_trait {
     };
 }
 
-aggregate_trait!(GenReal; BaseNum, Sync, Ord, Eq, PartialEq, PartialOrd, Rand);
+aggregate_trait!(GenReal; BaseNum, Sync, Rand, PartialOrd);
 aggregate_trait!(GenInteger; num::Integer, GenReal);
 aggregate_trait!(GenFloat; BaseFloat, GenReal);
 
@@ -40,6 +40,7 @@ pub type Unsigned = u32;
 pub type Integer = i32;
 
 /// A standard ray with an origin point and a direction
+#[derive(Debug, Eq, PartialEq)]
 pub struct Ray<T> {
     /// The origin point of the ray in three-dimensional space
     pub origin: Vector3<T>,

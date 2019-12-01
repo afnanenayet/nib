@@ -5,6 +5,7 @@ use crate::hittable::HitRecord;
 use crate::types::Ray;
 use crate::{hittable::Hittable, types::GenFloat};
 use cgmath::prelude::*;
+use std::cmp::Ordering::Equal;
 
 /// A naive list "acceleration structure" for computing ray intersections in a scene
 ///
@@ -46,7 +47,7 @@ impl<'a, T: GenFloat> Hittable<T> for ObjectList<'a, T> {
         intersections.sort_by(|&a, &b| {
             let a_dist: T = ray.origin.distance(a.p);
             let b_dist: T = ray.origin.distance(b.p);
-            a_dist.cmp(&b_dist)
+            a_dist.partial_cmp(&b_dist).unwrap_or(Equal)
         });
         Some(intersections[0])
     }
