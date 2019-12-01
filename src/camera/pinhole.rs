@@ -47,3 +47,90 @@ impl<T: GenFloat> Default for Pinhole<T> {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_get_ray_f32() {
+        type FType = f32;
+        let camera: Pinhole<FType> = Default::default();
+
+        // this is equivalent to the lower left corner of the frame
+        let ray: Ray<FType> = Ray {
+            origin: Vector3::new(0.0, 0.0, 0.0),
+            direction: Vector3::new(-2.0, -1.0, -1.0),
+        };
+        assert_eq!(camera.to_ray(0.0, 0.0), ray);
+
+        // middle
+        let ray: Ray<FType> = Ray {
+            origin: Vector3::new(0.0, 0.0, 0.0),
+            direction: Vector3::new(0.0, 0.0, -1.0),
+        };
+        assert_eq!(camera.to_ray(0.5, 0.5), ray);
+
+        // upper left corner
+        let ray: Ray<FType> = Ray {
+            origin: Vector3::new(0.0, 0.0, 0.0),
+            direction: Vector3::new(-2.0, 1.0, -1.0),
+        };
+        assert_eq!(camera.to_ray(0.0, 1.0), ray);
+
+        // upper right corner
+        let ray: Ray<FType> = Ray {
+            origin: Vector3::new(0.0, 0.0, 0.0),
+            direction: Vector3::new(2.0, 1.0, -1.0),
+        };
+        assert_eq!(camera.to_ray(1.0, 1.0), ray);
+
+        // lower right corner
+        let ray: Ray<FType> = Ray {
+            origin: Vector3::new(0.0, 0.0, 0.0),
+            direction: Vector3::new(2.0, -1.0, -1.0),
+        };
+        assert_eq!(camera.to_ray(1.0, 0.0), ray);
+    }
+
+    #[test]
+    fn test_get_ray_f64() {
+        type FType = f64;
+        let camera: Pinhole<FType> = Default::default();
+
+        // this is equivalent to the lower left corner of the frame
+        let ray: Ray<FType> = Ray {
+            origin: Vector3::new(0.0, 0.0, 0.0),
+            direction: Vector3::new(-2.0, -1.0, -1.0),
+        };
+        assert_eq!(camera.to_ray(0.0, 0.0), ray);
+
+        // middle
+        let ray: Ray<FType> = Ray {
+            origin: Vector3::new(0.0, 0.0, 0.0),
+            direction: Vector3::new(0.0, 0.0, -1.0),
+        };
+        assert_eq!(camera.to_ray(0.5, 0.5), ray);
+
+        // upper left corner
+        let ray: Ray<FType> = Ray {
+            origin: Vector3::new(0.0, 0.0, 0.0),
+            direction: Vector3::new(-2.0, 1.0, -1.0),
+        };
+        assert_eq!(camera.to_ray(0.0, 1.0), ray);
+
+        // upper right corner
+        let ray: Ray<FType> = Ray {
+            origin: Vector3::new(0.0, 0.0, 0.0),
+            direction: Vector3::new(2.0, 1.0, -1.0),
+        };
+        assert_eq!(camera.to_ray(1.0, 1.0), ray);
+
+        // lower right corner
+        let ray: Ray<FType> = Ray {
+            origin: Vector3::new(0.0, 0.0, 0.0),
+            direction: Vector3::new(2.0, -1.0, -1.0),
+        };
+        assert_eq!(camera.to_ray(1.0, 0.0), ray);
+    }
+}
