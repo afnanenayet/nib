@@ -4,6 +4,7 @@
 //! interfaces to export that framebuffer to a file, such as a PNG or PPM.
 
 use crate::types::PixelValue;
+use image::{self, save_buffer_with_format};
 use std::{fs::File, io::prelude::*, path::Path};
 use thiserror::Error;
 
@@ -38,6 +39,7 @@ pub trait FramebufferExporter {
 ///
 /// The PPM format is extremely simple and does not offer any compression. This is a poor choice
 /// for large images, as file sizes scale linearly with pixel counts.
+#[derive(Debug)]
 pub struct PPMExporter {
     /// The width of the output image
     pub width: u32,
@@ -72,5 +74,32 @@ impl FramebufferExporter for PPMExporter {
 
         // convert the IO error to an exporter error
         io_result.map_err(|e| ExporterError::IO { source: e })
+    }
+}
+
+#[derive(Debug)]
+pub struct PNGExporter {
+    /// The width of the output image
+    pub width: u32,
+
+    /// The height of the output image
+    pub height: u32,
+}
+
+impl FramebufferExporter for PNGExporter {
+    fn export(&self, buffer: &Vec<PixelValue>, path: &Path) -> ExporterResult<()> {
+        if self.width < 1 || self.height < 1 {
+            return Err(ExporterError::InvalidDimensions);
+        }
+        let flat_buffer: Vec<u8> = buffer.iter().flat_map(|n| n.iter().cloned()).collect();
+        image::save_buffer_with_format(
+            path,
+            &flat_buffer[..],
+            self.width,
+            self.height,
+            image::RGB(8),
+            image::PNG,
+        )
+        .map_err(|e| ExporterError::IO { source: e })
     }
 }
