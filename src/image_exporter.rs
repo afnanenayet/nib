@@ -71,9 +71,6 @@ impl FramebufferExporter for PPMExporter {
         };
 
         // convert the IO error to an exporter error
-        match io_result {
-            Err(e) => Err(ExporterError::IO { source: e }),
-            Ok(x) => Ok(x),
-        }
+        io_result.map_err(|e| ExporterError::IO { source: e })
     }
 }
