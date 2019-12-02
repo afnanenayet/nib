@@ -6,5 +6,6 @@ mod camera;
 mod sampler;
 mod math;
 mod accel;
+mod image_exporter;
 
 fn main() {}

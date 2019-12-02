@@ -58,3 +58,6 @@ pub enum OuputFType {
     PNG,
     PPM,
 }
+
+/// A type representing the RGB value of a pixel with 8-bit channels
+pub type PixelValue = [u8; 3];
