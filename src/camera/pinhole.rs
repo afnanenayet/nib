@@ -5,11 +5,12 @@ use crate::{
     types::{GenFloat, Ray},
 };
 use cgmath::Vector3;
+use serde::{Serialize, Deserialize};
 
 /// The classic pinhole camera
 ///
 /// No bells, no whistles, just projected rays.
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Pinhole<T: GenFloat> {
     /// The origin point of the camera's field of view
     pub origin: Vector3<T>,

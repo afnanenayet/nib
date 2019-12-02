@@ -18,11 +18,11 @@ use std::cmp::Ordering::Equal;
 #[derive(Debug)]
 pub struct ObjectList<'a, T: GenFloat> {
     /// A list of every object in the scene
-    objects: Vec<&'a dyn Hittable<T>>,
+    objects: Vec<Box<dyn Hittable<T> + 'a>>,
 }
 
 impl<'a, T: GenFloat> ObjectList<'a, T> {
-    pub fn new(objects: Vec<&'a dyn Hittable<T>>) -> AccelResult<Self> {
+    pub fn new(objects: Vec<Box<dyn Hittable<T> + 'a>>) -> AccelResult<Self> {
         if objects.is_empty() {
             return Err(AccelError::NoObjects);
         }

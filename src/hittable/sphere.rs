@@ -1,12 +1,15 @@
 //! An implementation of the sphere primitive
 
-use crate::hittable::HitRecord;
-use crate::types::Ray;
-use crate::{hittable::Hittable, types::GenFloat};
+use crate::{
+    hittable::{HitRecord, Hittable},
+    types::GenFloat,
+    types::Ray,
+};
 use cgmath::{prelude::*, Vector3};
+use serde::{Deserialize, Serialize};
 
 /// A sphere primitive
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Sphere<T: GenFloat> {
     /// The center of the sphere in spatial coordinates
     pub center: Vector3<T>,

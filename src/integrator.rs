@@ -3,7 +3,7 @@
 
 use crate::{
     sampler::Sampler,
-    scene::Scene,
+    scene::ProcessedScene,
     types::{GenFloat, Ray},
 };
 use cgmath::Vector3;
@@ -25,7 +25,7 @@ pub struct RenderParams<'a, T: GenFloat> {
     pub origin: &'a Ray<T>,
 
     /// A reference to the scene
-    pub scene: &'a Scene<T>,
+    pub scene: &'a ProcessedScene<'a, T>,
 
     /// A reference to the sampler to use with the integrator
     pub sampler: &'a mut dyn Sampler<T>,

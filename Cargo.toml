@@ -6,7 +6,7 @@ edition = "2018"
 
 [dependencies]
 num = "0.2.0"
-cgmath = "0.17.0"
+cgmath = { version = "0.17.0", features = ["serde"] }
 structopt = "0.3.5"
 serde = { version = "1.0", features = ["derive"] }
 thiserror = "1.0.6"
