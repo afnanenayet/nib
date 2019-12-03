@@ -2,7 +2,14 @@
 //!
 //! The renderer takes a scene, and calculates the value for each pixel using a given integrator.
 
-use crate::{integrator::Integrator, sampler::Sampler, scene::ProcessedScene, types::GenFloat};
+use crate::{
+    camera::Camera,
+    integrator::{Integrator, RenderParams},
+    sampler::Sampler,
+    scene::ProcessedScene,
+    types::{GenFloat, PixelValue},
+};
+use std::convert::TryInto;
 
 /// The data a renderer requires to produce an image
 ///
@@ -18,4 +25,35 @@ pub struct Renderer<'a, T: GenFloat> {
 
     /// A representation of the scene and lighting information
     pub scene: Box<ProcessedScene<'a, T>>,
+
+    /// The camera to use to render this instance
+    pub camera: Box<dyn Camera<T>>,
+
+    /// The width of the output image
+    pub width: u32,
+
+    /// The height of the output image
+    pub height: u32,
+}
+
+impl<'a, T: GenFloat> Renderer<'a, T> {
+    pub fn render(&mut self) -> Vec<PixelValue> {
+        // This is the naive single threaded implementation. TODO(afnan) make this multithreaded
+        // once the results are confirmed to be correct.
+        (0..self.width)
+            .zip(0..self.height)
+            .map(|(x, y)| {
+                let u = T::from(x).unwrap() / T::from(self.width).unwrap();
+                let v = T::from(y).unwrap() / T::from(self.height).unwrap();
+                let ray = self.camera.to_ray(u, v);
+
+                let params = RenderParams {
+                    origin: &ray,
+                    scene: &self.scene,
+                    sampler: &mut *self.sampler,
+                };
+                self.integrator.render(params)
+            })
+            .collect()
+    }
 }

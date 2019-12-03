@@ -5,7 +5,7 @@ use crate::{
     types::{GenFloat, Ray},
 };
 use cgmath::Vector3;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// The classic pinhole camera
 ///

@@ -1,10 +1,11 @@
 //! The integrator module defines several integrators, and also provides an interface for generic
 //! integrators that can be extended so that other integrators can be easily added.
 
+use crate::types::PixelValue;
 use crate::{
     sampler::Sampler,
     scene::ProcessedScene,
-    types::{GenFloat, Ray},
+    types::{GenFloat, GenInteger, Ray},
 };
 use cgmath::Vector3;
 use std::fmt::Debug;
@@ -18,7 +19,7 @@ use std::fmt::Debug;
 ///
 /// You should pass this struct by value since it's simply a struct of references to objects, which
 /// is pretty cheap.
-pub struct RenderParams<'a, T: GenFloat> {
+pub struct RenderParams<'a, 'b, 'c, T: GenFloat> {
     /// The outgoing ray
     ///
     /// In rendering, we trace rays or paths, and they originate at a certain point and extend
@@ -26,10 +27,10 @@ pub struct RenderParams<'a, T: GenFloat> {
     pub origin: &'a Ray<T>,
 
     /// A reference to the scene
-    pub scene: &'a ProcessedScene<'a, T>,
+    pub scene: &'b ProcessedScene<'b, T>,
 
     /// A reference to the sampler to use with the integrator
-    pub sampler: &'a mut dyn Sampler<T>,
+    pub sampler: &'c mut dyn Sampler<T>,
 }
 
 /// A trait that defines an integrator. An integrator defines the operations that are responsible
@@ -39,5 +40,5 @@ pub trait Integrator<T: GenFloat>: Debug {
     ///
     /// Given certain input parameters this method calculates the color values at a particular
     /// point.
-    fn render(&self, params: RenderParams<T>) -> Vector3<T>;
+    fn render(&self, params: RenderParams<T>) -> PixelValue;
 }
