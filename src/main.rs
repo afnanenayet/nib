@@ -7,5 +7,6 @@ mod sampler;
 mod math;
 mod accel;
 mod image_exporter;
+mod renderer;
 
 fn main() {}

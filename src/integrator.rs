@@ -7,6 +7,7 @@ use crate::{
     types::{GenFloat, Ray},
 };
 use cgmath::Vector3;
+use std::fmt::Debug;
 
 /// A struct representing the various options and parameters that can be configured for the
 /// `render` method in a particular integrator
@@ -33,10 +34,10 @@ pub struct RenderParams<'a, T: GenFloat> {
 
 /// A trait that defines an integrator. An integrator defines the operations that are responsible
 /// for taking input data for a given pixel, and calculating the output colors at each pixel.
-pub trait Integrator<T: GenFloat> {
+pub trait Integrator<T: GenFloat>: Debug {
     /// Calculate the color value for a particular pixel, given a reference to the scene.
     ///
     /// Given certain input parameters this method calculates the color values at a particular
     /// point.
-    fn render(params: RenderParams<T>) -> Vector3<T>;
+    fn render(&self, params: RenderParams<T>) -> Vector3<T>;
 }

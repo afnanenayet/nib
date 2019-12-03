@@ -4,6 +4,7 @@
 //! implementations.
 
 use crate::types::GenFloat;
+use std::fmt::Debug;
 use thiserror::Error;
 
 mod random;
@@ -70,7 +71,7 @@ pub trait InPlace<T: GenFloat> {
 /// This method automatically derives these methods for any sampler that implements the
 /// `BaseSampler` trait. Users should use this trait and *not* the `BaseSampler` trait as an
 /// interface.
-pub trait Sampler<T: GenFloat> {
+pub trait Sampler<T: GenFloat>: Debug {
     /// Sample all of the dimensions for a particular index
     // TODO(afnan) should we use `&mut self` instead?
     fn sample_idx(&self, index: u32) -> SamplerResult<Vec<T>>;

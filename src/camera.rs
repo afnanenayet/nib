@@ -2,6 +2,7 @@
 //! types
 
 use crate::types::{GenFloat, Ray};
+use std::fmt::Debug;
 
 mod pinhole;
 
@@ -10,7 +11,7 @@ pub use pinhole::Pinhole;
 /// The generic interface for a camera type
 ///
 /// A camera simply needs to convert u, v coordinates to a 3D ray.
-pub trait Camera<T: GenFloat> {
+pub trait Camera<T: GenFloat>: Debug {
     /// Convert (u, v) pixel coordinates to a ray in 3D space
     fn to_ray(&self, u: T, v: T) -> Ray<T>;
 }

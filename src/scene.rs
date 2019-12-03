@@ -51,6 +51,7 @@ struct Scene<T: GenFloat> {
 /// The `ProcessedScene` struct contains all of the information that an integrator needs to generate an
 /// image. This is generated from the input `Scene` struct that is primarily used for serializing
 /// and deserializing scene information from user input.
+#[derive(Debug)]
 pub struct ProcessedScene<'a, T> {
     /// An acceleration structure containing all of the visible objects in the scene that can be
     /// queried to calculate a ray intersecion. We don't need to store a list of objects in this
