@@ -4,6 +4,7 @@
 use cgmath::{BaseFloat, BaseNum, Vector3};
 use num;
 use rand::Rand;
+use typetag;
 
 /// Generate a trait that is the sum of other trait bounds
 ///
@@ -50,13 +51,6 @@ pub struct Ray<T> {
     /// The direction of the ray is represented as a normalized 3D vector, which means that every
     /// component of the vector must be between 0 and 1.
     pub direction: Vector3<T>,
-}
-
-/// An enum type describing the possible output filetypes for the resulting image
-#[derive(Debug, PartialEq, Eq)]
-pub enum OuputFType {
-    PNG,
-    PPM,
 }
 
 /// A type representing the RGB value of a pixel with 8-bit channels

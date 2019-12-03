@@ -8,6 +8,13 @@ use image::{self, save_buffer_with_format};
 use std::{fs::File, io::prelude::*, path::Path};
 use thiserror::Error;
 
+/// An enum type describing the possible output filetypes for the resulting image
+#[derive(Debug, PartialEq, Eq)]
+pub enum OuputType {
+    PNG,
+    PPM,
+}
+
 /// The possible errors that can arise when exporting a framebuffer
 #[derive(Error, Debug)]
 pub enum ExporterError {
