@@ -1,5 +1,7 @@
 //! An implementation of the Whitted/direct lighting rendering technique. This is the "classic"
-//! ray-tracing technique. It was developed by Turner Whitted in 1980.
+//! ray-tracing technique. It was developed by Turner Whitted in 1980, in a paper titled "An
+//! Improved Illumination Model for Shaded Display."
+
 
 use serde::{Deserialize, Serialize};
 
