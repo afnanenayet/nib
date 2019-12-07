@@ -1,6 +1,6 @@
 //! Utility math functions  
 
-use crate::types::{GenFloat, GenReal, ETA};
+use crate::types::{GenFloat, ETA};
 use cgmath::{prelude::*, Vector3};
 use rand::prelude::*;
 
