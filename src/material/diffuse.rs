@@ -11,7 +11,7 @@ use rand::prelude::*;
 ///
 /// This BSDF models a typical matte, or non-glossy surface. The user can specify the albedo of the
 /// material, which defines its color.
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Diffuse<T: GenFloat> {
     /// The fraction of light that is absorbed for each color channel.
     pub albedo: Vector3<T>,
