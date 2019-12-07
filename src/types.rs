@@ -24,7 +24,7 @@ macro_rules! aggregate_trait {
     };
 }
 
-aggregate_trait!(GenReal; BaseNum, Sync, PartialOrd, UniformSampler);
+aggregate_trait!(GenReal; BaseNum, Sync, PartialOrd);
 aggregate_trait!(GenInteger; num::Integer, GenReal);
 aggregate_trait!(GenFloat; BaseFloat, GenReal);
 
