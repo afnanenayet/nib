@@ -1,0 +1,34 @@
+use crate::{
+    hittable::HitRecord,
+    material::{BSDFRecord, BSDF},
+    math::mirror,
+    types::{GenFloat, Ray},
+};
+use cgmath::Vector3;
+use rand::prelude::*;
+
+/// A perfect mirror surface that reflects rays perfectly
+#[derive(Debug, Copy, Clone)]
+pub struct Mirror {}
+
+impl<T, R> BSDF<T, R> for Mirror
+where
+    T: GenFloat,
+    R: Rng + ?Sized,
+    rand::distributions::Standard: rand::distributions::Distribution<T>,
+{
+    fn scatter(&self, _r: &mut R, ray: &Ray<T>, hit_record: &HitRecord<T>) -> BSDFRecord<T> {
+        let mirror_direction = mirror(&ray.direction, &hit_record.normal);
+        BSDFRecord {
+            out: Ray {
+                origin: ray.origin,
+                direction: mirror_direction,
+            },
+            attenuation: Vector3::new(
+                T::from(1).unwrap(),
+                T::from(1).unwrap(),
+                T::from(1).unwrap(),
+            ),
+        }
+    }
+}
