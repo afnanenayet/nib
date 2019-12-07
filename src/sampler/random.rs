@@ -2,33 +2,25 @@
 
 use crate::sampler::SamplerResult;
 use crate::{sampler::InPlace, types::GenFloat};
-use rand::{isaac::Isaac64Rng, Rng, SeedableRng};
+use rand::{rngs::StdRng, Rng, SeedableRng};
 
 /// An implementation of a basic random sampler
 ///
 /// This sampler uses the ISAAC64 algorithm under the hood and is deterministic. You can optionally
 /// provide a seed.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Random {
-    /// The RNG to use with the random sampler
+    /// The PRNG to use with the random sampler
     ///
     /// You can use the default implementation on this sampler if you don't want to construc the
     /// RNG struct yourself, or don't care about the seed.
-    pub rand: Isaac64Rng,
-
-    /// An optional seed for the RNG
-    ///
-    /// This is part of the sampler struct because the RNG expects a reference to an array of 64
-    /// bit integers, and this struct needs to own the references.
-    pub seed: Vec<u64>,
+    pub prng: StdRng,
 }
 
 impl Default for Random {
     fn default() -> Self {
         Self {
-            rand: Isaac64Rng::new_unseeded(),
-            // The empty vector does not allocate, so there are no performance concerns here.
-            seed: Vec::new(),
+            prng: StdRng::seed_from_u64(42),
         }
     }
 }
@@ -37,16 +29,19 @@ impl Random {
     /// Create a new random sampler with a given seed
     ///
     /// The seed can be 256 elements long - anything extra will be ignored.
-    pub fn with_seed(seed: Vec<u64>) -> Self {
+    pub fn with_seed(seed: u64) -> Self {
         Self {
-            rand: Isaac64Rng::from_seed(&seed[..]),
-            seed,
+            prng: StdRng::seed_from_u64(seed),
         }
     }
 }
 
-impl<T: GenFloat> InPlace<T> for Random {
+impl<T> InPlace<T> for Random
+where
+    T: GenFloat,
+    rand::distributions::Standard: rand::distributions::Distribution<T>,
+{
     fn sample(&mut self, _index: u32, _dim: u32) -> SamplerResult<T> {
-        Ok(self.rand.gen())
+        Ok(self.prng.gen())
     }
 }
