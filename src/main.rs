@@ -1,12 +1,15 @@
+mod accel;
+mod camera;
+mod hittable;
+mod image_exporter;
 mod integrator;
+mod math;
+mod renderer;
+mod sampler;
 mod scene;
 mod types;
-mod hittable;
-mod camera;
-mod sampler;
-mod math;
-mod accel;
-mod image_exporter;
-mod renderer;
 
-fn main() {}
+fn main() {
+    let sampler = sampler::Random::default();
+    let camera: camera::Pinhole<f32> = camera::Pinhole::default();
+}
