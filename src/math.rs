@@ -1,6 +1,6 @@
 //! Utility math functions  
 
-use crate::types::{GenFloat, ETA};
+use crate::types::{GenFloat, GenReal, ETA};
 use cgmath::{prelude::*, Vector3};
 use rand::prelude::*;
 
@@ -27,4 +27,12 @@ where
     }
     // Normalize the vector so it has a magnitude of one
     v.normalize()
+}
+
+/// Mirror a vector about a unit direction
+///
+/// `vector` is the incoming vector, and `normal` is the vector to mirror `vector` around. Returns
+/// a mirrored vector. Note that `normal` must be a unit vector.
+pub fn mirror<T: GenFloat>(vector: &Vector3<T>, normal: &Vector3<T>) -> Vector3<T> {
+    vector - (normal * T::from(2).unwrap() * vector.dot(*normal))
 }
