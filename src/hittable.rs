@@ -6,8 +6,12 @@
 //! structures so that they can be used generically. It doesn't really matter, as long as you can
 //! yield which object was hit.
 
-use crate::types::{GenFloat, GenReal, Ray};
+use crate::{
+    material::BSDF,
+    types::{GenFloat, GenReal, Ray},
+};
 use cgmath::Vector3;
+use rand::Rng;
 use std::fmt::Debug;
 
 mod sphere;
@@ -34,4 +38,19 @@ pub struct HitRecord<T: GenReal> {
 
     /// The normal vector for the intersection
     pub normal: Vector3<T>,
+}
+
+/// The struct for some object in the scene that can be intersected geometrically that also
+/// provides a BSDF function for texture.
+///
+/// This struct pairs together geometry primitives and their corresponding BSDF functions so that
+/// we can calculate the color value for a light bounce, and determine which direction the ray
+/// should go next.
+#[derive(Debug)]
+pub struct Textured<T: GenFloat, R: Rng + ?Sized> {
+    /// The geometric primitive that might be hit by the light ray or path
+    pub geometry: Box<dyn Hittable<T>>,
+
+    /// A reference to the BSDF method for
+    pub mat: Box<dyn BSDF<T, R>>,
 }
