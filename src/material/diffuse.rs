@@ -23,8 +23,8 @@ where
     R: Rng + ?Sized,
     rand::distributions::Standard: rand::distributions::Distribution<T>,
 {
-    fn scatter(&self, r: &mut R, ray: &Ray<T>, hit_record: &HitRecord<T>) -> BSDFRecord<T> {
-        let target = hit_record.p + hit_record.normal + sample_unit_sphere(&mut r);
+    fn scatter(&self, r: &mut R, _ray: &Ray<T>, hit_record: &HitRecord<T>) -> BSDFRecord<T> {
+        let target = hit_record.p + hit_record.normal + sample_unit_sphere(r);
         let out = Ray {
             origin: hit_record.p,
             direction: target - hit_record.p,
