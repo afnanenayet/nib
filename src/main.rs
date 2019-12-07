@@ -3,6 +3,7 @@ mod camera;
 mod hittable;
 mod image_exporter;
 mod integrator;
+mod material;
 mod math;
 mod renderer;
 mod sampler;
