@@ -7,7 +7,10 @@ use crate::{
 use cgmath::Vector3;
 use rand::prelude::*;
 
-/// A perfect mirror surface that reflects rays perfectly
+/// A perfect mirror surface
+///
+/// This BSDF simply reflects incoming light rays around the normal vector of the surface (the
+/// normal is computed from the ray intersection on the geometric object).
 #[derive(Debug, Copy, Clone)]
 pub struct Mirror {}
 
