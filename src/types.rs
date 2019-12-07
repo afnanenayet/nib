@@ -3,8 +3,7 @@
 
 use cgmath::{BaseFloat, BaseNum, Vector3};
 use num;
-use rand::Rand;
-use typetag;
+use rand::distributions::uniform::UniformSampler;
 
 /// Generate a trait that is the sum of other trait bounds
 ///
@@ -25,7 +24,7 @@ macro_rules! aggregate_trait {
     };
 }
 
-aggregate_trait!(GenReal; BaseNum, Sync, Rand, PartialOrd);
+aggregate_trait!(GenReal; BaseNum, Sync, PartialOrd, UniformSampler);
 aggregate_trait!(GenInteger; num::Integer, GenReal);
 aggregate_trait!(GenFloat; BaseFloat, GenReal);
 
@@ -55,3 +54,6 @@ pub struct Ray<T> {
 
 /// A type representing the RGB value of a pixel with 8-bit channels
 pub type PixelValue = [u8; 3];
+
+/// The floating point error threshold to use with the renderer
+pub const ETA: f32 = 0.0001;
