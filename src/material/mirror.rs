@@ -10,9 +10,16 @@ use rand::prelude::*;
 /// A perfect mirror surface
 ///
 /// This BSDF simply reflects incoming light rays around the normal vector of the surface (the
-/// normal is computed from the ray intersection on the geometric object).
+/// normal is computed from the ray intersection on the geometric object). The mirror BSDF has no
+/// parameters, which is why it is an empty struct.
 #[derive(Debug, Copy, Clone)]
 pub struct Mirror {}
+
+impl Default for Mirror {
+    fn default() -> Self {
+        Self {}
+    }
+}
 
 impl<T, R> BSDF<T, R> for Mirror
 where
