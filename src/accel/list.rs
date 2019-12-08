@@ -2,7 +2,7 @@
 
 use crate::{
     accel::{AccelError, AccelResult},
-    hittable::{HitRecord, Hittable},
+    hittable::{HitRecord, Hittable, Textured},
     types::{GenFloat, Ray},
 };
 use cgmath::prelude::*;
@@ -18,11 +18,11 @@ use std::cmp::Ordering::Equal;
 #[derive(Debug)]
 pub struct ObjectList<'a, T: GenFloat> {
     /// A list of every object in the scene
-    objects: Vec<Box<dyn Hittable<T> + 'a>>,
+    objects: Vec<Textured<'a, T>>,
 }
 
 impl<'a, T: GenFloat> ObjectList<'a, T> {
-    pub fn new(objects: Vec<Box<dyn Hittable<T> + 'a>>) -> AccelResult<Self> {
+    pub fn new(objects: Vec<Textured<'a, T>>) -> AccelResult<Self> {
         if objects.is_empty() {
             return Err(AccelError::NoObjects);
         }
@@ -34,12 +34,14 @@ impl<'a, T: GenFloat> Hittable<T> for ObjectList<'a, T> {
     fn hit(&self, ray: &Ray<T>) -> Option<HitRecord<T>> {
         // Collect every object that was hit so we can sort them out and find the closest
         // intersection to the origin point of the ray after every object has been traversed.
-        let mut intersections: Vec<HitRecord<T>> =
-            self.objects.iter().filter_map(|obj| obj.hit(ray)).collect();
+        let mut intersections: Vec<HitRecord<T>> = self
+            .objects
+            .iter()
+            .filter_map(|obj| obj.geometry.hit(ray))
+            .collect();
 
-        // If the list is empty, then the sort method will be a no-op
-
-        // we don't need to preserve the order of elements, so we can use the fast unstable sort
+        // If the list is empty, then the sort method will be a no-op. We don't need to preserve
+        // the order of elements, so we can use the fast unstable sort.
         intersections.sort_unstable_by(|&a, &b| {
             let a_dist: T = ray.origin.distance(a.p);
             let b_dist: T = ray.origin.distance(b.p);
@@ -48,6 +50,6 @@ impl<'a, T: GenFloat> Hittable<T> for ObjectList<'a, T> {
             a_dist.partial_cmp(&b_dist).unwrap_or(Equal)
         });
         // Option<&HitRecord> -> Option<HitRecord>
-        intersections.first().map(|x| *x)
+        intersections.first().map(|&x| x)
     }
 }

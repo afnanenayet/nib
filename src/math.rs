@@ -1,6 +1,9 @@
 //! Utility math functions  
 
-use crate::types::{GenFloat, ETA};
+use crate::{
+    sampler::Sampler,
+    types::{GenFloat, ETA},
+};
 use cgmath::{prelude::*, Vector3};
 use rand::prelude::*;
 
@@ -11,12 +14,12 @@ use rand::prelude::*;
 /// lie within the unit sphere.
 ///
 /// We reject vectors with very small norms, as this can be an issue with floating point numbers.
-pub fn sample_unit_sphere<T, R>(r: &mut R) -> Vector3<T>
+pub fn sample_unit_sphere<T>(sampler: &mut dyn Sampler<T>) -> Vector3<T>
 where
     T: GenFloat,
-    R: Rng + ?Sized,
     rand::distributions::Standard: rand::distributions::Distribution<T>,
 {
+    let mut r = thread_rng();
     let mut v = Vector3::new(
         T::from(0).unwrap(),
         T::from(0).unwrap(),

@@ -5,18 +5,27 @@
 
 use crate::{
     accel, camera,
-    hittable::{self, Hittable},
+    hittable::{self, Hittable, Textured},
+    material::{self, BSDF},
     types::GenFloat,
 };
+use rand;
 use serde::{Deserialize, Serialize};
 
-/// The different types of `Hittable` types that can be as input objects
+/// The different types of `Hittable` types that can be used as input objects
 ///
 /// This is an enum type that exists for convenient use with serde, so we can create a serializable
 /// struct to expose as a scene description to the user.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 enum SerializedHittable<T: GenFloat> {
     Sphere(hittable::Sphere<T>),
+}
+
+/// The different types of `BSDF` types that can be used as input objects
+#[derive(Debug, Clone, Serialize, Deserialize)]
+enum SerializedMaterial<T: GenFloat> {
+    Diffuse(material::Diffuse<T>),
+    Mirror(material::Mirror),
 }
 
 /// The different types of acceleration structures that can be used in the scene description
@@ -31,13 +40,23 @@ enum SerializedCamera<T: GenFloat> {
     Pinhole(camera::Pinhole<T>),
 }
 
+/// A serializable wrapper for the
+#[derive(Debug, Serialize, Deserialize)]
+struct SerializedTextured<T: GenFloat> {
+    /// The geometric primitive that might be hit by the light ray or path
+    pub geometry: SerializedHittable<T>,
+
+    /// A reference to the BSDF method for
+    pub mat: SerializedMaterial<T>,
+}
+
 /// A struct representing the scene description as the user will input it
 ///
 /// This struct exists solely for serialization and deserialization
 #[derive(Debug, Serialize, Deserialize)]
 struct Scene<T: GenFloat> {
     /// A list of all of the geometric objects in the scene
-    pub objects: Vec<SerializedHittable<T>>,
+    pub objects: Vec<SerializedTextured<T>>,
 
     /// The acceleration structure to use with the scene
     pub acceleration_structure: SerializedAccelerationStruct,
@@ -63,18 +82,34 @@ pub struct ProcessedScene<'a, T: GenFloat> {
     pub camera: Box<dyn camera::Camera<T> + 'a>,
 }
 
-impl<'a, T: GenFloat + 'a> From<Scene<T>> for ProcessedScene<'a, T> {
+impl<'a, T> From<Scene<T>> for ProcessedScene<'a, T>
+where
+    T: GenFloat + 'a,
+    rand::distributions::Standard: rand::distributions::Distribution<T>,
+{
     fn from(scene: Scene<T>) -> Self {
         // We just destructure the serialized struct and convert them to boxed dynamic
         // implementations
-        let objects: Vec<Box<dyn Hittable<T> + 'a>> = (&scene.objects)
+        let mut objects: Vec<Textured<T>> = (&scene.objects)
             .iter()
-            .map(|x| {
-                let x: Box<dyn Hittable<T> + 'a> = match x {
-                    SerializedHittable::Sphere(x) => Box::new(x.clone()),
-                };
-                x
-            })
+            .map(
+                |SerializedTextured {
+                     geometry: g,
+                     mat: m,
+                 }| {
+                    let geometry: Box<dyn Hittable<T> + 'a> = match g {
+                        SerializedHittable::Sphere(x) => Box::new(x.clone()),
+                    };
+                    let bsdf: Box<dyn BSDF<T> + 'a> = match m {
+                        SerializedMaterial::Mirror(x) => Box::new(x.clone()),
+                        SerializedMaterial::Diffuse(x) => Box::new(x.clone()),
+                    };
+                    Textured {
+                        geometry,
+                        mat: bsdf,
+                    }
+                },
+            )
             .collect();
         let camera = match scene.camera {
             SerializedCamera::Pinhole(x) => Box::new(x),

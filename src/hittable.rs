@@ -11,7 +11,7 @@ use crate::{
     types::{GenFloat, GenReal, Ray},
 };
 use cgmath::Vector3;
-use rand::Rng;
+use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 
 mod sphere;
@@ -47,10 +47,10 @@ pub struct HitRecord<T: GenReal> {
 /// we can calculate the color value for a light bounce, and determine which direction the ray
 /// should go next.
 #[derive(Debug)]
-pub struct Textured<T: GenFloat, R: Rng + ?Sized> {
+pub struct Textured<'a, T: GenFloat> {
     /// The geometric primitive that might be hit by the light ray or path
-    pub geometry: Box<dyn Hittable<T>>,
+    pub geometry: Box<dyn Hittable<T> + 'a>,
 
     /// A reference to the BSDF method for
-    pub mat: Box<dyn BSDF<T, R>>,
+    pub mat: Box<dyn BSDF<T> + 'a>,
 }

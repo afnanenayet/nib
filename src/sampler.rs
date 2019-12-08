@@ -13,21 +13,17 @@ pub use random::Random;
 
 /// The possible errors that a `Sampler` can return
 #[derive(Error, Debug, Eq, PartialEq)]
-pub enum SamplerError {
+pub enum SamplerError<T: GenFloat> {
     /// The caller requested more dimensions than the sampler could provide
     ///
     /// Some samplers are limited in the amount of dimensions they can provide. This error
-    /// indicates that the caller requested more dimensions than the sampler could provide. The
-    /// sampler can indicate how many dimensions can be provided for this sampler, if the sampler
-    /// can provide some dimensions, but less than the amount that was requested.
-    #[error(
-        "Too many dimensions were requested, but you can request {dimensions_left:?} dimensions."
-    )]
-    TooManyDims {
-        /// The number of dimensions remaining for the sampler, for this index. There may be no
-        /// dimensions remaining
-        dimensions_left: u32,
-    },
+    /// indicates that the caller requested more dimensions than the sampler could provide. This
+    /// error handles the case where the sampler is completely exhausted.
+    ///
+    /// In the event that the sampler is able to return a partial result, but not all of the
+    /// requested dimensions, the `IncompleteDimensions` variant should be used.
+    #[error("Too many dimensions were requested")]
+    TooManyDims,
 
     /// The sampler has been exhausted, and cannot generate any more samples
     ///
@@ -36,10 +32,36 @@ pub enum SamplerError {
     /// more dimensional samples for a sample.
     #[error("The sampler has been exhausted and cannot generate any more samples.")]
     NoSamplesRemaining,
+
+    /// The user requested more samples for an inded than the sampler was able to provide
+    ///
+    /// This error is used when the sampler is able to provide *some* of the dimensions, but not
+    /// all of them. This error variant indicates that the sampler has been exhausted, but will
+    /// provide the dimensions that the sampler had left.
+    ///
+    /// In the event that the sampler can't produce any more dimensions and has been completely
+    /// exhausted for this index, use the `TooManyDims` variant.
+    #[error(
+        "The sampler was able to provide {provided:?} dimensions, but {requested:?} were requsted"
+    )]
+    IncompleteDimensions {
+        /// The dimensions the sampler was able to supply
+        sample: Vec<T>,
+
+        /// The number of dimensions that were requested
+        ///
+        /// This number must always be greater than 0.
+        requested: u32,
+
+        /// The number of dimensions the sampler was able to provide
+        ///
+        /// This number will always be greater than 0.
+        provided: u32,
+    },
 }
 
 /// A convenient type alias for when a result can return a `SamplerError`
-pub type SamplerResult<T> = Result<T, SamplerError>;
+pub type SamplerResult<T, N> = Result<T, SamplerError<N>>;
 
 /// The interface for a sampler that needs to be queried sequentially
 ///
@@ -51,9 +73,8 @@ pub type SamplerResult<T> = Result<T, SamplerError>;
 pub trait Sequential<T: GenFloat> {
     /// Retrieve the next sample
     ///
-    /// This retrieves the next sample with all of the dimensions.
-    // TODO(afnan) should we use `&mut self` instead?
-    fn next(&self) -> SamplerResult<Vec<T>>;
+    /// This retrieves number of dimensions specified for the next sample
+    fn next(&mut self, dimensions: u32) -> SamplerResult<Vec<T>, T>;
 }
 
 /// The interface for an in-place sampler that can stochastically query samples
@@ -63,7 +84,7 @@ pub trait Sequential<T: GenFloat> {
 /// be the most performant.
 pub trait InPlace<T: GenFloat> {
     /// Sample a particular dimension and index
-    fn sample(&mut self, index: u32, dim: u32) -> SamplerResult<T>;
+    fn sample(&mut self, index: u32, dim: u32) -> SamplerResult<T, T>;
 }
 
 /// The generic interface for a rendering sampler
@@ -74,5 +95,14 @@ pub trait InPlace<T: GenFloat> {
 pub trait Sampler<T: GenFloat>: Debug {
     /// Sample all of the dimensions for a particular index
     // TODO(afnan) should we use `&mut self` instead?
-    fn sample_idx(&self, index: u32) -> SamplerResult<Vec<T>>;
+    fn sample_idx(&mut self, index: u32) -> SamplerResult<Vec<T>, T>;
+
+    /// Request a certain number of dimensions for a particular index
+    fn sampler_idx_dims(&mut self, index: u32, dimensions: u32) -> SamplerResult<Vec<T>, T>;
+
+    /// Get the next `dimensions` samples.
+    ///
+    /// If there are no more dimensions remaining for this particular index, then this will return
+    /// an error, or an incomplete
+    fn next(&mut self, dimensions: u32) -> SamplerResult<Vec<T>, T>;
 }
