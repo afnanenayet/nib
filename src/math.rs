@@ -1,11 +1,10 @@
-//! Utility math functions  
+//! Utility math functions
 
 use crate::{
     sampler::Sampler,
     types::{GenFloat, ETA},
 };
 use cgmath::{prelude::*, Vector3};
-use rand::prelude::*;
 
 /// Generate a random sample in the unit sphere
 ///
@@ -19,14 +18,14 @@ where
     T: GenFloat,
     rand::distributions::Standard: rand::distributions::Distribution<T>,
 {
-    let mut r = thread_rng();
+    let rs = sampler.next(3).unwrap();
     let mut v = Vector3::new(
         T::from(0).unwrap(),
         T::from(0).unwrap(),
         T::from(0).unwrap(),
     );
     while v.magnitude() < T::from(ETA).unwrap() {
-        v = Vector3::new(r.gen(), r.gen(), r.gen());
+        v = Vector3::new(rs[0], rs[1], rs[2]);
     }
     // Normalize the vector so it has a magnitude of one
     v.normalize()
