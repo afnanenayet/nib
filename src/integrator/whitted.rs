@@ -2,7 +2,6 @@
 //! ray-tracing technique. It was developed by Turner Whitted in 1980, in a paper titled "An
 //! Improved Illumination Model for Shaded Display."
 
-
 use serde::{Deserialize, Serialize};
 
 /// The settings for the Whitted integrator
@@ -10,8 +9,8 @@ use serde::{Deserialize, Serialize};
 pub struct Whitted {
     /// The recursion limit for rays
     ///
-    /// This settings caps the depth of rays in the scene (this is necessary in case there is
-    /// infinite recursion in the scene).
+    /// This settings sets an upper bound on the depth of the rays in the scene (this is necessary
+    /// in case there is infinite recursion in the scene).
     pub u32: max_depth,
 }
 
