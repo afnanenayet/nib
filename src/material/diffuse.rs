@@ -6,7 +6,6 @@ use crate::{
     types::{GenFloat, Ray},
 };
 use cgmath::Vector3;
-use rand::prelude::*;
 use serde::{Deserialize, Serialize};
 
 /// A diffuse BSDF function
@@ -14,7 +13,11 @@ use serde::{Deserialize, Serialize};
 /// This BSDF models a typical matte, or non-glossy surface. The user can specify the albedo of the
 /// material, which defines its color.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub struct Diffuse<T: GenFloat> {
+pub struct Diffuse<T>
+where
+    T: GenFloat,
+    rand::distributions::Standard: rand::distributions::Distribution<T>,
+{
     /// The fraction of light that is absorbed for each color channel.
     pub albedo: Vector3<T>,
 }

@@ -10,13 +10,20 @@ mod diffuse;
 mod mirror;
 
 pub use diffuse::Diffuse;
+use enum_dispatch::enum_dispatch;
 pub use mirror::Mirror;
+use serde::{Deserialize, Serialize};
 
 /// This trait defines some sort of object that can specify how light is scattered when the
 /// material is hit.
 ///
 /// This interface provides one method: the `scatter` function, which will return a `BSDFRecord`
-pub trait BSDF<T: GenFloat>: Debug {
+#[enum_dispatch(SerializedMaterial)]
+pub trait BSDF<T>: Debug
+where
+    T: GenFloat,
+    rand::distributions::Standard: rand::distributions::Distribution<T>,
+{
     /// Return the result of a scattering function on an input ray
     fn scatter(
         &self,
@@ -35,4 +42,16 @@ pub struct BSDFRecord<T: GenFloat> {
 
     /// The attenuation factor to apply to the outgoing ray
     pub attenuation: Vector3<T>,
+}
+
+/// The different types of `BSDF` types that can be used as input objects
+#[enum_dispatch]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum SerializedMaterial<T>
+where
+    T: GenFloat,
+    rand::distributions::Standard: rand::distributions::Distribution<T>,
+{
+    Diffuse(Diffuse<T>),
+    Mirror(Mirror),
 }

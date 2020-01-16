@@ -4,11 +4,13 @@
 //! and the integrator.
 
 use crate::{
-    accel, camera,
+    accel,
+    camera::{self, SerializedCamera},
     hittable::{self, Hittable, Textured},
-    material::{self, BSDF},
+    material::{SerializedMaterial, BSDF},
     types::{GenFloat, PixelValue},
 };
+use enum_dispatch::enum_dispatch;
 use rand;
 use serde::{Deserialize, Serialize};
 
@@ -16,16 +18,10 @@ use serde::{Deserialize, Serialize};
 ///
 /// This is an enum type that exists for convenient use with serde, so we can create a serializable
 /// struct to expose as a scene description to the user.
+#[enum_dispatch]
 #[derive(Debug, Serialize, Deserialize, Clone)]
 enum SerializedHittable<T: GenFloat> {
     Sphere(hittable::Sphere<T>),
-}
-
-/// The different types of `BSDF` types that can be used as input objects
-#[derive(Debug, Clone, Serialize, Deserialize)]
-enum SerializedMaterial<T: GenFloat> {
-    Diffuse(material::Diffuse<T>),
-    Mirror(material::Mirror),
 }
 
 /// The different types of acceleration structures that can be used in the scene description
@@ -34,15 +30,13 @@ enum SerializedAccelerationStruct {
     ObjectList,
 }
 
-/// The different types of cameras that can be used in the scene description
-#[derive(Debug, Serialize, Deserialize)]
-enum SerializedCamera<T: GenFloat> {
-    Pinhole(camera::Pinhole<T>),
-}
-
 /// A serializable wrapper for the
 #[derive(Debug, Serialize, Deserialize)]
-struct SerializedTextured<T: GenFloat> {
+struct SerializedTextured<T>
+where
+    T: GenFloat,
+    rand::distributions::Standard: rand::distributions::Distribution<T>,
+{
     /// The geometric primitive that might be hit by the light ray or path
     pub geometry: SerializedHittable<T>,
 
@@ -54,7 +48,11 @@ struct SerializedTextured<T: GenFloat> {
 ///
 /// This struct exists solely for serialization and deserialization
 #[derive(Debug, Serialize, Deserialize)]
-struct Scene<T: GenFloat> {
+struct Scene<T>
+where
+    T: GenFloat,
+    rand::distributions::Standard: rand::distributions::Distribution<T>,
+{
     /// A list of all of the geometric objects in the scene
     pub objects: Vec<SerializedTextured<T>>,
 
