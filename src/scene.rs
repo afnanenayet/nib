@@ -7,7 +7,7 @@ use crate::{
     accel, camera,
     hittable::{self, Hittable, Textured},
     material::{self, BSDF},
-    types::GenFloat,
+    types::{GenFloat, PixelValue},
 };
 use rand;
 use serde::{Deserialize, Serialize};
@@ -76,10 +76,15 @@ pub struct ProcessedScene<'a, T: GenFloat> {
     /// queried to calculate a ray intersecion. We don't need to store a list of objects in this
     /// struct because the acceleration structure is the only thing that will process objects that
     /// are visible and can be hit by rays.
-    pub acceleration_struct: Box<dyn Hittable<T> + 'a>,
+    pub accel: Box<dyn Hittable<T> + 'a>,
 
     /// The camera being used to render the scene
     pub camera: Box<dyn camera::Camera<T> + 'a>,
+
+    /// The background color to return when no objects are hit.
+    ///
+    /// This is a fallback method for when no other color can be computed.
+    pub background: PixelValue,
 }
 
 impl<'a, T> From<Scene<T>> for ProcessedScene<'a, T>
@@ -90,7 +95,7 @@ where
     fn from(scene: Scene<T>) -> Self {
         // We just destructure the serialized struct and convert them to boxed dynamic
         // implementations
-        let mut objects: Vec<Textured<T>> = (&scene.objects)
+        let objects: Vec<Textured<T>> = (&scene.objects)
             .iter()
             .map(
                 |SerializedTextured {
@@ -116,7 +121,8 @@ where
         };
         ProcessedScene {
             camera,
-            acceleration_struct: Box::new(accel::ObjectList::new(objects).unwrap()),
+            accel: Box::new(accel::ObjectList::new(objects).unwrap()),
+            background: [0, 0, 0], // unknown pixels are black
         }
     }
 }
