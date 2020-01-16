@@ -5,10 +5,15 @@ use crate::types::PixelValue;
 use crate::{
     sampler::Sampler,
     scene::ProcessedScene,
-    types::{GenFloat, GenInteger, Ray},
+    types::{GenFloat, Ray},
 };
-use cgmath::Vector3;
 use std::fmt::Debug;
+
+pub mod whitted;
+pub mod normal;
+
+pub use whitted::Whitted;
+pub use normal::Normal;
 
 /// A struct representing the various options and parameters that can be configured for the
 /// `render` method in a particular integrator
@@ -19,6 +24,7 @@ use std::fmt::Debug;
 ///
 /// You should pass this struct by value since it's simply a struct of references to objects, which
 /// is pretty cheap.
+#[derive(Debug)]
 pub struct RenderParams<'a, 'b, 'c, T: GenFloat> {
     /// The outgoing ray
     ///
