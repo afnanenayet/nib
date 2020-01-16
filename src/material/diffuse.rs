@@ -16,7 +16,6 @@ use serde::{Deserialize, Serialize};
 pub struct Diffuse<T>
 where
     T: GenFloat,
-    rand::distributions::Standard: rand::distributions::Distribution<T>,
 {
     /// The fraction of light that is absorbed for each color channel.
     pub albedo: Vector3<T>,
@@ -25,7 +24,6 @@ where
 impl<T> BSDF<T> for Diffuse<T>
 where
     T: GenFloat,
-    rand::distributions::Standard: rand::distributions::Distribution<T>,
 {
     fn scatter(
         &self,

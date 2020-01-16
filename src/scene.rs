@@ -35,7 +35,6 @@ enum SerializedAccelerationStruct {
 struct SerializedTextured<T>
 where
     T: GenFloat,
-    rand::distributions::Standard: rand::distributions::Distribution<T>,
 {
     /// The geometric primitive that might be hit by the light ray or path
     pub geometry: SerializedHittable<T>,
@@ -48,11 +47,7 @@ where
 ///
 /// This struct exists solely for serialization and deserialization
 #[derive(Debug, Serialize, Deserialize)]
-struct Scene<T>
-where
-    T: GenFloat,
-    rand::distributions::Standard: rand::distributions::Distribution<T>,
-{
+struct Scene<T: GenFloat> {
     /// A list of all of the geometric objects in the scene
     pub objects: Vec<SerializedTextured<T>>,
 
@@ -88,7 +83,6 @@ pub struct ProcessedScene<'a, T: GenFloat> {
 impl<'a, T> From<Scene<T>> for ProcessedScene<'a, T>
 where
     T: GenFloat + 'a,
-    rand::distributions::Standard: rand::distributions::Distribution<T>,
 {
     fn from(scene: Scene<T>) -> Self {
         // We just destructure the serialized struct and convert them to boxed dynamic

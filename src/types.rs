@@ -3,7 +3,7 @@
 
 use cgmath::{BaseFloat, BaseNum, Vector3};
 use num;
-use rand::distributions::uniform::UniformSampler;
+use rand;
 
 /// Generate a trait that is the sum of other trait bounds
 ///
@@ -20,7 +20,10 @@ use rand::distributions::uniform::UniformSampler;
 macro_rules! aggregate_trait {
     ( $i:ident; $($t:path),+ ) => {
         pub trait $i: $($t +)+ {}
-        impl<T> $i for T where T: $($t +)+ {}
+        impl<T> $i for T where
+            rand::distributions::Standard: rand::distributions::Distribution<T>,
+            T: $($t +)+,
+            {}
     };
 }
 

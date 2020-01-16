@@ -16,7 +16,6 @@ use cgmath::{prelude::*, Vector3};
 pub fn sample_unit_sphere<T>(sampler: &mut dyn Sampler<T>) -> Vector3<T>
 where
     T: GenFloat,
-    rand::distributions::Standard: rand::distributions::Distribution<T>,
 {
     let rs = sampler.next(3).unwrap();
     let mut v = Vector3::new(

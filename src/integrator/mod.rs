@@ -9,11 +9,11 @@ use crate::{
 };
 use std::fmt::Debug;
 
-pub mod whitted;
 pub mod normal;
+pub mod whitted;
 
-pub use whitted::Whitted;
 pub use normal::Normal;
+pub use whitted::Whitted;
 
 /// A struct representing the various options and parameters that can be configured for the
 /// `render` method in a particular integrator

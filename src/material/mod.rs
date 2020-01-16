@@ -22,7 +22,6 @@ use serde::{Deserialize, Serialize};
 pub trait BSDF<T>: Debug
 where
     T: GenFloat,
-    rand::distributions::Standard: rand::distributions::Distribution<T>,
 {
     /// Return the result of a scattering function on an input ray
     fn scatter(
@@ -50,7 +49,6 @@ pub struct BSDFRecord<T: GenFloat> {
 pub enum SerializedMaterial<T>
 where
     T: GenFloat,
-    rand::distributions::Standard: rand::distributions::Distribution<T>,
 {
     Diffuse(Diffuse<T>),
     Mirror(Mirror),

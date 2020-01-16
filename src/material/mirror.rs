@@ -19,7 +19,6 @@ pub struct Mirror {}
 impl<T> BSDF<T> for Mirror
 where
     T: GenFloat,
-    rand::distributions::Standard: rand::distributions::Distribution<T>,
 {
     fn scatter(
         &self,
