@@ -11,7 +11,6 @@ use crate::{
     types::{GenFloat, PixelValue},
 };
 use enum_dispatch::enum_dispatch;
-use rand;
 use serde::{Deserialize, Serialize};
 
 /// The different types of `Hittable` types that can be used as input objects
@@ -20,19 +19,19 @@ use serde::{Deserialize, Serialize};
 /// struct to expose as a scene description to the user.
 #[enum_dispatch]
 #[derive(Debug, Serialize, Deserialize, Clone)]
-enum SerializedHittable<T: GenFloat> {
+pub enum SerializedHittable<T: GenFloat> {
     Sphere(hittable::Sphere<T>),
 }
 
 /// The different types of acceleration structures that can be used in the scene description
 #[derive(Debug, Serialize, Deserialize, Clone)]
-enum SerializedAccelerationStruct {
+pub enum SerializedAccelerationStruct {
     ObjectList,
 }
 
 /// A serializable wrapper for the
 #[derive(Debug, Serialize, Deserialize)]
-struct SerializedTextured<T>
+pub struct SerializedTextured<T>
 where
     T: GenFloat,
 {
@@ -47,7 +46,7 @@ where
 ///
 /// This struct exists solely for serialization and deserialization
 #[derive(Debug, Serialize, Deserialize)]
-struct Scene<T: GenFloat> {
+pub struct Scene<T: GenFloat> {
     /// A list of all of the geometric objects in the scene
     pub objects: Vec<SerializedTextured<T>>,
 
@@ -56,6 +55,12 @@ struct Scene<T: GenFloat> {
 
     /// The camera to use with the scene
     pub camera: SerializedCamera<T>,
+
+    /// The background color to return when no objects are hit
+    pub background: PixelValue,
+
+    /// The number of samples to take per pixel. This is effectively the anti-aliasing factor.
+    pub samples_per_pixel: u32,
 }
 
 /// A scene with objects, lighting information, and other configuration options for rendering
@@ -65,19 +70,10 @@ struct Scene<T: GenFloat> {
 /// and deserializing scene information from user input.
 #[derive(Debug)]
 pub struct ProcessedScene<'a, T: GenFloat> {
-    /// An acceleration structure containing all of the visible objects in the scene that can be
-    /// queried to calculate a ray intersecion. We don't need to store a list of objects in this
-    /// struct because the acceleration structure is the only thing that will process objects that
-    /// are visible and can be hit by rays.
     pub accel: Box<dyn Hittable<T> + 'a>,
-
-    /// The camera being used to render the scene
     pub camera: Box<dyn camera::Camera<T> + 'a>,
-
-    /// The background color to return when no objects are hit.
-    ///
-    /// This is a fallback method for when no other color can be computed.
     pub background: PixelValue,
+    pub samples_per_pixel: u32,
 }
 
 impl<'a, T> From<Scene<T>> for ProcessedScene<'a, T>
@@ -114,7 +110,8 @@ where
         ProcessedScene {
             camera,
             accel: Box::new(accel::ObjectList::new(objects).unwrap()),
-            background: [0, 0, 0], // unknown pixels are black
+            background: scene.background, // unknown pixels are black
+            samples_per_pixel: scene.samples_per_pixel,
         }
     }
 }

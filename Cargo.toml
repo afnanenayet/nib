@@ -15,7 +15,7 @@ image = "0.22.3"
 typetag = "0.1"
 enum_dispatch = "0.2.0"
 indicatif = "0.13.0"
-toml = "0.5"
+serde_json = "1.0"
 
 [profile.release]
 codegen-units = 1
