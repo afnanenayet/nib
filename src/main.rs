@@ -13,8 +13,7 @@ mod types;
 use crate::scene::*;
 use cgmath::Vector3;
 use hittable::Sphere;
-use std::io::prelude::*;
-use std::{error::Error, fs::File, path::PathBuf};
+use std::{error::Error, path::PathBuf};
 use structopt::StructOpt;
 use serde_json;
 
