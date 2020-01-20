@@ -83,7 +83,7 @@ where
     fn from(scene: Scene<T>) -> Self {
         // We just destructure the serialized struct and convert them to boxed dynamic
         // implementations
-        let objects: Vec<Textured<T>> = (&scene.objects)
+        let objects: Vec<Textured<'a, T>> = (&scene.objects)
             .iter()
             .map(
                 |SerializedTextured {
@@ -114,4 +114,28 @@ where
             samples_per_pixel: scene.samples_per_pixel,
         }
     }
+}
+
+/// Generate a set of sample scenes for documentation and reference
+///
+/// The serialized scenes are both generated and parsed programatically, based off the underlying
+/// types, with serde. T
+macro_rules! sample_scenes {
+    () => {
+        let scenes: Vec<Scene<f32>> = vec![
+            Scene {
+                objects: vec![SerializedTextured {
+                    geometry: SerializedHittable::Sphere(Sphere {
+                        center: Vector3::new(0.0, 0.0, 0.0),
+                        radius: 1.0,
+                    }),
+                    mat: material::Mirror::default().into(),
+                }],
+                camera: camera::Pinhole::default().into(),
+                background: [0, 0, 0],
+                samples_per_pixel: 100,
+                acceleration_structure: SerializedAccelerationStruct::ObjectList,
+            },
+        ]
+    };
 }

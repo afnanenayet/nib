@@ -13,9 +13,9 @@ mod types;
 use crate::scene::*;
 use cgmath::Vector3;
 use hittable::Sphere;
-use std::{error::Error, path::PathBuf};
-use structopt::StructOpt;
 use serde_json;
+use std::{error::Error, fs::File, io::Read, path::PathBuf};
+use structopt::StructOpt;
 
 /// An oxidized renderer
 #[derive(StructOpt, Debug)]
@@ -35,23 +35,10 @@ struct Args {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    //let args = Args::from_args();
-    //let mut scene_file = File::open(args.scene)?;
-    //let mut buffer = String::new();
-    //scene_file.read_to_string(&mut buffer)?;
-    let scene: Scene<f32> = Scene {
-        objects: vec![SerializedTextured {
-            geometry: SerializedHittable::Sphere(Sphere {
-                center: Vector3::new(0.0, 0.0, 0.0),
-                radius: 1.0,
-            }),
-            mat: material::Mirror::default().into(),
-        }],
-        camera: camera::Pinhole::default().into(),
-        background: [0, 0, 0],
-        samples_per_pixel: 100,
-        acceleration_structure: SerializedAccelerationStruct::ObjectList,
-    };
-    println!("{}", serde_json::to_string_pretty(&scene).unwrap()); // TODO(afnan) remove
+    let args = Args::from_args();
+    let mut scene_file = File::open(args.scene)?;
+    let mut buffer = String::new();
+    scene_file.read_to_string(&mut buffer)?;
+    let scene: Scene<f32> = serde_json::from_str(&buffer)?;
     Ok(())
 }
