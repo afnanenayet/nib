@@ -26,14 +26,10 @@ impl<T: GenFloat> Default for Normal<T> {
 }
 
 impl<T: GenFloat> Integrator<T> for Normal<T> {
-    fn render(&self, params: RenderParams<T>) -> PixelValue {
+    fn render(&self, params: RenderParams<T>) -> PixelValue<T> {
         if let Some(accel_record) = params.scene.accel.collision(params.origin) {
             let normal = accel_record.hit_record.normal;
-            return [
-                normal.x.to_u8().unwrap(),
-                normal.y.to_u8().unwrap(),
-                normal.z.to_u8().unwrap(),
-            ];
+            return PixelValue::new(normal.x, normal.y, normal.z);
         }
         params.scene.background
     }

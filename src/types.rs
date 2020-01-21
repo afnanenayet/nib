@@ -4,6 +4,7 @@
 use cgmath::{BaseFloat, BaseNum, Vector3};
 use num;
 use rand;
+use std::fmt::{Debug, Display};
 
 /// Generate a trait that is the sum of other trait bounds
 ///
@@ -27,7 +28,7 @@ macro_rules! aggregate_trait {
     };
 }
 
-aggregate_trait!(GenReal; BaseNum, Sync, PartialOrd, Copy, Clone);
+aggregate_trait!(GenReal; BaseNum, Sync, PartialOrd, Copy, Clone, Display, Debug);
 aggregate_trait!(GenInteger; num::Integer, GenReal);
 aggregate_trait!(GenFloat; BaseFloat, GenReal);
 
@@ -55,11 +56,9 @@ pub struct Ray<T> {
     pub direction: Vector3<T>,
 }
 
-/// A type representing the RGB value of a pixel with 8-bit channels
-pub type PixelValue = [u8; 3];
+/// A type representing the RGB value of a pixel in the rendering calculations. This is not the
+/// final color value that is output to the buffer.
+pub type PixelValue<T> = Vector3<T>;
 
 /// The floating point error threshold to use with the renderer
 pub const ETA: f32 = 0.0001;
-
-/// The color black, which is the absence of light
-pub const BLACK: [u8; 3] = [0, 0, 0];

@@ -2,7 +2,7 @@
 
 use crate::{
     sampler::Sampler,
-    types::{GenFloat, ETA},
+    types::{GenFloat, GenReal, ETA},
 };
 use cgmath::{prelude::*, Vector3};
 
@@ -36,4 +36,12 @@ where
 /// a mirrored vector. Note that `normal` must be a unit vector.
 pub fn mirror<T: GenFloat>(vector: &Vector3<T>, normal: &Vector3<T>) -> Vector3<T> {
     vector - (normal * T::from(2).unwrap() * vector.dot(*normal))
+}
+
+/// Multiply two vectors together in a component wise fashion
+///
+/// This is the equivalent of A' * B, or (A transpose) multiplied with B. This method will multiply
+/// each corresponding component of the vectors together.
+pub fn component_mul<T: GenReal>(a: Vector3<T>, b: Vector3<T>) -> Vector3<T> {
+    Vector3::new(a.x * b.x, a.y * b.y, a.z * b.z)
 }

@@ -46,5 +46,5 @@ pub trait Integrator<T: GenFloat>: Debug {
     ///
     /// Given certain input parameters this method calculates the color values at a particular
     /// point.
-    fn render(&self, params: RenderParams<T>) -> PixelValue;
+    fn render(&self, params: RenderParams<T>) -> PixelValue<T>;
 }

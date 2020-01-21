@@ -40,7 +40,7 @@ pub struct Renderer<'a, T: GenFloat> {
 }
 
 impl<'a, T: GenFloat> Renderer<'a, T> {
-    pub fn render(&mut self) -> anyhow::Result<Vec<PixelValue>> {
+    pub fn render(&mut self) -> anyhow::Result<Vec<PixelValue<T>>> {
         // This is the naive single threaded implementation. TODO(afnan) make this multithreaded
         // once the results are confirmed to be correct.
         let pixel_val = (0..self.width)
@@ -62,15 +62,16 @@ impl<'a, T: GenFloat> Renderer<'a, T> {
                         };
                         self.integrator.render(params)
                     })
-                    .fold([0, 0, 0], |acc, x| {
-                        [acc[0] + x[0], acc[1] + x[1], acc[2] + x[2]]
-                    });
-                let spp = self.scene.samples_per_pixel.to_u8().unwrap();
-                [
-                    acc[0].to_u8().unwrap() / spp,
-                    acc[1].to_u8().unwrap() / spp,
-                    acc[2].to_u8().unwrap() / spp,
-                ]
+                    .fold(
+                        PixelValue::new(
+                            T::from(0).unwrap(),
+                            T::from(0).unwrap(),
+                            T::from(0).unwrap(),
+                        ),
+                        |acc, x| acc + x,
+                    );
+                let spp = T::from(self.scene.samples_per_pixel).unwrap();
+                PixelValue::new(acc.x / spp, acc.y / spp, acc.z / spp)
             })
             .collect();
         Ok(pixel_val)

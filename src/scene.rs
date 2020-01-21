@@ -57,7 +57,7 @@ pub struct Scene<T: GenFloat> {
     pub camera: SerializedCamera<T>,
 
     /// The background color to return when no objects are hit
-    pub background: PixelValue,
+    pub background: PixelValue<T>,
 
     /// The number of samples to take per pixel. This is effectively the anti-aliasing factor.
     pub samples_per_pixel: u32,
@@ -72,7 +72,7 @@ pub struct Scene<T: GenFloat> {
 pub struct ProcessedScene<'a, T: GenFloat> {
     pub accel: Box<dyn Accel<T> + 'a>,
     pub camera: Box<dyn camera::Camera<T> + 'a>,
-    pub background: PixelValue,
+    pub background: PixelValue<T>,
     pub samples_per_pixel: u32,
 }
 
