@@ -29,7 +29,12 @@ impl<T: GenFloat> Integrator<T> for Normal<T> {
     fn render(&self, params: RenderParams<T>) -> PixelValue<T> {
         if let Some(accel_record) = params.scene.accel.collision(params.origin) {
             let normal = accel_record.hit_record.normal;
-            return PixelValue::new(normal.x, normal.y, normal.z);
+            // Normals can range from -1 to 1, and we need to change that window to [0, 1]. We use
+            // the simple formula x' = (0.5 * x) + 0.5
+            let x = (normal.x * T::from(0.5).unwrap()) + T::from(0.5).unwrap();
+            let y = (normal.y * T::from(0.5).unwrap()) + T::from(0.5).unwrap();
+            let z = (normal.z * T::from(0.5).unwrap()) + T::from(0.5).unwrap();
+            return PixelValue::new(x, y, z);
         }
         params.scene.background
     }
