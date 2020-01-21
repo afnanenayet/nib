@@ -1,8 +1,7 @@
 //! A basic random sampler
 
-use crate::sampler::SamplerResult;
 use crate::{
-    sampler::{InPlace, Sequential},
+    sampler::{InPlace, Sampler, SamplerResult, Sequential},
     types::GenFloat,
 };
 use rand::{rngs::StdRng, Rng, SeedableRng};
@@ -54,6 +53,24 @@ where
     T: GenFloat,
     rand::distributions::Standard: rand::distributions::Distribution<T>,
 {
+    fn next(&mut self, dimensions: u32) -> SamplerResult<Vec<T>, T> {
+        Ok((0..dimensions).map(|_| self.prng.gen()).collect())
+    }
+}
+
+impl<T> Sampler<T> for Random
+where
+    T: GenFloat,
+    rand::distributions::Standard: rand::distributions::Distribution<T>,
+{
+    fn sample_idx(&mut self, _index: u32) -> SamplerResult<T, T> {
+        Ok(self.prng.gen())
+    }
+
+    fn sampler_idx_dims(&mut self, _: u32, dimensions: u32) -> SamplerResult<Vec<T>, T> {
+        Ok((0..dimensions).map(|_| self.prng.gen()).collect())
+    }
+
     fn next(&mut self, dimensions: u32) -> SamplerResult<Vec<T>, T> {
         Ok((0..dimensions).map(|_| self.prng.gen()).collect())
     }

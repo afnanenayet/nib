@@ -11,13 +11,33 @@ mod sampler;
 mod scene;
 mod types;
 
-use crate::scene::Scene;
+use crate::{
+    image_exporter::{FramebufferExporter, PPMExporter},
+    renderer::Renderer,
+    scene::Scene,
+};
 use cli::{dispatch_scene_parse, Args};
-use std::error::Error;
+use std::{error::Error, path::Path};
 use structopt::StructOpt;
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::from_args();
     let scene: Scene<f32> = dispatch_scene_parse(&args.scene, args.filetype.as_deref())?;
+    let processed_scene = scene.into();
+    let mut renderer = Renderer {
+        integrator: Box::new(integrator::Normal::default()),
+        sampler: Box::new(sampler::Random::default()),
+        scene: processed_scene,
+        camera: Box::new(camera::Pinhole::default()),
+        width: 400,
+        height: 200,
+    };
+    let buffer = renderer.render()?;
+    let exporter = PPMExporter {
+        width: 400,
+        height: 200,
+    };
+    let output_path = Path::new("out.ppm");
+    exporter.export(&buffer, output_path)?;
     Ok(())
 }

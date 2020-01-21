@@ -95,7 +95,7 @@ pub trait InPlace<T: GenFloat> {
 pub trait Sampler<T: GenFloat>: Debug {
     /// Sample all of the dimensions for a particular index
     // TODO(afnan) should we use `&mut self` instead?
-    fn sample_idx(&mut self, index: u32) -> SamplerResult<Vec<T>, T>;
+    fn sample_idx(&mut self, index: u32) -> SamplerResult<T, T>;
 
     /// Request a certain number of dimensions for a particular index
     fn sampler_idx_dims(&mut self, index: u32, dimensions: u32) -> SamplerResult<Vec<T>, T>;
