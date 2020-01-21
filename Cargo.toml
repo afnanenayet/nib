@@ -16,7 +16,10 @@ typetag = "0.1"
 enum_dispatch = "0.2.0"
 indicatif = "0.13.0"
 serde_json = "1.0"
+serde_yaml = "0.8"
+json5 = "0.2"
 anyhow = "1.0"
+ron = "0.5"
 
 [profile.release]
 codegen-units = 1
