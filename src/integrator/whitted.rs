@@ -4,7 +4,7 @@
 
 use crate::{
     integrator::{Integrator, RenderParams},
-    types::{GenFloat, PixelValue},
+    types::{GenFloat, PixelValue, BLACK},
 };
 use serde::{Deserialize, Serialize};
 use std::marker::PhantomData;
@@ -34,15 +34,25 @@ impl<T: GenFloat> Default for Whitted<T> {
 
 impl<T: GenFloat> Integrator<T> for Whitted<T> {
     fn render(&self, params: RenderParams<T>) -> PixelValue {
-        todo!()
+        self.render_helper(params, 0)
     }
 }
 
 impl<T: GenFloat> Whitted<T> {
+    /// The recursive helper method for the Whitted integrator
+    ///
+    /// This exists because we need to keep track of the stack depth as we cast new rays and the
+    /// `Integrator` trait doesn't have a parameter for depth.
     fn render_helper(&self, params: RenderParams<T>, depth: u32) -> PixelValue {
         if depth > self.max_depth {
             return params.scene.background;
         }
-        unimplemented!();
+
+        // First, we check to see if the ray hit anything
+        if let Some(hit_record) = params.scene.accel.collision(&params.origin) {
+            todo!();
+        } else {
+            return BLACK;
+        }
     }
 }

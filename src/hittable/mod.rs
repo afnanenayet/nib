@@ -31,9 +31,10 @@ pub trait Hittable<T: GenFloat>: Debug {
 
 /// Information pertaining to a ray intersection
 ///
-/// The hit record has information on where the object was hit and the normal for that hit
-#[derive(Clone, Copy, Eq, PartialEq, Debug)]
-pub struct HitRecord<T: GenReal> {
+/// The hit record has information on where the object was hit and the normal for that hit. This is
+/// the record struct specifically for geometric collisions.
+#[derive(Clone, Debug, Eq, PartialEq, Copy)]
+pub struct HitRecord<T: GenFloat> {
     /// The point in space where the object was hit
     pub p: Vector3<T>,
 

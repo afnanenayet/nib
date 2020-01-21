@@ -10,7 +10,9 @@ use crate::{
     scene::ProcessedScene,
     types::{GenFloat, PixelValue},
 };
+use anyhow;
 use indicatif::ProgressIterator;
+use num::traits::*;
 
 /// The data a renderer requires to produce an image
 ///
@@ -38,24 +40,39 @@ pub struct Renderer<'a, T: GenFloat> {
 }
 
 impl<'a, T: GenFloat> Renderer<'a, T> {
-    pub fn render(&mut self) -> Vec<PixelValue> {
+    pub fn render(&mut self) -> anyhow::Result<Vec<PixelValue>> {
         // This is the naive single threaded implementation. TODO(afnan) make this multithreaded
         // once the results are confirmed to be correct.
-        (0..self.width)
+        let pixel_val = (0..self.width)
             .progress()
             .zip((0..self.height).progress())
             .map(|(x, y)| {
-                let u = T::from(x).unwrap() / T::from(self.width).unwrap();
-                let v = T::from(y).unwrap() / T::from(self.height).unwrap();
-                let ray = self.camera.to_ray(u, v);
-
-                let params = RenderParams {
-                    origin: &ray,
-                    scene: &self.scene,
-                    sampler: &mut *self.sampler,
-                };
-                self.integrator.render(params)
+                let acc = (0..self.scene.samples_per_pixel)
+                    .map(|_| {
+                        let camera_samples = self.sampler.next(2).unwrap();
+                        let u = (T::from(x).unwrap() + camera_samples[0])
+                            / T::from(self.width).unwrap();
+                        let v = (T::from(y).unwrap() + camera_samples[1])
+                            / T::from(self.height).unwrap();
+                        let ray = self.camera.to_ray(u, v);
+                        let params = RenderParams {
+                            origin: &ray,
+                            scene: &self.scene,
+                            sampler: &mut *self.sampler,
+                        };
+                        self.integrator.render(params)
+                    })
+                    .fold([0, 0, 0], |acc, x| {
+                        [acc[0] + x[0], acc[1] + x[1], acc[2] + x[2]]
+                    });
+                let spp = self.scene.samples_per_pixel.to_u8().unwrap();
+                [
+                    acc[0].to_u8().unwrap() / spp,
+                    acc[1].to_u8().unwrap() / spp,
+                    acc[2].to_u8().unwrap() / spp,
+                ]
             })
-            .collect()
+            .collect();
+        Ok(pixel_val)
     }
 }

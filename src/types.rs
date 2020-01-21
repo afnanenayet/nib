@@ -27,7 +27,7 @@ macro_rules! aggregate_trait {
     };
 }
 
-aggregate_trait!(GenReal; BaseNum, Sync, PartialOrd);
+aggregate_trait!(GenReal; BaseNum, Sync, PartialOrd, Copy, Clone);
 aggregate_trait!(GenInteger; num::Integer, GenReal);
 aggregate_trait!(GenFloat; BaseFloat, GenReal);
 
@@ -60,3 +60,6 @@ pub type PixelValue = [u8; 3];
 
 /// The floating point error threshold to use with the renderer
 pub const ETA: f32 = 0.0001;
+
+/// The color black, which is the absence of light
+pub const BLACK: [u8; 3] = [0, 0, 0];

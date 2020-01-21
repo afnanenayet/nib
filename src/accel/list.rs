@@ -1,7 +1,7 @@
 //! The "list" acceleration structure for computing intersections.
 
 use crate::{
-    accel::{AccelError, AccelResult},
+    accel::{Accel, AccelError, AccelRecord, AccelResult},
     hittable::{HitRecord, Hittable, Textured},
     types::{GenFloat, Ray},
 };
@@ -30,26 +30,35 @@ impl<'a, T: GenFloat> ObjectList<'a, T> {
     }
 }
 
-impl<'a, T: GenFloat> Hittable<T> for ObjectList<'a, T> {
-    fn hit(&self, ray: &Ray<T>) -> Option<HitRecord<T>> {
+impl<'a, T: GenFloat> Accel<T> for ObjectList<'a, T> {
+    fn collision(&self, ray: &Ray<T>) -> Option<AccelRecord<T>> {
         // Collect every object that was hit so we can sort them out and find the closest
         // intersection to the origin point of the ray after every object has been traversed.
-        let mut intersections: Vec<HitRecord<T>> = self
+        let mut intersections: Vec<AccelRecord<T>> = self
             .objects
             .iter()
-            .filter_map(|obj| obj.geometry.hit(ray))
+            .filter_map(|obj| {
+                if let Some(hit_record) = obj.geometry.hit(ray) {
+                    Some(AccelRecord {
+                        object: obj,
+                        hit_record,
+                    })
+                } else {
+                    None
+                }
+            })
             .collect();
 
         // If the list is empty, then the sort method will be a no-op. We don't need to preserve
         // the order of elements, so we can use the fast unstable sort.
-        intersections.sort_unstable_by(|&a, &b| {
-            let a_dist: T = ray.origin.distance(a.p);
-            let b_dist: T = ray.origin.distance(b.p);
+        intersections.sort_unstable_by(|a, b| {
+            let a_dist: T = ray.origin.distance(a.hit_record.p);
+            let b_dist: T = ray.origin.distance(b.hit_record.p);
             // We treat NaN values as equal. If we hit NaNs by this point the entire list is likely
             // useless anyway and there are other issues that have propagated to this point.
             a_dist.partial_cmp(&b_dist).unwrap_or(Equal)
         });
-        // Option<&HitRecord> -> Option<HitRecord>
+        // Option<&AccelRecord> -> Option<AccelRecord>
         intersections.first().map(|&x| x)
     }
 }

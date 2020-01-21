@@ -4,7 +4,7 @@
 //! and the integrator.
 
 use crate::{
-    accel,
+    accel::{self, Accel},
     camera::{self, SerializedCamera},
     hittable::{self, Hittable, Textured},
     material::{SerializedMaterial, BSDF},
@@ -70,7 +70,7 @@ pub struct Scene<T: GenFloat> {
 /// and deserializing scene information from user input.
 #[derive(Debug)]
 pub struct ProcessedScene<'a, T: GenFloat> {
-    pub accel: Box<dyn Hittable<T> + 'a>,
+    pub accel: Box<dyn Accel<T> + 'a>,
     pub camera: Box<dyn camera::Camera<T> + 'a>,
     pub background: PixelValue,
     pub samples_per_pixel: u32,
