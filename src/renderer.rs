@@ -27,7 +27,7 @@ pub struct Renderer<'a, T: GenFloat> {
     pub sampler: Box<dyn Sampler<T>>,
 
     /// A representation of the scene and lighting information
-    pub scene: Box<ProcessedScene<'a, T>>,
+    pub scene: ProcessedScene<'a, T>,
 
     /// The camera to use to render this instance
     pub camera: Box<dyn Camera<T>>,
