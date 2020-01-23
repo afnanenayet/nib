@@ -57,7 +57,7 @@ impl<'a, T: GenFloat> Accel<T> for ObjectList<'a, T> {
         });
         // Option<&AccelRecord> -> Option<AccelRecord>
         if let Some(collision) = intersections.first().map(|&x| x) {
-            if collision.hit_record.distance > T::from(0.001).unwrap() {
+            if collision.hit_record.distance >= T::from(0.001).unwrap() {
                 return Some(collision);
             }
         }

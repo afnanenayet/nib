@@ -74,9 +74,9 @@ impl FramebufferExporter for PPMExporter {
             file.write(header.as_bytes())?;
             // write each RGB value to the file
             for pixel in buffer {
-                let x = (pixel.x * T::from(255).unwrap()).to_u8().unwrap();
-                let y = (pixel.y * T::from(255).unwrap()).to_u8().unwrap();
-                let z = (pixel.z * T::from(255).unwrap()).to_u8().unwrap();
+                let x = (pixel.x * T::from(255).unwrap()).to_u8().unwrap_or(255);
+                let y = (pixel.y * T::from(255).unwrap()).to_u8().unwrap_or(255);
+                let z = (pixel.z * T::from(255).unwrap()).to_u8().unwrap_or(255);
                 let pixel_str = format!("{} {} {}\n", x, y, z);
                 file.write(pixel_str.as_bytes())?;
             }

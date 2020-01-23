@@ -21,21 +21,24 @@ pub struct Sphere<T: GenFloat> {
 impl<T: GenFloat> Hittable<T> for Sphere<T> {
     fn hit(&self, ray: &Ray<T>) -> Option<HitRecord<T>> {
         let oc = ray.origin - self.center;
-        let a = ray.direction.magnitude2();
         let b = oc.dot(ray.direction);
-        let c = oc.magnitude2() - (self.radius * self.radius);
-        let discriminant = (b * b) - (a * c);
-        let t = (-b - discriminant.sqrt()) / a;
+        let c = oc.dot(oc) - (self.radius * self.radius);
 
-        if discriminant >= T::from(0.0).unwrap() {
-            let p = ray.origin + (ray.direction * t);
-            let normal = (p - self.center) / self.radius;
-            return Some(HitRecord {
-                distance: t,
-                p,
-                normal,
-            });
+        if c > T::from(0).unwrap() && b > T::from(0).unwrap() {
+            return None;
         }
-        None
+        let discriminant = (b * b) - c;
+
+        if discriminant < T::from(0).unwrap() {
+            return None;
+        }
+        let t = -b - discriminant.sqrt();
+        let p = ray.origin + (ray.direction * t);
+        let normal = ((p - self.center) / self.radius).normalize();
+        Some(HitRecord {
+            distance: t,
+            p,
+            normal,
+        })
     }
 }

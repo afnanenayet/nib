@@ -4,7 +4,7 @@ use crate::{
     camera::Camera,
     types::{GenFloat, Ray},
 };
-use cgmath::Vector3;
+use cgmath::{InnerSpace, Vector3};
 use serde::{Deserialize, Serialize};
 
 /// The classic pinhole camera
@@ -26,7 +26,9 @@ impl<T: GenFloat> Camera<T> for Pinhole<T> {
     fn to_ray(&self, u: T, v: T) -> Ray<T> {
         Ray {
             origin: self.origin,
-            direction: self.lower_left + (self.horizontal * u) + (self.vertical * v) - self.origin,
+            direction: (self.lower_left + (self.horizontal * u) + (self.vertical * v)
+                - self.origin)
+                .normalize(),
         }
     }
 }
