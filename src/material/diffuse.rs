@@ -5,7 +5,7 @@ use crate::{
     sampler::Sampler,
     types::{GenFloat, Ray},
 };
-use cgmath::Vector3;
+use cgmath::{InnerSpace, Vector3};
 use serde::{Deserialize, Serialize};
 
 /// A diffuse BSDF function
@@ -34,7 +34,7 @@ where
         let target = hit_record.p + hit_record.normal + sample_unit_sphere(s);
         let out = Ray {
             origin: hit_record.p,
-            direction: target - hit_record.p,
+            direction: (target - hit_record.p).normalize(),
         };
         let attenuation = self.albedo;
         BSDFRecord { out, attenuation }
