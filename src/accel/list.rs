@@ -23,9 +23,6 @@ pub struct ObjectList<'a, T: GenFloat> {
 
 impl<'a, T: GenFloat> ObjectList<'a, T> {
     pub fn new(objects: Vec<Textured<'a, T>>) -> AccelResult<Self> {
-        if objects.is_empty() {
-            return Err(AccelError::NoObjects);
-        }
         Ok(ObjectList { objects })
     }
 }
@@ -52,13 +49,18 @@ impl<'a, T: GenFloat> Accel<T> for ObjectList<'a, T> {
         // If the list is empty, then the sort method will be a no-op. We don't need to preserve
         // the order of elements, so we can use the fast unstable sort.
         intersections.sort_unstable_by(|a, b| {
-            let a_dist: T = ray.origin.distance(a.hit_record.p);
-            let b_dist: T = ray.origin.distance(b.hit_record.p);
+            let a_dist: T = a.hit_record.distance;
+            let b_dist: T = b.hit_record.distance;
             // We treat NaN values as equal. If we hit NaNs by this point the entire list is likely
             // useless anyway and there are other issues that have propagated to this point.
             a_dist.partial_cmp(&b_dist).unwrap_or(Equal)
         });
         // Option<&AccelRecord> -> Option<AccelRecord>
-        intersections.first().map(|&x| x)
+        if let Some(collision) = intersections.first().map(|&x| x) {
+            if collision.hit_record.distance > T::from(0.001).unwrap() {
+                return Some(collision);
+            }
+        }
+        None
     }
 }

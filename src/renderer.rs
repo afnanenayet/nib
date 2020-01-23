@@ -12,7 +12,6 @@ use crate::{
 };
 use anyhow;
 use indicatif::ProgressIterator;
-use num::traits::*;
 
 /// The data a renderer requires to produce an image
 ///
@@ -43,10 +42,11 @@ impl<'a, T: GenFloat> Renderer<'a, T> {
     pub fn render(&mut self) -> anyhow::Result<Vec<PixelValue<T>>> {
         // This is the naive single threaded implementation. TODO(afnan) make this multithreaded
         // once the results are confirmed to be correct.
-        let pixel_val = (0..self.width)
+        let pixel_val = (0..(self.width * self.height))
             .progress()
-            .zip((0..self.height).progress())
-            .map(|(x, y)| {
+            .map(|i| {
+                let x = i % self.width;
+                let y = self.height - (i / self.width);
                 let acc = (0..self.scene.samples_per_pixel)
                     .map(|_| {
                         let camera_samples = self.sampler.next(2).unwrap();

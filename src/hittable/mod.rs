@@ -8,7 +8,7 @@
 
 use crate::{
     material::BSDF,
-    types::{GenFloat, GenReal, Ray},
+    types::{GenFloat, Ray},
 };
 use cgmath::Vector3;
 use enum_dispatch::enum_dispatch;
@@ -40,6 +40,9 @@ pub struct HitRecord<T: GenFloat> {
 
     /// The normal vector for the intersection
     pub normal: Vector3<T>,
+
+    /// The distance from the origin ray to the point of collision
+    pub distance: T,
 }
 
 /// The struct for some object in the scene that can be intersected geometrically that also

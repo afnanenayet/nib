@@ -7,8 +7,7 @@ use crate::{
     math::component_mul,
     types::{GenFloat, PixelValue},
 };
-use cgmath::Vector3;
-use num::Zero;
+use cgmath::{InnerSpace, Vector3};
 use serde::{Deserialize, Serialize};
 use std::marker::PhantomData;
 
@@ -42,31 +41,60 @@ impl<T: GenFloat> Integrator<T> for Whitted<T> {
 }
 
 impl<T: GenFloat> Whitted<T> {
+    pub fn new(max_depth: u32) -> Self {
+        Self {
+            max_depth,
+            phantom: PhantomData,
+        }
+    }
+}
+
+impl<T: GenFloat> Whitted<T> {
     /// The recursive helper method for the Whitted integrator
     ///
     /// This exists because we need to keep track of the stack depth as we cast new rays and the
     /// `Integrator` trait doesn't have a parameter for depth.
     fn render_helper(&self, params: RenderParams<T>, depth: u32) -> PixelValue<T> {
-        if depth > self.max_depth {
-            return params.scene.background;
-        }
-
         // First, we check to see if the ray hit anything, if not, we return a black background.
         // TODO(afnan) change this to be more extensible, such as allowing for a gradient or
         // an environment map
         if let Some(collision) = params.scene.accel.collision(&params.origin) {
+            if depth >= self.max_depth {
+                return PixelValue::new(
+                    T::from(0).unwrap(),
+                    T::from(0).unwrap(),
+                    T::from(0).unwrap(),
+                );
+            }
             let bsdf_record =
                 collision
                     .object
                     .mat
                     .scatter(params.sampler, params.origin, &collision.hit_record);
             // Calculate values of the rays recursively, accumulating as we go
-            let color = component_mul(
-                bsdf_record.attenuation,
-                self.render_helper(params, depth + 1),
-            );
+            let new_params = RenderParams {
+                origin: &bsdf_record.out,
+                ..params
+            };
+            let recursive_color = self.render_helper(new_params, depth + 1);
+            let color = component_mul(bsdf_record.attenuation, recursive_color);
             return color;
         }
-        return Vector3::zero();
+        let unit_dir = params.origin.direction.normalize();
+        let t = T::from(0.5).unwrap() * (unit_dir.y + T::from(1.0).unwrap());
+
+        // linearly interpolate a color based on the angle of the ray
+        return Vector3::new(
+            T::from(1.0).unwrap(),
+            T::from(1.0).unwrap(),
+            T::from(1.0).unwrap(),
+        )
+        .map(|x| x * (T::from(1.0).unwrap() - t))
+            + Vector3::new(
+                T::from(0.5).unwrap(),
+                T::from(0.7).unwrap(),
+                T::from(1.0).unwrap(),
+            )
+            .map(|x| x * t);
     }
 }
