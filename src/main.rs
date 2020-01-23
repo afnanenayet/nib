@@ -25,8 +25,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let scene: Scene<f32> = dispatch_scene_parse(&args.scene, args.filetype.as_deref())?;
     let processed_scene = scene.into();
     let mut renderer = Renderer {
-        //integrator: Box::new(integrator::Whitted::new(2)),
-        integrator: Box::new(integrator::Normal::default()),
+        integrator: Box::new(integrator::Whitted::default()),
         sampler: Box::new(sampler::Random::default()),
         scene: processed_scene,
         camera: Box::new(camera::Pinhole::default()),

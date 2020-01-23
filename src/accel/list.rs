@@ -55,7 +55,8 @@ impl<'a, T: GenFloat> Accel<T> for ObjectList<'a, T> {
             // useless anyway and there are other issues that have propagated to this point.
             a_dist.partial_cmp(&b_dist).unwrap_or(Equal)
         });
-        // Option<&AccelRecord> -> Option<AccelRecord>
+        // Convert `Option<&AccelRecord>` to `Option<AccelRecord>` and use some threshold to avoid
+        // shadow acne
         if let Some(collision) = intersections.first().map(|&x| x) {
             if collision.hit_record.distance >= T::from(0.001).unwrap() {
                 return Some(collision);
