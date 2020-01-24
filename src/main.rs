@@ -30,16 +30,18 @@ fn main() -> Result<(), Box<dyn Error>> {
     let processed_scene = scene.into();
     let mut renderer = Renderer {
         integrator: Box::new(integrator::Whitted::default()),
+        // TODO(afnan) throw this back in when we figure out how to pass our boy between threads
+        // safely or generate one per thread
         //sampler: Box::new(sampler::Random::default()),
         scene: processed_scene,
         camera: Box::new(camera::Pinhole::default()),
-        width: 800,
-        height: 400,
+        width: args.width,
+        height: args.height,
     };
     let buffer = renderer.render()?;
     let exporter = PPMExporter {
-        width: 800,
-        height: 400,
+        width: args.width,
+        height: args.height,
     };
     let output_path = Path::new("out.ppm");
     exporter.export(&buffer, output_path)?;

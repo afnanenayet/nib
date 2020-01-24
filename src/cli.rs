@@ -41,6 +41,14 @@ pub struct Args {
     /// output file type is inferred from the filename.
     #[structopt(short, long)]
     pub output: Option<String>,
+
+    /// The vertical resolution of the output image
+    #[structopt(short, long)]
+    pub height: u32,
+
+    /// The horizontal resolution of the output image
+    #[structopt(short, long)]
+    pub width: u32,
 }
 
 /// Parse the input scene file based on the file extension
