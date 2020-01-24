@@ -36,7 +36,7 @@
                 "Diffuse": {
                     "albedo": {
                         "x": 0.8,
-                        "y": 0.8,
+                        "y": 0.3,
                         "z": 0.3
                     }
                 }
@@ -103,5 +103,5 @@
         0,
         0
     ],
-    "samples_per_pixel": 300
+    "samples_per_pixel": 500
 }

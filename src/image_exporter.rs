@@ -62,21 +62,24 @@ impl PPMExporter {
         if self.width == 0 || self.height == 0 {
             return Err(ExporterError::InvalidDimensions);
         }
-        Ok("P3\n".to_owned() + &format!("{} {}\n", self.width, self.height) + "255\n")
+        Ok("P3\n".to_owned() + &format!("{} {}\n", self.width, self.height) + "1023\n")
     }
 }
 
 impl FramebufferExporter for PPMExporter {
     fn export<T: GenFloat>(&self, buffer: &Vec<PixelValue<T>>, path: &Path) -> ExporterResult<()> {
         let header = self.header()?;
+
+        let max_value = T::from(1023).unwrap();
         let io_result = {
             let mut file = File::create(path)?;
             file.write(header.as_bytes())?;
             // write each RGB value to the file
+
             for pixel in buffer {
-                let x = (pixel.x * T::from(255).unwrap()).to_u8().unwrap_or(255);
-                let y = (pixel.y * T::from(255).unwrap()).to_u8().unwrap_or(255);
-                let z = (pixel.z * T::from(255).unwrap()).to_u8().unwrap_or(255);
+                let x = (pixel.x * max_value).to_u16().unwrap();
+                let y = (pixel.y * max_value).to_u16().unwrap();
+                let z = (pixel.z * max_value).to_u16().unwrap();
                 let pixel_str = format!("{} {} {}\n", x, y, z);
                 file.write(pixel_str.as_bytes())?;
             }

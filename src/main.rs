@@ -43,7 +43,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         width: args.width,
         height: args.height,
     };
-    let output_path = Path::new("out.ppm");
+    let output_path = Path::new(args.output.unwrap_or("out.ppm"));
     exporter.export(&buffer, output_path)?;
     Ok(())
 }
