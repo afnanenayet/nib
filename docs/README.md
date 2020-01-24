@@ -1,5 +1,7 @@
 # nib
 
+[![asciicast](https://asciinema.org/a/g7uq7pnr4FrXGdBBMkpgeV8IZ.svg)](https://asciinema.org/a/g7uq7pnr4FrXGdBBMkpgeV8IZ)
+
 ## Summary
 
 `nib` is a renderer created for research purposes. It is designed to be as
