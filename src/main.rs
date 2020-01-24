@@ -38,7 +38,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         width: args.width,
         height: args.height,
     };
-    let buffer = renderer.render()?;
+    let buffer = renderer.render(args.threads)?;
     let exporter = PPMExporter {
         width: args.width,
         height: args.height,

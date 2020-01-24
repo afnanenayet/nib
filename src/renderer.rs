@@ -57,9 +57,18 @@ where
         pb
     }
 
-    pub fn render(&mut self) -> anyhow::Result<Vec<PixelValue<T>>> {
+    /// Render the image, returning a buffer of pixels
+    ///
+    /// You can optionally specify the number of threads you'd like to use. If this is unset or set
+    /// to 0, Rayon will automatically infer the number of threads to use based on the number of
+    /// logical CPUs detected on the system.
+    pub fn render(&mut self, num_threads: Option<usize>) -> anyhow::Result<Vec<PixelValue<T>>> {
         let pb = self.create_progress_bar();
         let sampler = sampler::Random::default();
+
+        if let Some(n) = num_threads {
+            set_threads(n)?;
+        }
 
         // This is the naive single threaded implementation. TODO(afnan) make this multithreaded
         // once the results are confirmed to be correct.
@@ -108,4 +117,11 @@ where
         pb.finish_and_clear();
         Ok(buffer)
     }
+}
+
+/// Set the number of threads in the global threadpool
+fn set_threads(num_threads: usize) -> Result<(), rayon::ThreadPoolBuildError> {
+    rayon::ThreadPoolBuilder::new()
+        .num_threads(num_threads)
+        .build_global()
 }

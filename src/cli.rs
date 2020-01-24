@@ -33,9 +33,10 @@ pub struct Args {
     pub hide_progress: bool,
 
     /// The number of threads to use in the renderer. If this isn't set, the renderer will default
-    /// to the number of CPUs detected.
+    /// to the number of CPUs detected. This can also be set with the environment variable
+    /// "RAYON_NUM_THREADS". If this is set to 0, then the default number of threads will be used.
     #[structopt(short, long)]
-    pub threads: Option<u32>,
+    pub threads: Option<usize>,
 
     /// The filename of the output file. If this is not provided it will default to "out.png". The
     /// output file type is inferred from the filename.
