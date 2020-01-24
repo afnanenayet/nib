@@ -66,7 +66,7 @@ where
         // We use a sampler per thread rather than locking a sampler over all threads because the
         // lock contention would be too high. Having a sampler per thread seems to tbe the most
         // performant choice.
-        let pixel_val = (0..(self.width * self.height))
+        let buffer = (0..(self.width * self.height))
             .into_par_iter()
             .map_with(
                 || sampler.clone(),
@@ -106,6 +106,6 @@ where
             )
             .collect();
         pb.finish_and_clear();
-        Ok(pixel_val)
+        Ok(buffer)
     }
 }
