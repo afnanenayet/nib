@@ -21,14 +21,11 @@ use std::fmt::{Debug, Display};
 macro_rules! aggregate_trait {
     ( $i:ident; $($t:path),+ ) => {
         pub trait $i: $($t +)+ {}
-        impl<T> $i for T where
-            rand::distributions::Standard: rand::distributions::Distribution<T>,
-            T: $($t +)+,
-            {}
+        impl<T> $i for T where T: $($t +)+ {}
     };
 }
 
-aggregate_trait!(GenReal; BaseNum, Sync, PartialOrd, Copy, Clone, Display, Debug);
+aggregate_trait!(GenReal; BaseNum, Sync, PartialOrd, Copy, Clone, Display, Debug, Send);
 aggregate_trait!(GenInteger; num::Integer, GenReal);
 aggregate_trait!(GenFloat; BaseFloat, GenReal);
 

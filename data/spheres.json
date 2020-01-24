@@ -37,9 +37,39 @@
                     "albedo": {
                         "x": 0.8,
                         "y": 0.8,
-                        "z": 0.0
+                        "z": 0.3
                     }
                 }
+            }
+        },
+        {
+            "geometry": {
+                "Sphere": {
+                    "center": {
+                        "x": 1.0,
+                        "y": 0.0,
+                        "z": -1.0
+                    },
+                    "radius": 0.5
+                }
+            },
+            "mat": {
+                "Mirror": {}
+            }
+        },
+        {
+            "geometry": {
+                "Sphere": {
+                    "center": {
+                        "x": -1.0,
+                        "y": 0.0,
+                        "z": -1.0
+                    },
+                    "radius": 0.5
+                }
+            },
+            "mat": {
+                "Mirror": {}
             }
         }
     ],
@@ -73,5 +103,5 @@
         0,
         0
     ],
-    "samples_per_pixel": 10
+    "samples_per_pixel": 300
 }

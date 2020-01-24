@@ -5,6 +5,7 @@ use crate::{
     types::{GenFloat, GenReal, ETA},
 };
 use cgmath::{prelude::*, Vector3};
+use rand;
 
 /// Generate a random sample in the unit sphere
 ///
@@ -13,10 +14,7 @@ use cgmath::{prelude::*, Vector3};
 /// lie within the unit sphere.
 ///
 /// We reject vectors with very small norms, as this can be an issue with floating point numbers.
-pub fn sample_unit_sphere<T>(sampler: &mut dyn Sampler<T>) -> Vector3<T>
-where
-    T: GenFloat,
-{
+pub fn sample_unit_sphere<T: GenFloat>(sampler: &mut dyn Sampler<T>) -> Vector3<T> {
     let rs = sampler.next(3).unwrap();
     let mut v = Vector3::new(
         T::from(0).unwrap(),

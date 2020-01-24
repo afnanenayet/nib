@@ -24,7 +24,7 @@ pub use sphere::Sphere;
 /// objects. It doesn't matter, as long as you have some way to resolve which object was hit by an
 /// outgoing ray.
 #[enum_dispatch(SerializedAccelerationStruct)]
-pub trait Hittable<T: GenFloat>: Debug {
+pub trait Hittable<T: GenFloat>: Debug + Send + Sync {
     /// A method that returns a hit record if the object was hit
     fn hit(&self, ray: &Ray<T>) -> Option<HitRecord<T>>;
 }

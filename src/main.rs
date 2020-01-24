@@ -17,7 +17,11 @@ use crate::{
     scene::Scene,
 };
 use cli::{dispatch_scene_parse, Args};
-use std::{error::Error, marker::PhantomData, path::Path};
+use std::{
+    error::Error,
+    path::Path,
+    sync::{Arc, Mutex},
+};
 use structopt::StructOpt;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -26,7 +30,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let processed_scene = scene.into();
     let mut renderer = Renderer {
         integrator: Box::new(integrator::Whitted::default()),
-        sampler: Box::new(sampler::Random::default()),
+        //sampler: Box::new(sampler::Random::default()),
         scene: processed_scene,
         camera: Box::new(camera::Pinhole::default()),
         width: 800,

@@ -54,7 +54,7 @@ pub struct TexturedRef<'a, T: GenFloat> {
 ///
 /// It provides a simple interface which allows the caller to determine if an incoming ray collided
 /// with some object in the scene.
-pub trait Accel<T: GenFloat>: Debug {
+pub trait Accel<T: GenFloat>: Debug + Send + Sync {
     /// Return whether the incoming ray collided with any of the objects in the scene
     fn collision(&self, ray: &Ray<T>) -> Option<AccelRecord<T>>;
 }

@@ -14,7 +14,7 @@ pub use pinhole::Pinhole;
 ///
 /// A camera simply needs to convert u, v coordinates to a 3D ray.
 #[enum_dispatch(SerializedCamera)]
-pub trait Camera<T: GenFloat>: Debug {
+pub trait Camera<T: GenFloat>: Debug + Send + Sync {
     /// Convert (u, v) pixel coordinates to a ray in 3D space
     fn to_ray(&self, u: T, v: T) -> Ray<T>;
 }

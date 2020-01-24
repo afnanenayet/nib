@@ -41,7 +41,7 @@ pub struct RenderParams<'a, 'b, 'c, T: GenFloat> {
 
 /// A trait that defines an integrator. An integrator defines the operations that are responsible
 /// for taking input data for a given pixel, and calculating the output colors at each pixel.
-pub trait Integrator<T: GenFloat>: Debug {
+pub trait Integrator<T: GenFloat>: Debug + Send + Sync {
     /// Calculate the color value for a particular pixel, given a reference to the scene.
     ///
     /// Given certain input parameters this method calculates the color values at a particular

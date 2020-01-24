@@ -70,11 +70,14 @@ pub type SamplerResult<T, N> = Result<T, SamplerError<N>>;
 ///
 /// The `Sampler` method defines a number of convenience methods that are repetitive that can be
 /// derived from the methods of the `BaseSampler` trait.
-pub trait Sequential<T: GenFloat> {
+pub trait Sequential<T: GenFloat>: Debug + Send + Sync
+where
+    T: GenFloat,
+{
     /// Retrieve the next sample
     ///
     /// This retrieves number of dimensions specified for the next sample
-    fn next(&mut self, dimensions: u32) -> SamplerResult<Vec<T>, T>;
+    fn get_next(&mut self, dimensions: u32) -> SamplerResult<Vec<T>, T>;
 }
 
 /// The interface for an in-place sampler that can stochastically query samples
@@ -82,7 +85,10 @@ pub trait Sequential<T: GenFloat> {
 /// This is meant for samplers that can generate any sample in O(1)/on-the-fly with negligible
 /// overhead without requiring information about previous samples. These types of samplers tend to
 /// be the most performant.
-pub trait InPlace<T: GenFloat> {
+pub trait InPlace<T: GenFloat>: Debug + Send + Sync
+where
+    T: GenFloat,
+{
     /// Sample a particular dimension and index
     fn sample(&mut self, index: u32, dim: u32) -> SamplerResult<T, T>;
 }
@@ -92,7 +98,10 @@ pub trait InPlace<T: GenFloat> {
 /// This method automatically derives these methods for any sampler that implements the
 /// `BaseSampler` trait. Users should use this trait and *not* the `BaseSampler` trait as an
 /// interface.
-pub trait Sampler<T: GenFloat>: Debug {
+pub trait Sampler<T>: Debug + Send + Sync
+where
+    T: GenFloat,
+{
     /// Sample all of the dimensions for a particular index
     // TODO(afnan) should we use `&mut self` instead?
     fn sample_idx(&mut self, index: u32) -> SamplerResult<T, T>;

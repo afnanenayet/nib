@@ -6,12 +6,14 @@
 use crate::{
     camera::Camera,
     integrator::{Integrator, RenderParams},
-    sampler::Sampler,
+    sampler::{self, Sampler},
     scene::ProcessedScene,
     types::{GenFloat, PixelValue},
 };
 use anyhow;
-use indicatif::ProgressIterator;
+use indicatif::{ProgressBar, ProgressStyle};
+use rayon::prelude::*;
+use std::sync::{Arc, Mutex};
 
 /// The data a renderer requires to produce an image
 ///
@@ -22,9 +24,8 @@ pub struct Renderer<'a, T: GenFloat> {
     /// The integrator to use with the scene
     pub integrator: Box<dyn Integrator<T>>,
 
-    /// The sampler/sampling strategy to use with the scene
-    pub sampler: Box<dyn Sampler<T>>,
-
+    ///// The sampler/sampling str>ategy to use with the scene
+    //pub sampler: Box<dyn Sampler<T>>,
     /// A representation of the scene and lighting information
     pub scene: ProcessedScene<'a, T>,
 
@@ -38,42 +39,73 @@ pub struct Renderer<'a, T: GenFloat> {
     pub height: u32,
 }
 
-impl<'a, T: GenFloat> Renderer<'a, T> {
+impl<'a, T> Renderer<'a, T>
+where
+    rand::distributions::Standard: rand::distributions::Distribution<T>,
+    T: GenFloat,
+{
+    /// A small convenience method to generate the progress bar for the CLI
+    fn create_progress_bar(&self) -> ProgressBar {
+        let n = (self.width * self.height * self.scene.samples_per_pixel).into();
+        let pb = ProgressBar::new(n);
+        pb.set_style(
+            ProgressStyle::default_bar()
+                .template("{elapsed_precise}/{eta_precise} [{wide_bar}] {percent}%")
+                .progress_chars("=> "),
+        );
+        pb.set_draw_delta(n / 100);
+        pb
+    }
+
     pub fn render(&mut self) -> anyhow::Result<Vec<PixelValue<T>>> {
+        let pb = self.create_progress_bar();
+        let sampler = sampler::Random::default();
+
         // This is the naive single threaded implementation. TODO(afnan) make this multithreaded
         // once the results are confirmed to be correct.
+        // We use a sampler per thread rather than locking a sampler over all threads because the
+        // lock contention would be too high. Having a sampler per thread seems to tbe the most
+        // performant choice.
         let pixel_val = (0..(self.width * self.height))
-            .progress()
-            .map(|i| {
-                let x = i % self.width;
-                let y = self.height - (i / self.width);
-                let acc = (0..self.scene.samples_per_pixel)
-                    .map(|_| {
-                        let camera_samples = self.sampler.next(2).unwrap();
-                        let u = (T::from(x).unwrap() + camera_samples[0])
-                            / T::from(self.width).unwrap();
-                        let v = (T::from(y).unwrap() + camera_samples[1])
-                            / T::from(self.height).unwrap();
-                        let ray = self.camera.to_ray(u, v);
-                        let params = RenderParams {
-                            origin: &ray,
-                            scene: &self.scene,
-                            sampler: &mut *self.sampler,
-                        };
-                        self.integrator.render(params)
-                    })
-                    .fold(
-                        PixelValue::new(
-                            T::from(0).unwrap(),
-                            T::from(0).unwrap(),
-                            T::from(0).unwrap(),
-                        ),
-                        |acc, x| acc + x,
-                    );
-                let spp = T::from(self.scene.samples_per_pixel).unwrap();
-                PixelValue::new(acc.x / spp, acc.y / spp, acc.z / spp)
-            })
+            .into_par_iter()
+            .map_with(
+                || sampler.clone(),
+                |sampler_generator, i| {
+                    let mut sampler = sampler_generator();
+                    let x = i % self.width;
+                    let y = self.height - (i / self.width);
+                    let acc: PixelValue<T> = (0..self.scene.samples_per_pixel)
+                        .map(|_| {
+                            let camera_samples = sampler.next(2).unwrap();
+
+                            let u = (T::from(x).unwrap() + camera_samples[0])
+                                / T::from(self.width).unwrap();
+                            let v = (T::from(y).unwrap() + camera_samples[1])
+                                / T::from(self.height).unwrap();
+                            let ray = self.camera.to_ray(u, v);
+                            let params = RenderParams {
+                                origin: &ray,
+                                scene: &self.scene,
+                                sampler: &mut sampler,
+                            };
+                            let color = self.integrator.render(params);
+                            pb.inc(1);
+                            color
+                        })
+                        .fold(
+                            PixelValue::new(
+                                T::from(0).unwrap(),
+                                T::from(0).unwrap(),
+                                T::from(0).unwrap(),
+                            ),
+                            |acc, x| acc + x,
+                        );
+                    let spp = T::from(self.scene.samples_per_pixel).unwrap();
+                    PixelValue::new(acc.x / spp, acc.y / spp, acc.z / spp)
+                },
+            )
             .collect();
+        pb.finish_and_clear();
         Ok(pixel_val)
     }
 }

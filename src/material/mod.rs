@@ -19,7 +19,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// This interface provides one method: the `scatter` function, which will return a `BSDFRecord`
 #[enum_dispatch(SerializedMaterial)]
-pub trait BSDF<T>: Debug
+pub trait BSDF<T>: Debug + Send + Sync
 where
     T: GenFloat,
 {
