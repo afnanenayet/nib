@@ -46,7 +46,7 @@ where
 {
     /// A small convenience method to generate the progress bar for the CLI
     fn create_progress_bar(&self) -> ProgressBar {
-        let n = (self.width * self.height * self.scene.samples_per_pixel).into();
+        let n = (self.width * self.height).into();
         let pb = ProgressBar::new(n);
         pb.set_style(
             ProgressStyle::default_bar()
@@ -89,7 +89,6 @@ where
                                 sampler: &mut sampler,
                             };
                             let color = self.integrator.render(params);
-                            pb.inc(1);
                             color
                         })
                         .fold(
@@ -100,6 +99,7 @@ where
                             ),
                             |acc, x| acc + x,
                         );
+                    pb.inc(1);
                     let spp = T::from(self.scene.samples_per_pixel).unwrap();
                     PixelValue::new(acc.x / spp, acc.y / spp, acc.z / spp)
                 },
