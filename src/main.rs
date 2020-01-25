@@ -29,7 +29,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let scene: Scene<f32> = dispatch_scene_parse(&args.scene, args.filetype.as_deref())?;
     let processed_scene = scene.into();
     let mut renderer = Renderer {
-        integrator: Box::new(integrator::Whitted::default()),
+        integrator: Box::new(integrator::Whitted::new(20)),
         // TODO(afnan) throw this back in when we figure out how to pass our boy between threads
         // safely or generate one per thread
         //sampler: Box::new(sampler::Random::default()),
@@ -43,7 +43,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         width: args.width,
         height: args.height,
     };
-    let output_path = Path::new(args.output.unwrap_or("out.ppm"));
+    let output_str = &args.output.unwrap_or("out.ppm".to_string());
+    let output_path = Path::new(output_str);
     exporter.export(&buffer, output_path)?;
     Ok(())
 }
