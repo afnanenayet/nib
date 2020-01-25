@@ -7,6 +7,7 @@ use crate::{
     scene::ProcessedScene,
     types::{GenFloat, Ray},
 };
+use enum_dispatch::enum_dispatch;
 use std::fmt::Debug;
 
 pub mod normal;
@@ -41,10 +42,18 @@ pub struct RenderParams<'a, 'b, 'c, T: GenFloat> {
 
 /// A trait that defines an integrator. An integrator defines the operations that are responsible
 /// for taking input data for a given pixel, and calculating the output colors at each pixel.
+#[enum_dispatch(SerializedIntegrator)]
 pub trait Integrator<T: GenFloat>: Debug + Send + Sync {
     /// Calculate the color value for a particular pixel, given a reference to the scene.
     ///
     /// Given certain input parameters this method calculates the color values at a particular
     /// point.
     fn render(&self, params: RenderParams<T>) -> PixelValue<T>;
+}
+
+#[enum_dispatch]
+#[derive(Debug)]
+pub enum SerializedIntegrator<T: GenFloat> {
+    Normal(Normal<T>),
+    Whitted(Whitted<T>),
 }

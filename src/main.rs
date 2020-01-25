@@ -30,11 +30,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     let processed_scene = scene.into();
     let mut renderer = Renderer {
         integrator: Box::new(integrator::Whitted::new(20)),
+        //integrator: Box::new(integrator::Normal::default()),
         // TODO(afnan) throw this back in when we figure out how to pass our boy between threads
         // safely or generate one per thread
         //sampler: Box::new(sampler::Random::default()),
         scene: processed_scene,
-        camera: Box::new(camera::Pinhole::default()),
         width: args.width,
         height: args.height,
     };

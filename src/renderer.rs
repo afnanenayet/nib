@@ -13,7 +13,6 @@ use crate::{
 use anyhow;
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
-use std::sync::{Arc, Mutex};
 
 /// The data a renderer requires to produce an image
 ///
@@ -24,13 +23,8 @@ pub struct Renderer<'a, T: GenFloat> {
     /// The integrator to use with the scene
     pub integrator: Box<dyn Integrator<T>>,
 
-    ///// The sampler/sampling str>ategy to use with the scene
-    //pub sampler: Box<dyn Sampler<T>>,
     /// A representation of the scene and lighting information
     pub scene: ProcessedScene<'a, T>,
-
-    /// The camera to use to render this instance
-    pub camera: Box<dyn Camera<T>>,
 
     /// The width of the output image
     pub width: u32,
@@ -91,7 +85,7 @@ where
                                 / T::from(self.width).unwrap();
                             let v = (T::from(y).unwrap() + camera_samples[1])
                                 / T::from(self.height).unwrap();
-                            let ray = self.camera.to_ray(u, v);
+                            let ray = self.scene.camera.to_ray(u, v);
                             let params = RenderParams {
                                 origin: &ray,
                                 scene: &self.scene,
