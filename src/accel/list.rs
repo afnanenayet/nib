@@ -3,7 +3,7 @@
 use crate::{
     accel::{Accel, AccelError, AccelRecord, AccelResult},
     hittable::{HitRecord, Hittable, Textured},
-    types::{GenFloat, Ray},
+    types::{eta, GenFloat, Ray},
 };
 use cgmath::prelude::*;
 use std::cmp::Ordering::Equal;
@@ -58,7 +58,7 @@ impl<'a, T: GenFloat> Accel<T> for ObjectList<'a, T> {
         // Convert `Option<&AccelRecord>` to `Option<AccelRecord>` and use some threshold to avoid
         // shadow acne
         if let Some(collision) = intersections.first().map(|&x| x) {
-            if collision.hit_record.distance >= T::from(0.001).unwrap() {
+            if collision.hit_record.distance >= eta() {
                 return Some(collision);
             }
         }

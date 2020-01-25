@@ -58,4 +58,10 @@ pub struct Ray<T> {
 pub type PixelValue<T> = Vector3<T>;
 
 /// The floating point error threshold to use with the renderer
-pub const ETA: f32 = 0.0001;
+pub const ETA_F32: f32 = 0.0001;
+
+/// The floating point error threshold to use with the renderer, as a convenience function that
+/// will automatically convert it to whatever numeric type you want.
+pub fn eta<T: GenFloat>() -> T {
+    T::from(ETA_F32).unwrap()
+}

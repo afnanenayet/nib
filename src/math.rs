@@ -2,7 +2,7 @@
 
 use crate::{
     sampler::Sampler,
-    types::{GenFloat, GenReal, ETA},
+    types::{eta, GenFloat, GenReal},
 };
 use cgmath::{prelude::*, Vector3};
 use rand;
@@ -21,7 +21,7 @@ pub fn sample_unit_sphere<T: GenFloat>(sampler: &mut dyn Sampler<T>) -> Vector3<
         T::from(0).unwrap(),
         T::from(0).unwrap(),
     );
-    while v.magnitude() < T::from(ETA).unwrap() {
+    while v.magnitude() < eta() {
         v = Vector3::new(rs[0], rs[1], rs[2]);
     }
     // Normalize the vector so it has a magnitude of one
