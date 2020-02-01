@@ -63,3 +63,14 @@ A minimal scenes looks like this:
 
 You can use JSON, YAML, or RON (I use serde for serialization support). For
 now, the scene specification is subject to change as I develop the renderer.
+
+## Development
+
+I'm using Rust, so the usual `cargo` commands apply when building, testing,
+checking, etc.
+
+This gets tested on Windows, MacOS, and Linux on Azure pipelines, but I only
+use this on Linux, so Linux will likely have the best support. I can't offer
+any guarantees for other platforms, but will ensure that CI is passing and I am
+open to tackling issues that people may have on other platforms. Feel free to
+send a PR or file an issue!
