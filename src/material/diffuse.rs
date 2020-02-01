@@ -2,8 +2,9 @@ use crate::{
     hittable::HitRecord,
     material::{BSDFRecord, BSDF},
     math::sample_unit_sphere,
+    ray::Ray,
     sampler::Sampler,
-    types::{GenFloat, Ray},
+    types::GenFloat,
 };
 use cgmath::{InnerSpace, Vector3};
 use serde::{Deserialize, Serialize};

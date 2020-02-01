@@ -2,11 +2,7 @@
 //! integrators that can be extended so that other integrators can be easily added.
 
 use crate::types::PixelValue;
-use crate::{
-    sampler::Sampler,
-    scene::ProcessedScene,
-    types::{GenFloat, Ray},
-};
+use crate::{ray::Ray, sampler::Sampler, scene::ProcessedScene, types::GenFloat};
 use enum_dispatch::enum_dispatch;
 use std::fmt::Debug;
 

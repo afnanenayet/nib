@@ -6,6 +6,7 @@ mod image_exporter;
 mod integrator;
 mod material;
 mod math;
+mod ray;
 mod renderer;
 mod sampler;
 mod scene;

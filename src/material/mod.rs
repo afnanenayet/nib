@@ -2,7 +2,7 @@
 //! gives us texture and lighting information by defining a BSDF function for a particular
 //! geometric object.
 
-use crate::{hittable::HitRecord, sampler::Sampler, types::GenFloat, types::Ray};
+use crate::{hittable::HitRecord, ray::Ray, sampler::Sampler, types::GenFloat};
 use cgmath::Vector3;
 use std::fmt::Debug;
 

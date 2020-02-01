@@ -10,7 +10,8 @@ pub use list::ObjectList;
 use crate::{
     hittable::{HitRecord, Hittable, Textured},
     material::BSDF,
-    types::{GenFloat, Ray},
+    ray::Ray,
+    types::GenFloat,
 };
 use std::fmt::Debug;
 use thiserror::Error;

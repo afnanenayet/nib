@@ -3,7 +3,6 @@
 
 use cgmath::{BaseFloat, BaseNum, Vector3};
 use num;
-use rand;
 use std::fmt::{Debug, Display};
 
 /// Generate a trait that is the sum of other trait bounds
@@ -39,19 +38,6 @@ pub type Unsigned = u32;
 
 /// The particular integer type to use in this program.
 pub type Integer = i32;
-
-/// A standard ray with an origin point and a direction
-#[derive(Debug, Eq, PartialEq)]
-pub struct Ray<T> {
-    /// The origin point of the ray in three-dimensional space
-    pub origin: Vector3<T>,
-
-    /// The normalized direction of the ray
-    ///
-    /// The direction of the ray is represented as a normalized 3D vector, which means that every
-    /// component of the vector must be between 0 and 1.
-    pub direction: Vector3<T>,
-}
 
 /// A type representing the RGB value of a pixel in the rendering calculations. This is not the
 /// final color value that is output to the buffer.

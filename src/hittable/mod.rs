@@ -6,10 +6,7 @@
 //! structures so that they can be used generically. It doesn't really matter, as long as you can
 //! yield which object was hit.
 
-use crate::{
-    material::BSDF,
-    types::{GenFloat, Ray},
-};
+use crate::{material::BSDF, ray::Ray, types::GenFloat};
 use cgmath::Vector3;
 use enum_dispatch::enum_dispatch;
 use std::fmt::Debug;

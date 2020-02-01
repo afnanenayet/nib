@@ -2,7 +2,8 @@
 
 use crate::{
     hittable::{HitRecord, Hittable},
-    types::{GenFloat, Ray},
+    ray::Ray,
+    types::GenFloat,
 };
 use cgmath::{prelude::*, Vector3};
 use serde::{Deserialize, Serialize};

@@ -1,7 +1,7 @@
 //! A module defining the generic interface for cameras and providing interfaces for various camera
 //! types
 
-use crate::types::{GenFloat, Ray};
+use crate::{ray::Ray, types::GenFloat};
 use enum_dispatch::enum_dispatch;
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;

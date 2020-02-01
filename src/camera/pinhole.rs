@@ -1,9 +1,6 @@
 //! An implementation of a basic pinhole camera
 
-use crate::{
-    camera::Camera,
-    types::{GenFloat, Ray},
-};
+use crate::{camera::Camera, ray::Ray, types::GenFloat};
 use cgmath::{InnerSpace, Vector3};
 use serde::{Deserialize, Serialize};
 
