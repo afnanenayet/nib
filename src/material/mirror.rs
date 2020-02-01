@@ -5,7 +5,7 @@ use crate::{
     sampler::Sampler,
     types::{GenFloat, Ray},
 };
-use cgmath::Vector3;
+use cgmath::{InnerSpace, Vector3};
 use serde::{Deserialize, Serialize};
 
 /// A perfect mirror surface
@@ -30,7 +30,7 @@ where
         BSDFRecord {
             out: Ray {
                 origin: ray.origin,
-                direction: mirror_direction,
+                direction: mirror_direction.normalize(),
             },
             attenuation: Vector3::new(
                 T::from(1).unwrap(),

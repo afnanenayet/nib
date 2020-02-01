@@ -4,10 +4,9 @@
 
 use crate::{
     integrator::{Integrator, RenderParams},
-    math::component_mul,
     types::{GenFloat, PixelValue},
 };
-use cgmath::{InnerSpace, Vector3};
+use cgmath::{ElementWise, InnerSpace, Vector3};
 use serde::{Deserialize, Serialize};
 use std::marker::PhantomData;
 
@@ -60,11 +59,7 @@ impl<T: GenFloat> Whitted<T> {
         // an environment map
         if let Some(collision) = params.scene.accel.collision(&params.origin) {
             if depth >= self.max_depth {
-                return PixelValue::new(
-                    T::from(0).unwrap(),
-                    T::from(0).unwrap(),
-                    T::from(0).unwrap(),
-                );
+                return params.scene.background;
             }
             let bsdf_record =
                 collision
@@ -77,9 +72,11 @@ impl<T: GenFloat> Whitted<T> {
                 ..params
             };
             let recursive_color = self.render_helper(new_params, depth + 1);
-            let color = component_mul(bsdf_record.attenuation, recursive_color);
+            let color = bsdf_record.attenuation.mul_element_wise(recursive_color);
             return color;
         }
+
+        // Background is a gradient (temporary measure)
         let unit_dir = params.origin.direction.normalize();
         let t = T::from(0.5).unwrap() * (unit_dir.y + T::from(1.0).unwrap());
 

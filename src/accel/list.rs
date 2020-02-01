@@ -46,6 +46,10 @@ impl<'a, T: GenFloat> Accel<T> for ObjectList<'a, T> {
             })
             .collect();
 
+        //println!("[BEGIN]");
+        //println!("{:#?}", intersections);
+        //println!("[END]");
+
         // If the list is empty, then the sort method will be a no-op. We don't need to preserve
         // the order of elements, so we can use the fast unstable sort.
         intersections.sort_unstable_by(|a, b| {
@@ -55,13 +59,7 @@ impl<'a, T: GenFloat> Accel<T> for ObjectList<'a, T> {
             // useless anyway and there are other issues that have propagated to this point.
             a_dist.partial_cmp(&b_dist).unwrap_or(Equal)
         });
-        // Convert `Option<&AccelRecord>` to `Option<AccelRecord>` and use some threshold to avoid
-        // shadow acne
-        if let Some(collision) = intersections.first().map(|&x| x) {
-            if collision.hit_record.distance >= eta() {
-                return Some(collision);
-            }
-        }
-        None
+        // Convert `Option<&AccelRecord>` to `Option<AccelRecord>`
+        intersections.first().map(|&x| x)
     }
 }

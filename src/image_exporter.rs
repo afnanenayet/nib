@@ -62,7 +62,7 @@ impl PPMExporter {
         if self.width == 0 || self.height == 0 {
             return Err(ExporterError::InvalidDimensions);
         }
-        Ok("P3\n".to_owned() + &format!("{} {}\n", self.width, self.height) + "1023\n")
+        Ok("P3\n".to_owned() + &format!("{} {}\n", self.width, self.height) + "255\n")
     }
 }
 
@@ -70,7 +70,7 @@ impl FramebufferExporter for PPMExporter {
     fn export<T: GenFloat>(&self, buffer: &Vec<PixelValue<T>>, path: &Path) -> ExporterResult<()> {
         let header = self.header()?;
 
-        let max_value = T::from(1023).unwrap();
+        let max_value = T::from(255).unwrap();
         let io_result = {
             let mut file = File::create(path)?;
             file.write(header.as_bytes())?;

@@ -27,7 +27,7 @@ macro_rules! aggregate_trait {
 
 aggregate_trait!(GenReal; BaseNum, Sync, PartialOrd, Copy, Clone, Display, Debug, Send);
 aggregate_trait!(GenInteger; num::Integer, GenReal);
-aggregate_trait!(GenFloat; BaseFloat, GenReal);
+aggregate_trait!(GenFloat; BaseFloat, GenReal, num::Signed);
 
 /// The particular floating point type that is going to be used in this program. If you want to
 /// switch the float type to another type, simply change the type here.
@@ -58,7 +58,7 @@ pub struct Ray<T> {
 pub type PixelValue<T> = Vector3<T>;
 
 /// The floating point error threshold to use with the renderer
-pub const ETA_F32: f32 = 0.0001;
+pub const ETA_F32: f32 = 0.000001;
 
 /// The floating point error threshold to use with the renderer, as a convenience function that
 /// will automatically convert it to whatever numeric type you want.

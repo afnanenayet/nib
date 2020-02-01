@@ -13,18 +13,12 @@ use serde::{Deserialize, Serialize};
 /// This BSDF models a typical matte, or non-glossy surface. The user can specify the albedo of the
 /// material, which defines its color.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub struct Diffuse<T>
-where
-    T: GenFloat,
-{
+pub struct Diffuse<T: GenFloat> {
     /// The fraction of light that is absorbed for each color channel.
     pub albedo: Vector3<T>,
 }
 
-impl<T> BSDF<T> for Diffuse<T>
-where
-    T: GenFloat,
-{
+impl<T: GenFloat> BSDF<T> for Diffuse<T> {
     fn scatter(
         &self,
         s: &mut dyn Sampler<T>,
