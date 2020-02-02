@@ -81,17 +81,15 @@ impl<T: GenFloat> Whitted<T> {
         let t = T::from(0.5).unwrap() * (unit_dir.y + T::from(1.0).unwrap());
 
         // linearly interpolate a color based on the angle of the ray
-        return Vector3::new(
+        return (Vector3::new(
             T::from(1.0).unwrap(),
             T::from(1.0).unwrap(),
             T::from(1.0).unwrap(),
-        )
-        .map(|x| x * (T::from(1.0).unwrap() - t))
-            + Vector3::new(
+        ) * (T::from(1.0).unwrap() - t))
+            + (Vector3::new(
                 T::from(0.5).unwrap(),
                 T::from(0.7).unwrap(),
                 T::from(1.0).unwrap(),
-            )
-            .map(|x| x * t);
+            ) * t);
     }
 }

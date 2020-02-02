@@ -88,6 +88,6 @@ where
     }
 
     fn next(&mut self, dimensions: u32) -> SamplerResult<Vec<T>, T> {
-        Ok((0..dimensions).map(|_| self.prng.gen()).collect())
+        Ok((0..dimensions).map(|_| rand::thread_rng().gen()).collect())
     }
 }

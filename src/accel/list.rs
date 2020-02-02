@@ -4,7 +4,7 @@ use crate::{
     accel::{Accel, AccelRecord, AccelResult},
     hittable::Textured,
     ray::Ray,
-    types::GenFloat,
+    types::{eta, GenFloat},
 };
 use std::cmp::Ordering::Equal;
 
@@ -30,7 +30,8 @@ impl<'a, T: GenFloat> ObjectList<'a, T> {
 impl<'a, T: GenFloat> Accel<T> for ObjectList<'a, T> {
     fn collision(&self, ray: &Ray<T>) -> Option<AccelRecord<T>> {
         // Collect every object that was hit so we can sort them out and find the closest
-        // intersection to the origin point of the ray after every object has been traversed.
+        // intersection to the origin point of the ray after every object has been traversed. We
+        // also filter out any collisions that are less than the margin of error.
         let mut intersections: Vec<AccelRecord<T>> = self
             .objects
             .iter()
@@ -44,6 +45,7 @@ impl<'a, T: GenFloat> Accel<T> for ObjectList<'a, T> {
                     None
                 }
             })
+            //.filter(|x| x.hit_record.distance >= eta())
             .collect();
 
         // If the list is empty, then the sort method will be a no-op. We don't need to preserve
