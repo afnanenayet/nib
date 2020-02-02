@@ -22,7 +22,7 @@ pub fn sample_unit_sphere<T: GenFloat>(sampler: &mut dyn Sampler<T>) -> Vector3<
     );
     while v.magnitude() < eta() {
         let rs = sampler.next(3).unwrap();
-        debug_assert_eq!(rs.len(), 1);
+        debug_assert_eq!(rs.len(), 3);
         v = Vector3::new(rs[0], rs[1], rs[2]);
     }
     // Normalize the vector so it has a magnitude of one
@@ -35,4 +35,24 @@ pub fn sample_unit_sphere<T: GenFloat>(sampler: &mut dyn Sampler<T>) -> Vector3<
 /// a mirrored vector. Note that `normal` must be a unit vector.
 pub fn mirror<T: GenFloat>(vector: &Vector3<T>, normal: &Vector3<T>) -> Vector3<T> {
     vector - (normal * T::from(2).unwrap() * vector.dot(*normal))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::sampler::Random;
+
+    #[test]
+    fn test_sample_unit_sphere() {
+        let mut sampler = Random::default();
+
+        for _ in 0..100 {
+            let sphere_coordinates = sample_unit_sphere::<f32>(&mut sampler);
+
+            // Basic sanity check to ensure that all of the coordinates are within the proper range
+            assert!(sphere_coordinates[0] >= 0.0 && sphere_coordinates[0] <= 1.0);
+            assert!(sphere_coordinates[1] >= 0.0 && sphere_coordinates[1] <= 1.0);
+            assert!(sphere_coordinates[2] >= 0.0 && sphere_coordinates[2] <= 1.0);
+        }
+    }
 }
