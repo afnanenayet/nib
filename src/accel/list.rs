@@ -45,7 +45,7 @@ impl<'a, T: GenFloat> Accel<T> for ObjectList<'a, T> {
                     None
                 }
             })
-            //.filter(|x| x.hit_record.distance >= eta())
+            .filter(|x| x.hit_record.distance >= eta())
             .collect();
 
         // If the list is empty, then the sort method will be a no-op. We don't need to preserve
