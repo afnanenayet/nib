@@ -35,12 +35,49 @@ pub enum ExporterError {
 /// A result that can return an `ExporterError`
 pub type ExporterResult<T> = Result<T, ExporterError>;
 
-pub trait FramebufferExporter {
+/// The "base" trait for a `FrameBufferExporter`
+///
+/// Implementing this trait automatically implements the `FrameBufferExporter` trait, which
+/// provides some methods for free, such as converting the values from values between 0 and 1 to
+/// N-bit color values.
+pub trait FramebufferExporterBase {
     /// Export a buffer of pixel values to a file
     ///
     /// The `buffer` is a vector of RGB pixel values, and the `path` is the desired path to write
-    /// the file.
-    fn export<T: GenFloat>(&self, buffer: &Vec<PixelValue<T>>, path: &Path) -> ExporterResult<()>;
+    /// the file. You can assume that the buffer will consist of integers between 0 and
+    /// `MAX_COLOR`.
+    fn export(&self, buffer: &[PixelValue<u32>], path: &Path) -> ExporterResult<()>;
+
+    /// The maximum color value that a framebuffer
+    const MAX_COLOR: u32;
+}
+
+/// Something that can export a framebuffer of `PixelValue`s to some other format
+///
+/// Users should use this trait, implementors should use the `FramebufferExporterBase` trait, which
+/// abstracts away some common methods, such as converting a floating point value to an integer RGB
+/// value.
+pub trait FramebufferExporter {
+    /// Export a buffer of floating point pixel values to some other format
+    ///
+    /// This method expects a framebuffer of pixel values between 0 and 1, that haven't been
+    /// converted to some specific color format yet.
+    fn export<T: GenFloat>(&self, buffer: &[PixelValue<T>], path: &Path) -> ExporterResult<()>;
+}
+
+impl<T: FramebufferExporterBase> FramebufferExporter for T {
+    fn export<F: GenFloat>(&self, buffer: &[PixelValue<F>], path: &Path) -> ExporterResult<()> {
+        // Convert the floating point color values to proper N-bit integer color values, based on
+        // the `MAX_COLOR` value
+        let int_buffer: Vec<PixelValue<u32>> = buffer
+            .iter()
+            .map(|pixel| {
+                let max_value = F::from(T::MAX_COLOR).unwrap();
+                (pixel * max_value).map(|x| x.to_u32().unwrap())
+            })
+            .collect();
+        self.export(&int_buffer[..], path)
+    }
 }
 
 /// Export a framebuffer to the PPM image format
@@ -66,21 +103,19 @@ impl PPMExporter {
     }
 }
 
-impl FramebufferExporter for PPMExporter {
-    fn export<T: GenFloat>(&self, buffer: &Vec<PixelValue<T>>, path: &Path) -> ExporterResult<()> {
+impl FramebufferExporterBase for PPMExporter {
+    const MAX_COLOR: u32 = 255;
+
+    fn export(&self, buffer: &[PixelValue<u32>], path: &Path) -> ExporterResult<()> {
         let header = self.header()?;
 
-        let max_value = T::from(255).unwrap();
         let io_result = {
             let mut file = File::create(path)?;
             file.write(header.as_bytes())?;
             // write each RGB value to the file
 
             for pixel in buffer {
-                let x = (pixel.x * max_value).to_u16().unwrap();
-                let y = (pixel.y * max_value).to_u16().unwrap();
-                let z = (pixel.z * max_value).to_u16().unwrap();
-                let pixel_str = format!("{} {} {}\n", x, y, z);
+                let pixel_str = format!("{} {} {}\n", pixel.x, pixel.y, pixel.z);
                 file.write(pixel_str.as_bytes())?;
             }
             Ok(())
@@ -100,8 +135,10 @@ pub struct PNGExporter {
     pub height: u32,
 }
 
-impl FramebufferExporter for PNGExporter {
-    fn export<T: GenFloat>(&self, buffer: &Vec<PixelValue<T>>, path: &Path) -> ExporterResult<()> {
+impl FramebufferExporterBase for PNGExporter {
+    const MAX_COLOR: u32 = 255;
+
+    fn export(&self, buffer: &[PixelValue<u32>], path: &Path) -> ExporterResult<()> {
         if self.width < 1 || self.height < 1 {
             return Err(ExporterError::InvalidDimensions);
         }
@@ -117,11 +154,10 @@ impl FramebufferExporter for PNGExporter {
             // We're doing some shenanigans to convert a range [0, 1] to [0, 255], which you can
             // also interpret as converting a float to an 8-bit integer.
             .map(|v| {
-                let max = T::from(u8::max_value()).unwrap();
                 vec![
-                    (v.x * max).to_u8().unwrap(),
-                    (v.y * max).to_u8().unwrap(),
-                    (v.z * max).to_u8().unwrap(),
+                    v.x.to_u8().unwrap(),
+                    v.y.to_u8().unwrap(),
+                    v.z.to_u8().unwrap(),
                 ]
             })
             .collect::<Vec<Vec<u8>>>();

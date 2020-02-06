@@ -17,6 +17,7 @@ use crate::{
     renderer::Renderer,
     scene::Scene,
 };
+use anyhow;
 use cli::{dispatch_scene_parse, Args};
 use std::{
     error::Error,
@@ -25,7 +26,7 @@ use std::{
 };
 use structopt::StructOpt;
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> anyhow::Result<()> {
     let args = Args::from_args();
     let scene: Scene<f32> = dispatch_scene_parse(&args.scene, args.filetype.as_deref())?;
     let processed_scene = scene.into();
@@ -46,6 +47,6 @@ fn main() -> Result<(), Box<dyn Error>> {
     };
     let output_str = &args.output.unwrap_or("out.ppm".to_string());
     let output_path = Path::new(output_str);
-    exporter.export(&buffer, output_path)?;
+    exporter.export(&buffer[..], output_path)?;
     Ok(())
 }
