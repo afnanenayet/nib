@@ -2,9 +2,9 @@
 
 [![Build Status](https://dev.azure.com/afnanenayet/nib/_apis/build/status/afnanenayet.nib?branchName=master)](https://dev.azure.com/afnanenayet/nib/_build/latest?definitionId=7&branchName=master)
 
-[![asciicast](https://asciinema.org/a/g7uq7pnr4FrXGdBBMkpgeV8IZ.svg)](https://asciinema.org/a/g7uq7pnr4FrXGdBBMkpgeV8IZ)
-
 ![A picture of three rendered spheres](https://github.com/afnanenayet/nib/raw/master/docs/sample_image.png)
+
+[![asciicast](https://asciinema.org/a/g7uq7pnr4FrXGdBBMkpgeV8IZ.svg)](https://asciinema.org/a/g7uq7pnr4FrXGdBBMkpgeV8IZ)
 
 ## Summary
 
