@@ -44,10 +44,10 @@ pub type Integer = i32;
 pub type PixelValue<T> = Vector3<T>;
 
 /// The floating point error threshold to use with the renderer
-pub const ETA_F32: f32 = 0.000001;
+pub const ETA: Float = 0.000001;
 
 /// The floating point error threshold to use with the renderer, as a convenience function that
 /// will automatically convert it to whatever numeric type you want.
 pub fn eta<T: GenFloat>() -> T {
-    T::from(ETA_F32).unwrap()
+    T::from(ETA).unwrap()
 }

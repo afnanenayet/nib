@@ -107,7 +107,7 @@ where
             .collect();
         let camera: Box<dyn Camera<T>> = match scene.camera {
             SerializedCamera::BasicPinhole(x) => Box::new(x),
-            SerializedCamera::Pinhole(x) => Box::new(x),
+            SerializedCamera::Pinhole(x) => Box::new(x.init()),
         };
         ProcessedScene {
             camera,

@@ -51,6 +51,23 @@ impl<T: GenFloat> Default for BasicPinhole<T> {
 
 impl<T: GenFloat> Camera<T> for Pinhole<T> {
     fn to_ray(&self, u: T, v: T) -> Ray<T> {
+        if let Some(camera) = &self.basic_pinhole {
+            return camera.to_ray(u, v);
+        } else {
+            panic!("`Pinhole` camera was not initialized");
+        }
+    }
+}
+
+impl<T: GenFloat> Pinhole<T> {
+    /// Initialize the Pinhole camera with computed parameters
+    ///
+    /// This implementation Pinhole camera provides convenient parameters for users that convert
+    /// back into a basic pinhole camera. The underlying method for calculating rays based off of a
+    /// camera plane is still the same. Rather than repeating the calculations for every traced
+    /// ray, we can calculate the results once and cache them for every use. The init method does
+    /// exactly that, actually creating an underlying `BasicPinhole` struct for use at runtime.  
+    pub fn init(self) -> Self {
         let theta = self.vfov * T::from(std::f32::consts::PI).unwrap() / T::from(180).unwrap();
         let half_height = Float::tan(theta / T::from(2).unwrap());
         let half_width = self.aspect * half_height;
@@ -61,14 +78,18 @@ impl<T: GenFloat> Camera<T> for Pinhole<T> {
             self.origin - u_prime.map(|x| x * half_width) - v_prime.map(|x| x * half_height) - w;
         let horizontal: Vector3<T> = u_prime.map(|x| x * T::from(2).unwrap() * half_width);
         let vertical: Vector3<T> = v_prime.map(|x| x * T::from(2).unwrap() * half_height);
-        Ray {
-            origin: self.origin,
-            direction: (lower_left + (horizontal * u) + (vertical * v) - self.origin).normalize(),
+
+        Self {
+            basic_pinhole: Some(BasicPinhole {
+                origin: self.origin,
+                horizontal,
+                vertical,
+                lower_left,
+            }),
+            ..self
         }
     }
 }
-
-impl<T: GenFloat> Pinhole<T> {}
 
 /// A pinhole camera, much like `BasicPinhole`, that allows you to specify the aspect ratio and the
 /// field of view.
@@ -84,6 +105,8 @@ pub struct Pinhole<T: GenFloat> {
     pub up: Vector3<T>,
     /// The aspect ratio of the camera
     pub aspect: T,
+
+    basic_pinhole: Option<BasicPinhole<T>>,
 }
 
 #[cfg(test)]
