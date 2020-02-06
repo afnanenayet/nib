@@ -3,6 +3,7 @@
 //! camera information, amongst other things. The scene primarily interacts with the deserializer
 //! and the integrator.
 
+use crate::camera::Camera;
 use crate::{
     accel::{self, Accel},
     camera::{self, SerializedCamera},
@@ -104,7 +105,8 @@ where
                 },
             )
             .collect();
-        let camera = match scene.camera {
+        let camera: Box<dyn Camera<T>> = match scene.camera {
+            SerializedCamera::BasicPinhole(x) => Box::new(x),
             SerializedCamera::Pinhole(x) => Box::new(x),
         };
         ProcessedScene {

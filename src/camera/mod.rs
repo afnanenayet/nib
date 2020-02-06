@@ -8,6 +8,7 @@ use std::fmt::Debug;
 
 mod pinhole;
 
+pub use pinhole::BasicPinhole;
 pub use pinhole::Pinhole;
 
 /// The generic interface for a camera type
@@ -23,5 +24,6 @@ pub trait Camera<T: GenFloat>: Debug + Send + Sync {
 #[enum_dispatch]
 #[derive(Debug, Serialize, Deserialize)]
 pub enum SerializedCamera<T: GenFloat> {
+    BasicPinhole(BasicPinhole<T>),
     Pinhole(Pinhole<T>),
 }

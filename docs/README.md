@@ -4,6 +4,8 @@
 
 [![asciicast](https://asciinema.org/a/g7uq7pnr4FrXGdBBMkpgeV8IZ.svg)](https://asciinema.org/a/g7uq7pnr4FrXGdBBMkpgeV8IZ)
 
+![A picture of three rendered spheres](https://github.com/afnanenayet/nib/raw/master/src/docs/sample_image.png)
+
 ## Summary
 
 `nib` is a renderer created for research purposes. It is designed to be as
@@ -22,7 +24,7 @@ nib --help
 
 You can find example scene files in the `data/` folder.
 
-A minimal scenes looks like this:
+A minimal scene looks like this:
 
 ```json
 {
