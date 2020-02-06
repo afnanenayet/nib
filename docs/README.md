@@ -4,7 +4,7 @@
 
 [![asciicast](https://asciinema.org/a/g7uq7pnr4FrXGdBBMkpgeV8IZ.svg)](https://asciinema.org/a/g7uq7pnr4FrXGdBBMkpgeV8IZ)
 
-![A picture of three rendered spheres](https://github.com/afnanenayet/nib/raw/master/src/docs/sample_image.png)
+![A picture of three rendered spheres](https://github.com/afnanenayet/nib/raw/master/docs/sample_image.png)
 
 ## Summary
 
