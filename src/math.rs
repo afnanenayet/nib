@@ -1,11 +1,7 @@
 //! Utility math functions
 
-use crate::{
-    sampler::Sampler,
-    types::{eta, GenFloat, GenReal},
-};
+use crate::{sampler::Sampler, types::GenFloat};
 use cgmath::{prelude::*, Vector3};
-use rand;
 
 /// Generate a random sample in the unit sphere
 ///

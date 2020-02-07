@@ -19,11 +19,7 @@ use crate::{
 };
 use anyhow;
 use cli::{dispatch_scene_parse, Args};
-use std::{
-    error::Error,
-    path::Path,
-    sync::{Arc, Mutex},
-};
+use std::path::Path;
 use structopt::StructOpt;
 
 fn main() -> anyhow::Result<()> {

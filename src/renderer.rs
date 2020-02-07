@@ -4,7 +4,6 @@
 //! This acts as the main executor module to coordinate computation in the renderer.
 
 use crate::{
-    camera::Camera,
     integrator::{Integrator, RenderParams},
     sampler::{self, Sampler},
     scene::ProcessedScene,
