@@ -72,12 +72,12 @@ mod tests {
     use cgmath::Vector3;
 
     // A convenience method to help create an ObjectList of references
-    fn create_list<'a>(objects: Vec<(Sphere<f32>, Mirror)>) -> ObjectList<'a, f32> {
+    fn create_list<'a>(objects: Vec<Sphere<f32>>) -> ObjectList<'a, f32> {
         let box_objects = objects
             .into_iter()
-            .map(|(geom, mat)| Textured {
+            .map(|geom| Textured {
                 geometry: Box::new(geom),
-                mat: Box::new(mat),
+                mat: Box::new(Mirror::default()),
             })
             .collect();
         ObjectList::new(box_objects).unwrap()
@@ -95,27 +95,18 @@ mod tests {
     #[test]
     fn no_collisions() {
         let list = create_list(vec![
-            (
-                Sphere {
-                    center: Vector3::new(0.0, 0.0, 0.0),
-                    radius: 1.0,
-                },
-                Mirror {},
-            ),
-            (
-                Sphere {
-                    center: Vector3::new(0.0, 5.0, 0.0),
-                    radius: 1.0,
-                },
-                Mirror {},
-            ),
-            (
-                Sphere {
-                    center: Vector3::new(0.0, -5.0, 0.0),
-                    radius: 1.0,
-                },
-                Mirror {},
-            ),
+            Sphere {
+                center: Vector3::new(0.0, 0.0, 0.0),
+                radius: 1.0,
+            },
+            Sphere {
+                center: Vector3::new(0.0, 5.0, 0.0),
+                radius: 1.0,
+            },
+            Sphere {
+                center: Vector3::new(0.0, -5.0, 0.0),
+                radius: 1.0,
+            },
         ]);
         let ray = Ray::<f32>::new(Vector3::new(0.0, 0.0, -1.0), Vector3::new(0.0, 0.0, -1.0));
         assert!(list.collision(&ray).is_none());
@@ -125,13 +116,10 @@ mod tests {
     // geometric primitive
     #[test]
     fn one_possible_collision() {
-        let list = create_list(vec![(
-            Sphere {
-                center: Vector3::new(0.0, 0.0, 0.0),
-                radius: 1.0,
-            },
-            Mirror {},
-        )]);
+        let list = create_list(vec![Sphere {
+            center: Vector3::new(0.0, 0.0, 0.0),
+            radius: 1.0,
+        }]);
         let ray = Ray::<f32>::new(Vector3::new(0.0, -2.0, 0.0), Vector3::new(0.0, 1.0, 0.0));
         assert!(list.collision(&ray).is_some());
     }
@@ -140,34 +128,22 @@ mod tests {
     #[test]
     fn multiple_collisions() {
         let list = create_list(vec![
-            (
-                Sphere {
-                    center: Vector3::new(0.0, 0.0, 0.0),
-                    radius: 1.0,
-                },
-                Mirror {},
-            ),
-            (
-                Sphere {
-                    center: Vector3::new(0.0, 2.0, 0.0),
-                    radius: 1.0,
-                },
-                Mirror {},
-            ),
-            (
-                Sphere {
-                    center: Vector3::new(-5.0, -5.0, -5.0),
-                    radius: 2.0,
-                },
-                Mirror {},
-            ),
-            (
-                Sphere {
-                    center: Vector3::new(5.0, 5.0, 5.0),
-                    radius: 2.0,
-                },
-                Mirror {},
-            ),
+            Sphere {
+                center: Vector3::new(0.0, 0.0, 0.0),
+                radius: 1.0,
+            },
+            Sphere {
+                center: Vector3::new(0.0, 2.0, 0.0),
+                radius: 1.0,
+            },
+            Sphere {
+                center: Vector3::new(-5.0, -5.0, -5.0),
+                radius: 2.0,
+            },
+            Sphere {
+                center: Vector3::new(5.0, 5.0, 5.0),
+                radius: 2.0,
+            },
         ]);
         let ray = Ray::<f32>::new(Vector3::new(0.0, -2.0, 0.0), Vector3::new(0.0, 1.0, 0.0));
         let expected = HitRecord {
