@@ -19,6 +19,12 @@ pub enum OuputType {
 /// The possible errors that can arise when exporting a framebuffer
 #[derive(Error, Debug)]
 pub enum ExporterError {
+    #[error("There was some error from the image library")]
+    Image {
+        #[from]
+        source: image::ImageError,
+    },
+
     #[error("There was some IO error")]
     IO {
         #[from]
@@ -146,7 +152,7 @@ impl FramebufferExporterBase for PNGExporter {
         // values. We convert the vector values into `Vec` types so we can iterate over the pixels.
         // This lets us leverage Rust's built-in method to flatten iterators of iterators. The
         // cgmath vector type does not offer an iterator, unfortunately.
-        // -------
+
         // TODO(afnan) consider forking cgmath and adding the iterators to avoid this layer of
         // indirection, which incurs some extra allocation.
         let u8_buffer = buffer
@@ -175,9 +181,9 @@ impl FramebufferExporterBase for PNGExporter {
             &flat_buffer[..],
             self.width,
             self.height,
-            image::RGB(8),
-            image::PNG,
+            image::ColorType::Rgb8,
+            image::ImageFormat::Png,
         )
-        .map_err(|e| ExporterError::IO { source: e })
+        .map_err(|e| ExporterError::Image { source: e })
     }
 }
