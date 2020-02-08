@@ -15,8 +15,8 @@
                 "Diffuse": {
                     "albedo": {
                         "x": 0.8,
-                        "y": 0.8,
-                        "z": 0.0
+                        "y": 0.3,
+                        "z": 0.3
                     }
                 }
             }
@@ -36,8 +36,8 @@
                 "Diffuse": {
                     "albedo": {
                         "x": 0.8,
-                        "y": 0.3,
-                        "z": 0.3
+                        "y": 0.8,
+                        "z": 0.0
                     }
                 }
             }
@@ -54,7 +54,14 @@
                 }
             },
             "mat": {
-                "Mirror": {}
+                "Mirror": {
+                    "albedo": {
+                        "x": 0.8,
+                        "y": 0.6,
+                        "z": 0.2
+                    },
+                    "perturbation": 0.0
+                }
             }
         },
         {
@@ -69,13 +76,20 @@
                 }
             },
             "mat": {
-                "Mirror": {}
+                "Mirror": {
+                    "albedo": {
+                        "x": 0.8,
+                        "y": 0.8,
+                        "z": 0.8
+                    },
+                    "perturbation": 0.0
+                }
             }
         }
     ],
     "acceleration_structure": "ObjectList",
     "camera": {
-        "Pinhole": {
+        "BasicPinhole": {
             "origin": {
                 "x": 0.0,
                 "y": 0.0,

@@ -12,12 +12,13 @@
                 }
             },
             "mat": {
-                "Diffuse": {
+                "Mirror": {
                     "albedo": {
                         "x": 1.0,
                         "y": 1.0,
                         "z": 1.0
-                    }
+                    },
+                    "perturbation": 0.0
                 }
             }
         },
@@ -33,12 +34,13 @@
                 }
             },
             "mat": {
-                "Diffuse": {
+                "Mirror": {
                     "albedo": {
                         "x": 0.6,
                         "y": 0.6,
                         "z": 0.6
-                    }
+                    },
+                    "perturbation": 0.5
                 }
             }
         },
@@ -54,12 +56,13 @@
                 }
             },
             "mat": {
-                "Diffuse": {
+                "Mirror": {
                     "albedo": {
                         "x": 0.5,
                         "y": 0.5,
                         "z": 1.0
-                    }
+                    },
+                    "perturbation": 0.9
                 }
             }
         },

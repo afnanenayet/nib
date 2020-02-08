@@ -6,13 +6,17 @@ use crate::{hittable::HitRecord, ray::Ray, sampler::Sampler, types::GenFloat};
 use cgmath::Vector3;
 use std::fmt::Debug;
 
+mod blinn_phong;
 mod diffuse;
+mod glass;
 mod mirror;
 
-pub use diffuse::Diffuse;
 use enum_dispatch::enum_dispatch;
-pub use mirror::Mirror;
 use serde::{Deserialize, Serialize};
+
+pub use blinn_phong::BlinnPhong;
+pub use diffuse::Diffuse;
+pub use mirror::Mirror;
 
 /// This trait defines some sort of object that can specify how light is scattered when the
 /// material is hit.
@@ -51,5 +55,5 @@ where
     T: GenFloat,
 {
     Diffuse(Diffuse<T>),
-    Mirror(Mirror),
+    Mirror(Mirror<T>),
 }
