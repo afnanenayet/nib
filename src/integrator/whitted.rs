@@ -87,9 +87,9 @@ impl<T: GenFloat> Whitted<T> {
             T::from(1.0).unwrap(),
         ) * (T::from(1.0).unwrap() - t))
             + (Vector3::new(
-                T::from(0.5).unwrap(),
-                T::from(0.7).unwrap(),
-                T::from(1.0).unwrap(),
+                T::from(0.3).unwrap(),
+                T::from(0.3).unwrap(),
+                T::from(0.3).unwrap(),
             ) * t);
     }
 }
