@@ -40,7 +40,7 @@
                         "y": 0.6,
                         "z": 0.6
                     },
-                    "perturbation": 0.5
+                    "perturbation": 0.8
                 }
             }
         },
@@ -58,11 +58,11 @@
             "mat": {
                 "Mirror": {
                     "albedo": {
-                        "x": 0.5,
-                        "y": 0.5,
-                        "z": 1.0
+                        "x": 1.0,
+                        "y": 0.0,
+                        "z": 0.0
                     },
-                    "perturbation": 0.9
+                    "perturbation": 0.3
                 }
             }
         },
