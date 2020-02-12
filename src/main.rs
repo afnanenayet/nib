@@ -27,8 +27,6 @@ fn main() -> anyhow::Result<()> {
     let scene: Scene<f32> = dispatch_scene_parse(&args.scene, args.filetype.as_deref())?;
     let processed_scene = scene.into();
     let mut renderer = Renderer {
-        integrator: Box::new(integrator::Whitted::new(5)),
-        //integrator: Box::new(integrator::Normal::default()),
         // TODO(afnan) throw this back in when we figure out how to pass our boy between threads
         // safely or generate one per thread
         //sampler: Box::new(sampler::Random::default()),

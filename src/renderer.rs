@@ -4,7 +4,7 @@
 //! This acts as the main executor module to coordinate computation in the renderer.
 
 use crate::{
-    integrator::{Integrator, RenderParams},
+    integrator::RenderParams,
     sampler::{self, Sampler},
     scene::ProcessedScene,
     types::{GenFloat, PixelValue},
@@ -19,9 +19,6 @@ use rayon::prelude::*;
 /// also implements the methods necessary to produce an image.
 #[derive(Debug)]
 pub struct Renderer<'a, T: GenFloat> {
-    /// The integrator to use with the scene
-    pub integrator: Box<dyn Integrator<T>>,
-
     /// A representation of the scene and lighting information
     pub scene: ProcessedScene<'a, T>,
 
@@ -63,12 +60,10 @@ where
             set_threads(n)?;
         }
 
-        // This is the naive single threaded implementation. TODO(afnan) make this multithreaded
-        // once the results are confirmed to be correct.
-        // We use a sampler per thread rather than locking a sampler over all threads because the
-        // lock contention would be too high. Having a sampler per thread seems to tbe the most
-        // performant choice.
-        let buffer = (0..(self.width * self.height))
+        // We use a sampler per thread rather than sharing a sampler over all threads because the
+        // lock contention causes a large performance hit.
+        let mut buffer = Vec::with_capacity((self.width * self.height) as usize);
+        (0..(self.width * self.height))
             .into_par_iter()
             .map_with(
                 || sampler.clone(),
@@ -90,7 +85,7 @@ where
                                 scene: &self.scene,
                                 sampler: &mut sampler,
                             };
-                            let color = self.integrator.render(params);
+                            let color = self.scene.integrator.render(params);
                             color
                         })
                         .fold(
@@ -106,7 +101,7 @@ where
                     PixelValue::new(acc.x / spp, acc.y / spp, acc.z / spp)
                 },
             )
-            .collect();
+            .collect_into_vec(&mut buffer);
         pb.finish_and_clear();
         Ok(buffer)
     }

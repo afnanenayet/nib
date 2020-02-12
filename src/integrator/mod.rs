@@ -4,6 +4,7 @@
 use crate::types::PixelValue;
 use crate::{ray::Ray, sampler::Sampler, scene::ProcessedScene, types::GenFloat};
 use enum_dispatch::enum_dispatch;
+use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 
 pub mod normal;
@@ -48,7 +49,7 @@ pub trait Integrator<T: GenFloat>: Debug + Send + Sync {
 }
 
 #[enum_dispatch]
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum SerializedIntegrator<T: GenFloat> {
     Normal(Normal<T>),
     Whitted(Whitted<T>),

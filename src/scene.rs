@@ -3,11 +3,11 @@
 //! camera information, amongst other things. The scene primarily interacts with the deserializer
 //! and the integrator.
 
-use crate::camera::Camera;
 use crate::{
     accel::{self, Accel},
-    camera::{self, SerializedCamera},
+    camera::{self, Camera, SerializedCamera},
     hittable::{self, Hittable, Textured},
+    integrator::{Integrator, SerializedIntegrator},
     material::{SerializedMaterial, BSDF},
     types::{GenFloat, PixelValue},
 };
@@ -62,6 +62,9 @@ pub struct Scene<T: GenFloat> {
 
     /// The number of samples to take per pixel. This is effectively the anti-aliasing factor.
     pub samples_per_pixel: u32,
+
+    /// The integrator to use to render the scene
+    pub integrator: SerializedIntegrator<T>,
 }
 
 /// A scene with objects, lighting information, and other configuration options for rendering
@@ -75,6 +78,7 @@ pub struct ProcessedScene<'a, T: GenFloat> {
     pub camera: Box<dyn camera::Camera<T> + 'a>,
     pub background: PixelValue<T>,
     pub samples_per_pixel: u32,
+    pub integrator: Box<dyn Integrator<T> + 'a>,
 }
 
 impl<'a, T> From<Scene<T>> for ProcessedScene<'a, T>
@@ -109,8 +113,13 @@ where
             SerializedCamera::BasicPinhole(x) => Box::new(x),
             SerializedCamera::Pinhole(x) => Box::new(x.init()),
         };
+        let integrator: Box<dyn Integrator<T>> = match scene.integrator {
+            SerializedIntegrator::Normal(x) => Box::new(x),
+            SerializedIntegrator::Whitted(x) => Box::new(x),
+        };
         ProcessedScene {
             camera,
+            integrator,
             accel: Box::new(accel::ObjectList::new(objects).unwrap()),
             background: scene.background,
             samples_per_pixel: scene.samples_per_pixel,
