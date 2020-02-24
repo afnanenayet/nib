@@ -115,5 +115,10 @@
         0,
         0
     ],
+    "integrator": {
+        "Whitted": {
+            "max_depth": 6
+        }
+    },
     "samples_per_pixel": 500
 }
