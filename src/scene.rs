@@ -101,6 +101,7 @@ where
                     let bsdf: Box<dyn BSDF<T> + 'a> = match m {
                         SerializedMaterial::Mirror(x) => Box::new(x.clone()),
                         SerializedMaterial::Diffuse(x) => Box::new(x.clone()),
+                        SerializedMaterial::Dielectric(x) => Box::new(x.clone()),
                     };
                     Textured {
                         geometry,

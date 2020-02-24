@@ -7,14 +7,15 @@ use cgmath::Vector3;
 use std::fmt::Debug;
 
 mod blinn_phong;
+mod dielectric;
 mod diffuse;
-mod glass;
 mod mirror;
 
 use enum_dispatch::enum_dispatch;
 use serde::{Deserialize, Serialize};
 
 pub use blinn_phong::BlinnPhong;
+pub use dielectric::Dielectric;
 pub use diffuse::Diffuse;
 pub use mirror::Mirror;
 
@@ -56,4 +57,5 @@ where
 {
     Diffuse(Diffuse<T>),
     Mirror(Mirror<T>),
+    Dielectric(Dielectric<T>),
 }
