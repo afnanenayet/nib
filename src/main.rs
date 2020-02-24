@@ -1,3 +1,6 @@
+#[global_allocator]
+static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
+
 mod accel;
 mod camera;
 mod cli;
@@ -19,6 +22,7 @@ use crate::{
 };
 use anyhow;
 use cli::{dispatch_scene_parse, Args};
+use jemallocator;
 use std::path::Path;
 use structopt::StructOpt;
 
