@@ -26,6 +26,23 @@
             "geometry": {
                 "Sphere": {
                     "center": {
+                        "x": -1.0,
+                        "y": 0.0,
+                        "z": -2.0
+                    },
+                    "radius": 0.5
+                }
+            },
+            "mat": {
+                "Dielectric": {
+                    "refraction_index": 1.5
+                }
+            }
+        },
+        {
+            "geometry": {
+                "Sphere": {
+                    "center": {
                         "x": 0.0,
                         "y": -100.5,
                         "z": -1.0
