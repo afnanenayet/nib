@@ -72,7 +72,7 @@ steps:
     condition: and(and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/')), not( eq( variables['Agent.OS'], 'Windows_NT' ) ))
     displayName: 'Create Github release'
     inputs:
-      githubConnection: afnanenayetgh
+      githubConnection: 'github.com_afnanenayet'
       repositoryName: afnanenayet/nib
       action: 'edit'
       tag: '$(build.my_tag)'
