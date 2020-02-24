@@ -7,7 +7,7 @@ use crate::{
     accel::{self, Accel},
     camera::{self, Camera, SerializedCamera},
     hittable::{self, Hittable, Textured},
-    integrator::{Integrator, SerializedIntegrator},
+    integrator::{Integrator, SerializedIntegrator, Whitted},
     material::{SerializedMaterial, BSDF},
     types::{GenFloat, PixelValue},
 };

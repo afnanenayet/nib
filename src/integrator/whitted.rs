@@ -21,7 +21,19 @@ pub struct Whitted<T: GenFloat> {
 
     /// This exists so we can have the type parameter `T`, which is used with the `RenderParams<T>`
     /// struct in the `Integrator` implementation.
+    ///
+    /// Users do not need to supply this field if deserializing a scene file, serde will be able to
+    /// produce a valid default value.
+    #[serde(default = "default_phantom")]
     phantom: PhantomData<T>,
+}
+
+/// A helper method to supply phantom data by default
+///
+/// Serde requires a method to supply a default value. This function is a shim so that serde can
+/// generate a default value for phantom data.
+fn default_phantom<T>() -> PhantomData<T> {
+    PhantomData
 }
 
 impl<T: GenFloat> Default for Whitted<T> {
