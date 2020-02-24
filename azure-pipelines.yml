@@ -34,7 +34,7 @@ steps:
     displayName: Install rust
     condition: ne( variables['Agent.OS'], 'Windows_NT' )
   - script: |
-      rustup install stable
+      rustup install stable --no-self-update
     displayName: Windows install rust
     condition: eq( variables['Agent.OS'], 'Windows_NT' )
   - script: cargo build --all
