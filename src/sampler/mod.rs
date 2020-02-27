@@ -7,6 +7,7 @@ use crate::types::GenFloat;
 use std::fmt::Debug;
 use thiserror::Error;
 
+pub mod primitives;
 mod random;
 
 pub use random::Random;

@@ -1,9 +1,8 @@
 use crate::{
     hittable::HitRecord,
     material::{BSDFRecord, BSDF},
-    math::sample_unit_sphere,
     ray::Ray,
-    sampler::Sampler,
+    sampler::{primitives::sample_unit_sphere, Sampler},
     types::GenFloat,
 };
 use cgmath::Vector3;
