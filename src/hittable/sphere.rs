@@ -9,7 +9,7 @@ use cgmath::{prelude::*, Vector3};
 use serde::{Deserialize, Serialize};
 
 /// A sphere primitive
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub struct Sphere<T: GenFloat> {
     /// The center of the sphere in spatial coordinates
     pub center: Vector3<T>,

@@ -50,7 +50,7 @@ pub struct BSDFRecord<T: GenFloat> {
 
 /// The different types of `BSDF` types that can be used as input objects
 #[enum_dispatch]
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Copy, Clone)]
 pub enum SerializedMaterial<T>
 where
     T: GenFloat,

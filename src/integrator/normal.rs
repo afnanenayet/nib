@@ -12,7 +12,7 @@ use serde::{Deserialize, Serialize};
 use std::marker::PhantomData;
 
 /// The parameters for the `Normal` integrator
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub struct Normal<T: GenFloat> {
     phantom: PhantomData<T>,
 }

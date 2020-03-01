@@ -49,7 +49,7 @@ pub trait Integrator<T: GenFloat>: Debug + Send + Sync {
 }
 
 #[enum_dispatch]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub enum SerializedIntegrator<T: GenFloat> {
     Normal(Normal<T>),
     Whitted(Whitted<T>),

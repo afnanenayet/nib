@@ -17,7 +17,7 @@ use serde::{Deserialize, Serialize};
 /// important to make sure that you specify meaningful IOR values so that the material looks
 /// realistic and accurate. There are many references for IOR values that you can find on the
 /// internet.
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy)]
 pub struct Dielectric<T: GenFloat> {
     /// The refraction index of the material
     pub refraction_index: T,

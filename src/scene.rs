@@ -19,19 +19,19 @@ use serde::{Deserialize, Serialize};
 /// This is an enum type that exists for convenient use with serde, so we can create a serializable
 /// struct to expose as a scene description to the user.
 #[enum_dispatch]
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub enum SerializedHittable<T: GenFloat> {
     Sphere(hittable::Sphere<T>),
 }
 
 /// The different types of acceleration structures that can be used in the scene description
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub enum SerializedAccelerationStruct {
     ObjectList,
 }
 
 /// A serializable wrapper for the
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Copy, Clone)]
 pub struct SerializedTextured<T>
 where
     T: GenFloat,
@@ -46,7 +46,7 @@ where
 /// A struct representing the scene description as the user will input it
 ///
 /// This struct exists solely for serialization and deserialization
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Scene<T: GenFloat> {
     /// A list of all of the geometric objects in the scene
     pub objects: Vec<SerializedTextured<T>>,
@@ -65,6 +65,12 @@ pub struct Scene<T: GenFloat> {
 
     /// The integrator to use to render the scene
     pub integrator: SerializedIntegrator<T>,
+
+    /// The vertical resolution of the scene, in pixels
+    pub height: u32,
+
+    /// The horizontal resolution of the scene, in pixels
+    pub width: u32,
 }
 
 /// A scene with objects, lighting information, and other configuration options for rendering
@@ -79,6 +85,8 @@ pub struct ProcessedScene<'a, T: GenFloat> {
     pub background: PixelValue<T>,
     pub samples_per_pixel: u32,
     pub integrator: Box<dyn Integrator<T> + 'a>,
+    pub height: u32,
+    pub width: u32,
 }
 
 impl<'a, T> From<Scene<T>> for ProcessedScene<'a, T>
@@ -86,6 +94,7 @@ where
     T: GenFloat + 'a,
 {
     fn from(scene: Scene<T>) -> Self {
+        let aspect_ratio = T::from(scene.height).unwrap() / T::from(scene.width).unwrap();
         // We just destructure the serialized struct and convert them to boxed dynamic
         // implementations
         let objects: Vec<Textured<'a, T>> = (&scene.objects)
@@ -112,7 +121,8 @@ where
             .collect();
         let camera: Box<dyn Camera<T>> = match scene.camera {
             SerializedCamera::BasicPinhole(x) => Box::new(x),
-            SerializedCamera::Pinhole(x) => Box::new(x.init()),
+            SerializedCamera::Pinhole(x) => Box::new(x.init(aspect_ratio)),
+            SerializedCamera::ThinLens(x) => Box::new(x),
         };
         let integrator: Box<dyn Integrator<T>> = match scene.integrator {
             SerializedIntegrator::Normal(x) => Box::new(x),
@@ -124,6 +134,8 @@ where
             accel: Box::new(accel::ObjectList::new(objects).unwrap()),
             background: scene.background,
             samples_per_pixel: scene.samples_per_pixel,
+            height: scene.height,
+            width: scene.width,
         }
     }
 }

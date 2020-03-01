@@ -1,4 +1,4 @@
-//! An implementation of a basic pinhole camera
+//! Implementations of pinhole cameras
 
 use crate::{camera::Camera, ray::Ray, types::GenFloat};
 use cgmath::{InnerSpace, Vector3};
@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 /// The classic pinhole camera
 ///
 /// No bells, no whistles, just projected rays.
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Copy, Clone)]
 pub struct BasicPinhole<T: GenFloat> {
     /// The origin point of the camera's field of view
     pub origin: Vector3<T>,
@@ -49,16 +49,6 @@ impl<T: GenFloat> Default for BasicPinhole<T> {
     }
 }
 
-impl<T: GenFloat> Camera<T> for Pinhole<T> {
-    fn to_ray(&self, u: T, v: T) -> Ray<T> {
-        if let Some(camera) = &self.basic_pinhole {
-            return camera.to_ray(u, v);
-        } else {
-            panic!("`Pinhole` camera was not initialized");
-        }
-    }
-}
-
 impl<T: GenFloat> Pinhole<T> {
     /// Initialize the Pinhole camera with computed parameters
     ///
@@ -67,10 +57,10 @@ impl<T: GenFloat> Pinhole<T> {
     /// camera plane is still the same. Rather than repeating the calculations for every traced
     /// ray, we can calculate the results once and cache them for every use. The init method does
     /// exactly that, actually creating an underlying `BasicPinhole` struct for use at runtime.  
-    pub fn init(self) -> Self {
+    pub fn init(self, aspect_ratio: T) -> BasicPinhole<T> {
         let theta = self.vfov * T::from(std::f32::consts::PI).unwrap() / T::from(180).unwrap();
         let half_height = Float::tan(theta / T::from(2).unwrap());
-        let half_width = self.aspect * half_height;
+        let half_width = aspect_ratio * half_height;
         let w = (self.origin - self.target).normalize();
         let u_prime = (self.up.cross(w)).normalize();
         let v_prime = w.cross(u_prime);
@@ -79,21 +69,18 @@ impl<T: GenFloat> Pinhole<T> {
         let horizontal: Vector3<T> = u_prime.map(|x| x * T::from(2).unwrap() * half_width);
         let vertical: Vector3<T> = v_prime.map(|x| x * T::from(2).unwrap() * half_height);
 
-        Self {
-            basic_pinhole: Some(BasicPinhole {
-                origin: self.origin,
-                horizontal,
-                vertical,
-                lower_left,
-            }),
-            ..self
+        BasicPinhole {
+            origin: self.origin,
+            horizontal,
+            vertical,
+            lower_left,
         }
     }
 }
 
 /// A pinhole camera, much like `BasicPinhole`, that allows you to specify the aspect ratio and the
 /// field of view.
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Copy, Clone)]
 pub struct Pinhole<T: GenFloat> {
     /// The target that the camera is pointing towards from the origin
     pub target: Vector3<T>,
@@ -103,10 +90,8 @@ pub struct Pinhole<T: GenFloat> {
     pub vfov: T,
     /// Which direction you consider up for the camera
     pub up: Vector3<T>,
-    /// The aspect ratio of the camera
-    pub aspect: T,
-
-    basic_pinhole: Option<BasicPinhole<T>>,
+    /// The aspect ratio of
+    pub aspect_ratio: T,
 }
 
 #[cfg(test)]

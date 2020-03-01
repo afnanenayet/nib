@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 use std::marker::PhantomData;
 
 /// The parameters for the Whitted integrator
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Copy, Clone)]
 pub struct Whitted<T: GenFloat> {
     /// The recursion limit for rays
     ///
