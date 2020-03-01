@@ -30,7 +30,7 @@ pub struct ThinLens<T: GenFloat> {
 }
 
 impl<T: GenFloat> Camera<T> for ThinLens<T> {
-    fn to_ray(&self, u: T, v: T) -> crate::ray::Ray<T> {
+    fn to_ray(&self, _u: T, _v: T) -> crate::ray::Ray<T> {
         unimplemented!()
     }
 }

@@ -1,6 +1,6 @@
 //! Utility math functions
 
-use crate::{sampler::Sampler, types::GenFloat};
+use crate::types::GenFloat;
 use cgmath::{prelude::*, Vector3};
 use num::pow;
 
