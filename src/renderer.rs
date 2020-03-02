@@ -79,7 +79,7 @@ where
                                 / T::from(self.width).unwrap();
                             let v = (T::from(y).unwrap() + camera_samples[1])
                                 / T::from(self.height).unwrap();
-                            let ray = self.scene.camera.to_ray(u, v);
+                            let ray = self.scene.camera.to_ray(u, v, &mut sampler);
                             let params = RenderParams {
                                 origin: &ray,
                                 scene: &self.scene,

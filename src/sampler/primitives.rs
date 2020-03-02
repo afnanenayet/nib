@@ -35,7 +35,7 @@ pub fn sample_unit_sphere<T: GenFloat>(sampler: &mut dyn Sampler<T>) -> Vector3<
 /// Generate a random sample in the unit disk
 ///
 /// This method uses rejection sampling to generate the point.
-pub fn sample_disk<T: GenFloat>(sampler: &mut dyn Sampler<T>) -> Vector3<T> {
+pub fn sample_unit_disk<T: GenFloat>(sampler: &mut dyn Sampler<T>) -> Vector3<T> {
     let mut v = Vector3::new(
         T::from(2).unwrap(),
         T::from(2).unwrap(),

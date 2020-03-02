@@ -1,7 +1,7 @@
 //! A module defining the generic interface for cameras and providing interfaces for various camera
 //! types
 
-use crate::{ray::Ray, types::GenFloat};
+use crate::{ray::Ray, sampler::Sampler, types::GenFloat};
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 
@@ -21,7 +21,7 @@ pub trait Camera<T: GenFloat>: Debug + Send + Sync {
     /// This method expects (u, v) coordinates that lie in the unit plane [0, 1]. It also expects
     /// an aspect ratio, which is just nx / ny, where nx and ny are the horizontal and vertical
     /// pixels, respectively.
-    fn to_ray(&self, u: T, v: T) -> Ray<T>;
+    fn to_ray(&self, u: T, v: T, s: &mut dyn Sampler<T>) -> Ray<T>;
 }
 
 /// The different types of cameras that can be used in the scene description
