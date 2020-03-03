@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["set_threads","Set the number of threads in the global threadpool"]],"struct":[["Renderer","The data a renderer requires to produce an image"]]});

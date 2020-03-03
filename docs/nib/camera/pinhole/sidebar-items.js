@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["_IMPL_DESERIALIZE_FOR_BasicPinhole",""],["_IMPL_DESERIALIZE_FOR_Pinhole",""],["_IMPL_SERIALIZE_FOR_BasicPinhole",""],["_IMPL_SERIALIZE_FOR_Pinhole",""]],"struct":[["BasicPinhole","The classic pinhole camera"],["Pinhole","A pinhole camera, much like `BasicPinhole`, that allows you to specify the aspect ratio and the field of view."]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["BlinnPhong","An implementation of the Blinn-Phong BSDF"]]});

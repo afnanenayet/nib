@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["_IMPL_DESERIALIZE_FOR_Normal",""],["_IMPL_SERIALIZE_FOR_Normal",""]],"struct":[["Normal","The parameters for the `Normal` integrator"]]});

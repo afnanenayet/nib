@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["_IMPL_DESERIALIZE_FOR_Whitted",""],["_IMPL_SERIALIZE_FOR_Whitted",""]],"fn":[["default_phantom","A helper method to supply phantom data by default"]],"struct":[["Whitted","The parameters for the Whitted integrator"]]});

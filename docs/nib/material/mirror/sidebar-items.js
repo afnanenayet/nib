@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["_IMPL_DESERIALIZE_FOR_Mirror",""],["_IMPL_SERIALIZE_FOR_Mirror",""]],"struct":[["Mirror","A perfect mirror surface"]]});

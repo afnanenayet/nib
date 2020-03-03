@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["_IMPL_DESERIALIZE_FOR_Diffuse",""],["_IMPL_SERIALIZE_FOR_Diffuse",""]],"struct":[["Diffuse","A diffuse BSDF function"]]});
