@@ -6,4 +6,4 @@
 mkdir -p docs/
 cargo doc
 cp -r target/doc/* docs/
-echo "<head><meta http-equiv='refresh' content='0;URL=nib/index.html'></head>" > docs/index.html
+echo "<head><meta http-equiv='refresh' content='0;URL=https://afnan.io/nib/index.html'></head>" > docs/index.html
