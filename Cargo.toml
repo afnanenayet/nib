@@ -4,6 +4,8 @@ version = "0.2.1"
 authors = ["Afnan Enayet <afnan@afnan.io>"]
 edition = "2018"
 publish = false
+documentation = "https://afnan.io/nib"
+license = "mit"
 
 [dependencies]
 num = "0.2"
