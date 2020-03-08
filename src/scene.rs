@@ -6,23 +6,12 @@
 use crate::{
     accel::{self, Accel},
     camera::{self, Camera, SerializedCamera},
-    hittable::{self, Hittable, Textured},
+    hittable::{Hittable, SerializedHittable, Textured},
     integrator::{Integrator, SerializedIntegrator},
     material::{SerializedMaterial, BSDF},
     types::{GenFloat, PixelValue},
 };
-use enum_dispatch::enum_dispatch;
 use serde::{Deserialize, Serialize};
-
-/// The different types of `Hittable` types that can be used as input objects
-///
-/// This is an enum type that exists for convenient use with serde, so we can create a serializable
-/// struct to expose as a scene description to the user.
-#[enum_dispatch]
-#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
-pub enum SerializedHittable<T: GenFloat> {
-    Sphere(hittable::Sphere<T>),
-}
 
 /// The different types of acceleration structures that can be used in the scene description
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
@@ -120,18 +109,20 @@ where
             )
             .collect();
         let camera: Box<dyn Camera<T>> = match scene.camera {
-            SerializedCamera::BasicPinhole(x) => Box::new(x),
             SerializedCamera::Pinhole(x) => Box::new(x.init(aspect_ratio)),
+            SerializedCamera::BasicPinhole(x) => Box::new(x),
             SerializedCamera::ThinLens(x) => Box::new(x),
         };
-        let integrator: Box<dyn Integrator<T>> = match scene.integrator {
-            SerializedIntegrator::Normal(x) => Box::new(x),
-            SerializedIntegrator::Whitted(x) => Box::new(x),
+        let integrator: Box<dyn Integrator<T>> = Box::new(scene.integrator);
+        let accel = match scene.acceleration_structure {
+            SerializedAccelerationStruct::ObjectList => {
+                Box::new(accel::ObjectList::new(objects).unwrap())
+            }
         };
         ProcessedScene {
             camera,
             integrator,
-            accel: Box::new(accel::ObjectList::new(objects).unwrap()),
+            accel,
             background: scene.background,
             samples_per_pixel: scene.samples_per_pixel,
             height: scene.height,

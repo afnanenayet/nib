@@ -9,6 +9,7 @@
 use crate::{material::BSDF, ray::Ray, types::GenFloat};
 use cgmath::Vector3;
 use enum_dispatch::enum_dispatch;
+use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 
 mod sphere;
@@ -20,10 +21,20 @@ pub use sphere::Sphere;
 /// NOTE: This method can be used with entire acceleration structures or individual geometric
 /// objects. It doesn't matter, as long as you have some way to resolve which object was hit by an
 /// outgoing ray.
-#[enum_dispatch(SerializedAccelerationStruct)]
+#[enum_dispatch(SerializedHittable)]
 pub trait Hittable<T: GenFloat>: Debug + Send + Sync {
     /// A method that returns a hit record if the object was hit
     fn hit(&self, ray: &Ray<T>) -> Option<HitRecord<T>>;
+}
+
+/// The different types of `Hittable` types that can be used as input objects
+///
+/// This is an enum type that exists for convenient use with serde, so we can create a serializable
+/// struct to expose as a scene description to the user.
+#[enum_dispatch]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
+pub enum SerializedHittable<T: GenFloat> {
+    Sphere(Sphere<T>),
 }
 
 /// Information pertaining to a ray intersection
