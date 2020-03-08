@@ -1,6 +1,5 @@
-#[cfg(not(target_os = "windows"))]
 #[global_allocator]
-static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
+static GLOBAL: MiMalloc = MiMalloc;
 
 mod accel;
 mod camera;
@@ -23,11 +22,9 @@ use crate::{
 };
 use anyhow;
 use cli::{dispatch_scene_parse, Args};
+use mimalloc::MiMalloc;
 use std::path::Path;
 use structopt::StructOpt;
-
-#[cfg(not(target_os = "windows"))]
-use jemallocator;
 
 fn main() -> anyhow::Result<()> {
     let args = Args::from_args();
