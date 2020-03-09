@@ -130,15 +130,6 @@
 <span id="130">130</span>
 <span id="131">131</span>
 <span id="132">132</span>
-<span id="133">133</span>
-<span id="134">134</span>
-<span id="135">135</span>
-<span id="136">136</span>
-<span id="137">137</span>
-<span id="138">138</span>
-<span id="139">139</span>
-<span id="140">140</span>
-<span id="141">141</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! A module providing definitions and methods for a scene. A scene contains most of the relevant</span>
 <span class="doccomment">//! information for an integrator, and it provides information such as lights, geometric objects,</span>
@@ -148,23 +139,12 @@
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">accel</span>::{<span class="self">self</span>, <span class="ident">Accel</span>},
     <span class="ident">camera</span>::{<span class="self">self</span>, <span class="ident">Camera</span>, <span class="ident">SerializedCamera</span>},
-    <span class="ident">hittable</span>::{<span class="self">self</span>, <span class="ident">Hittable</span>, <span class="ident">Textured</span>},
+    <span class="ident">hittable</span>::{<span class="ident">Hittable</span>, <span class="ident">SerializedHittable</span>, <span class="ident">Textured</span>},
     <span class="ident">integrator</span>::{<span class="ident">Integrator</span>, <span class="ident">SerializedIntegrator</span>},
     <span class="ident">material</span>::{<span class="ident">SerializedMaterial</span>, <span class="ident">BSDF</span>},
     <span class="ident">types</span>::{<span class="ident">GenFloat</span>, <span class="ident">PixelValue</span>},
 };
-<span class="kw">use</span> <span class="ident">enum_dispatch</span>::<span class="ident">enum_dispatch</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
-
-<span class="doccomment">/// The different types of `Hittable` types that can be used as input objects</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// This is an enum type that exists for convenient use with serde, so we can create a serializable</span>
-<span class="doccomment">/// struct to expose as a scene description to the user.</span>
-<span class="attribute">#[<span class="ident">enum_dispatch</span>]</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SerializedHittable</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">GenFloat</span><span class="op">&gt;</span> {
-    <span class="ident">Sphere</span>(<span class="ident">hittable</span>::<span class="ident">Sphere</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>),
-}
 
 <span class="doccomment">/// The different types of acceleration structures that can be used in the scene description</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
@@ -262,18 +242,20 @@
             )
             .<span class="ident">collect</span>();
         <span class="kw">let</span> <span class="ident">camera</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Camera</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">scene</span>.<span class="ident">camera</span> {
-            <span class="ident">SerializedCamera</span>::<span class="ident">BasicPinhole</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">x</span>),
             <span class="ident">SerializedCamera</span>::<span class="ident">Pinhole</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">x</span>.<span class="ident">init</span>(<span class="ident">aspect_ratio</span>)),
+            <span class="ident">SerializedCamera</span>::<span class="ident">BasicPinhole</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">x</span>),
             <span class="ident">SerializedCamera</span>::<span class="ident">ThinLens</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">x</span>),
         };
-        <span class="kw">let</span> <span class="ident">integrator</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Integrator</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">scene</span>.<span class="ident">integrator</span> {
-            <span class="ident">SerializedIntegrator</span>::<span class="ident">Normal</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">x</span>),
-            <span class="ident">SerializedIntegrator</span>::<span class="ident">Whitted</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">x</span>),
+        <span class="kw">let</span> <span class="ident">integrator</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Integrator</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">scene</span>.<span class="ident">integrator</span>);
+        <span class="kw">let</span> <span class="ident">accel</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">scene</span>.<span class="ident">acceleration_structure</span> {
+            <span class="ident">SerializedAccelerationStruct</span>::<span class="ident">ObjectList</span> <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">accel</span>::<span class="ident">ObjectList</span>::<span class="ident">new</span>(<span class="ident">objects</span>).<span class="ident">unwrap</span>())
+            }
         };
         <span class="ident">ProcessedScene</span> {
             <span class="ident">camera</span>,
             <span class="ident">integrator</span>,
-            <span class="ident">accel</span>: <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">accel</span>::<span class="ident">ObjectList</span>::<span class="ident">new</span>(<span class="ident">objects</span>).<span class="ident">unwrap</span>()),
+            <span class="ident">accel</span>,
             <span class="ident">background</span>: <span class="ident">scene</span>.<span class="ident">background</span>,
             <span class="ident">samples_per_pixel</span>: <span class="ident">scene</span>.<span class="ident">samples_per_pixel</span>,
             <span class="ident">height</span>: <span class="ident">scene</span>.<span class="ident">height</span>,

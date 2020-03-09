@@ -1,0 +1,1 @@
+initSidebarItems({"derive":[["Preprocess","A default implementation of the `Preprocess` macro for structs that just returns the struct"]]});
