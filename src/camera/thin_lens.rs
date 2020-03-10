@@ -1,4 +1,4 @@
-//! A model of a thin-lens camera
+//! A model of a thin-lens camera that allows for an aperture parameter
 
 use crate::{
     camera::Camera,
@@ -6,8 +6,9 @@ use crate::{
     sampler::{primitives::sample_unit_disk, Sampler},
     types::GenFloat,
 };
-use cgmath::Vector3;
+use cgmath::{InnerSpace, Vector3};
 use serde::{Deserialize, Serialize};
+use std::f32::consts::PI;
 
 /// A thin lens camera model
 ///
@@ -62,7 +63,7 @@ pub struct ThinLensParameters<T: GenFloat> {
     pub up: Vector3<T>,
 
     /// The field of view for the camera, in degrees
-    pub fov: Vector3<T>,
+    pub fov: T,
 
     /// The aperture size of the camera
     ///
@@ -79,7 +80,25 @@ pub struct ThinLensParameters<T: GenFloat> {
 
 impl<T: GenFloat> ThinLensParameters<T> {
     /// Initialize a `ThinLens` runtime struct from user-provided input
-    pub fn init(self) -> ThinLens<T> {
-        todo!()
+    pub fn init(self, aspect_ratio: T) -> ThinLens<T> {
+        let w = (self.look_from - self.look_at).normalize();
+        let u = self.up.cross(w);
+        let v = w.cross(u);
+        let theta = self.fov * T::from(PI).unwrap() / T::from(180).unwrap();
+        let half_height = (theta / T::from(2).unwrap()).tan();
+        let half_width = aspect_ratio * half_height;
+        ThinLens {
+            origin: self.look_from,
+            lens_radius: self.aperture / T::from(2).unwrap(),
+            w,
+            u,
+            v,
+            horizontal: u.map(|x| x * T::from(2).unwrap() * half_width * self.focus_distance),
+            vertical: v.map(|x| x * T::from(2).unwrap() * half_height * self.focus_distance),
+            lower_left: self.look_from
+                - u.map(|x| x * half_width * self.focus_distance)
+                - v.map(|x| x * half_height * self.focus_distance)
+                - w.map(|x| x * self.focus_distance),
+        }
     }
 }

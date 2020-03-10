@@ -109,9 +109,9 @@ where
             )
             .collect();
         let camera: Box<dyn Camera<T>> = match scene.camera {
-            SerializedCamera::Pinhole(x) => Box::new(x.init(aspect_ratio)),
             SerializedCamera::BasicPinhole(x) => Box::new(x),
-            SerializedCamera::ThinLens(x) => Box::new(x),
+            SerializedCamera::Pinhole(x) => Box::new(x.init(aspect_ratio)),
+            SerializedCamera::ThinLens(x) => Box::new(x.init(aspect_ratio)),
         };
         let integrator: Box<dyn Integrator<T>> = Box::new(scene.integrator);
         let accel = match scene.acceleration_structure {

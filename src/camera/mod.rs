@@ -29,5 +29,5 @@ pub trait Camera<T: GenFloat>: Debug + Send + Sync {
 pub enum SerializedCamera<T: GenFloat> {
     BasicPinhole(BasicPinhole<T>),
     Pinhole(Pinhole<T>),
-    ThinLens(ThinLens<T>),
+    ThinLens(thin_lens::ThinLensParameters<T>),
 }
