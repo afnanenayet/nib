@@ -12,6 +12,7 @@ use enum_dispatch::enum_dispatch;
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 
+mod bounding_box;
 mod sphere;
 
 pub use sphere::Sphere;
@@ -25,6 +26,23 @@ pub use sphere::Sphere;
 pub trait Hittable<T: GenFloat>: Debug + Send + Sync {
     /// A method that returns a hit record if the object was hit
     fn hit(&self, ray: &Ray<T>) -> Option<HitRecord<T>>;
+}
+
+/// An interface for an object that is used as part of an acceleration structure
+///
+/// This method is automatically implemented for any struct that implements `Hittable`. This
+/// differs from the `Hittable` trait in that these objects simply need to report whether they were
+/// hit or not, not the particular point where the ray intersects the object.
+pub trait AccelHittable<T: GenFloat>: Debug + Send + Sync {
+    fn hit(&self, ray: &Ray<T>, inverse_dir: Vector3<T>) -> bool;
+}
+
+impl<T: GenFloat> AccelHittable<T> for dyn Hittable<T> {
+    /// A blanket implementation of the `AccelHittable` trait for `Hittable` objects. It returns
+    /// whether there was some hit record returned. Otherwise it will return `false`.
+    fn hit(&self, ray: &Ray<T>, inverse_dir: Vector3<T>) -> bool {
+        self.hit(ray).is_some()
+    }
 }
 
 /// The different types of `Hittable` types that can be used as input objects

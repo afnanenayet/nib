@@ -3,6 +3,7 @@
 
 use cgmath::{BaseFloat, BaseNum, Vector3};
 use num;
+use num_derive::{FromPrimitive, ToPrimitive};
 use std::fmt::{Debug, Display};
 
 /// Generate a trait that is the sum of other trait bounds
@@ -50,4 +51,25 @@ pub const ETA: Float = 0.000001;
 /// will automatically convert it to whatever numeric type you want.
 pub fn eta<T: GenFloat>() -> T {
     T::from(ETA).unwrap()
+}
+
+/// A dimension in 3D space
+///
+/// This is a type safe way to pass a dimension around
+#[derive(FromPrimitive, ToPrimitive)]
+pub enum Dimension {
+    X = 0,
+    Y,
+    Z,
+}
+
+impl Iterator for Dimension {
+    type Item = Dimension;
+    fn next(&mut self) -> Option<Self::Item> {
+        match self {
+            Dimension::X => Some(Dimension::Y),
+            Dimension::Y => Some(Dimension::Z),
+            _ => None,
+        }
+    }
 }

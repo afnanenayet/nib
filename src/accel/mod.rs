@@ -3,6 +3,7 @@
 //! This module provides the generic interface for acceleration structures as well as
 //! implementations of various acceleration structures.
 
+mod bvh;
 mod list;
 
 pub use list::ObjectList;
