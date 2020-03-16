@@ -4,7 +4,10 @@
 use cgmath::{BaseFloat, BaseNum, Vector3};
 use num;
 use num_derive::{FromPrimitive, ToPrimitive};
-use std::fmt::{Debug, Display};
+use std::{
+    fmt::{Debug, Display},
+    slice::Iter,
+};
 
 /// Generate a trait that is the sum of other trait bounds
 ///
@@ -56,11 +59,32 @@ pub fn eta<T: GenFloat>() -> T {
 /// A dimension in 3D space
 ///
 /// This is a type safe way to pass a dimension around
-#[derive(FromPrimitive, ToPrimitive)]
+#[derive(Debug, FromPrimitive, ToPrimitive)]
 pub enum Dimension {
     X = 0,
     Y,
     Z,
+}
+
+impl Display for Dimension {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Dimension::X => f.write_str("X"),
+            Dimension::Y => f.write_str("Y"),
+            Dimension::Z => f.write_str("Z"),
+        }
+    }
+}
+
+impl Dimension {
+    /// Returns an iterator over the three dimensions
+    ///
+    /// This method returns an iterator over the elements in the `Dimension` enum
+    pub fn iterator() -> Iter<'static, Dimension> {
+        use Dimension::*;
+        static DIMENSIONS: [Dimension; 3] = [X, Y, Z];
+        DIMENSIONS.iter()
+    }
 }
 
 impl Iterator for Dimension {

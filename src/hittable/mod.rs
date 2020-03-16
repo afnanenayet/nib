@@ -24,7 +24,11 @@ pub use sphere::Sphere;
 /// outgoing ray.
 #[enum_dispatch(SerializedHittable)]
 pub trait Hittable<T: GenFloat>: Debug + Send + Sync {
-    /// A method that returns a hit record if the object was hit
+    /// A method that returns a hit record if the object was hit.
+    ///
+    /// If the element was hit, the method will return a `HitRecord` struct with the information of
+    /// where the object was hit, the distance, and the normal vector of the intersection from the
+    /// ray.
     fn hit(&self, ray: &Ray<T>) -> Option<HitRecord<T>>;
 }
 
@@ -34,13 +38,19 @@ pub trait Hittable<T: GenFloat>: Debug + Send + Sync {
 /// differs from the `Hittable` trait in that these objects simply need to report whether they were
 /// hit or not, not the particular point where the ray intersects the object.
 pub trait AccelHittable<T: GenFloat>: Debug + Send + Sync {
+    /// Whether the objcet was hit
+    ///
+    /// This method simply returns whether the object intersected with the ray. It requires the
+    /// incoming ray and the inverse direction of the ray as parameters. The inverse ray is
+    /// precomputed for efficiency, since it's a calculation that will be repeated for every
+    /// potential ray intersection.
     fn hit(&self, ray: &Ray<T>, inverse_dir: Vector3<T>) -> bool;
 }
 
 impl<T: GenFloat> AccelHittable<T> for dyn Hittable<T> {
     /// A blanket implementation of the `AccelHittable` trait for `Hittable` objects. It returns
     /// whether there was some hit record returned. Otherwise it will return `false`.
-    fn hit(&self, ray: &Ray<T>, inverse_dir: Vector3<T>) -> bool {
+    fn hit(&self, ray: &Ray<T>, _: Vector3<T>) -> bool {
         self.hit(ray).is_some()
     }
 }
