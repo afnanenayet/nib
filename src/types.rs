@@ -58,7 +58,16 @@ pub fn eta<T: GenFloat>() -> T {
 
 /// A dimension in 3D space
 ///
-/// This is a type safe way to pass a dimension around
+/// This is a type safe way to represent a dimension in the three-dimensional space. Through the
+/// use of the `num` derived traits, these dimensions can be converted to indices easily:
+///
+/// ```
+/// # use crate::types::Dimension;
+/// use num_traits::ToPrimitive;
+///
+/// let dimension = Dimension::X;
+/// let dim_u32 = dimension.to_u32().unwrap();
+/// ```
 #[derive(Debug, FromPrimitive, ToPrimitive)]
 pub enum Dimension {
     X = 0,

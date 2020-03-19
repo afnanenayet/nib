@@ -20,6 +20,7 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 /// An error associated with acceleration structures
 pub enum AccelError {
+    /// No objects were passed to the acceleration structure at initialization
     #[error("There must be at least one object passed to the constructor")]
     NoObjects,
 }
