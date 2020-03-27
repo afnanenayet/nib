@@ -13,8 +13,10 @@ use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 
 mod sphere;
+mod triangle;
 
 pub use sphere::Sphere;
+pub use triangle::Triangle;
 
 /// An interface for any object that can intersect with a ray coming from the camera
 ///
