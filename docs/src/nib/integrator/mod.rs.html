@@ -59,7 +59,7 @@
 <span class="doccomment">//! integrators that can be extended so that other integrators can be easily added.</span>
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">types</span>::<span class="ident">PixelValue</span>;
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">ray</span>::<span class="ident">Ray</span>, <span class="ident">sampler</span>::<span class="ident">Sampler</span>, <span class="ident">scene</span>::<span class="ident">ProcessedScene</span>, <span class="ident">types</span>::<span class="ident">GenFloat</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">ray</span>::<span class="ident">Ray</span>, <span class="ident">renderer</span>::<span class="ident">Renderer</span>, <span class="ident">sampler</span>::<span class="ident">Sampler</span>, <span class="ident">types</span>::<span class="ident">GenFloat</span>};
 <span class="kw">use</span> <span class="ident">enum_dispatch</span>::<span class="ident">enum_dispatch</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::<span class="ident">Debug</span>;
@@ -87,8 +87,8 @@
     <span class="doccomment">/// until the next collision, or go on forever.</span>
     <span class="kw">pub</span> <span class="ident">origin</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Ray</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 
-    <span class="doccomment">/// A reference to the scene</span>
-    <span class="kw">pub</span> <span class="ident">scene</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">ProcessedScene</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">T</span><span class="op">&gt;</span>,
+    <span class="doccomment">/// A reference to the renderer itself</span>
+    <span class="kw">pub</span> <span class="ident">context</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">Renderer</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">T</span><span class="op">&gt;</span>,
 
     <span class="doccomment">/// A reference to the sampler to use with the integrator</span>
     <span class="kw">pub</span> <span class="ident">sampler</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;c</span> <span class="kw-2">mut</span> <span class="kw">dyn</span> <span class="ident">Sampler</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,

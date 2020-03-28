@@ -177,9 +177,9 @@
         <span class="comment">// First, we check to see if the ray hit anything, if not, we return a black background.</span>
         <span class="comment">// TODO(afnan) change this to be more extensible, such as allowing for a gradient or</span>
         <span class="comment">// an environment map</span>
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">collision</span>) <span class="op">=</span> <span class="ident">params</span>.<span class="ident">scene</span>.<span class="ident">accel</span>.<span class="ident">collision</span>(<span class="kw-2">&amp;</span><span class="ident">params</span>.<span class="ident">origin</span>) {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">collision</span>) <span class="op">=</span> <span class="ident">params</span>.<span class="ident">context</span>.<span class="ident">accel</span>.<span class="ident">collision</span>(<span class="kw-2">&amp;</span><span class="ident">params</span>.<span class="ident">origin</span>) {
             <span class="kw">if</span> <span class="ident">depth</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">max_depth</span> {
-                <span class="kw">return</span> <span class="ident">params</span>.<span class="ident">scene</span>.<span class="ident">background</span>;
+                <span class="kw">return</span> <span class="ident">params</span>.<span class="ident">context</span>.<span class="ident">background</span>;
             }
             <span class="kw">let</span> <span class="ident">bsdf_record</span> <span class="op">=</span>
                 <span class="ident">collision</span>

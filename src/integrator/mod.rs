@@ -2,7 +2,7 @@
 //! integrators that can be extended so that other integrators can be easily added.
 
 use crate::types::PixelValue;
-use crate::{ray::Ray, sampler::Sampler, scene::ProcessedScene, types::GenFloat};
+use crate::{ray::Ray, renderer::Renderer, sampler::Sampler, types::GenFloat};
 use enum_dispatch::enum_dispatch;
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
@@ -30,8 +30,8 @@ pub struct RenderParams<'a, 'b, 'c, T: GenFloat> {
     /// until the next collision, or go on forever.
     pub origin: &'a Ray<T>,
 
-    /// A reference to the scene
-    pub scene: &'b ProcessedScene<'b, T>,
+    /// A reference to the renderer itself
+    pub context: &'b Renderer<'b, T>,
 
     /// A reference to the sampler to use with the integrator
     pub sampler: &'c mut dyn Sampler<T>,

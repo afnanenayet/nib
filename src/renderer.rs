@@ -4,29 +4,31 @@
 //! This acts as the main executor module to coordinate computation in the renderer.
 
 use crate::{
-    integrator::RenderParams,
+    accel::Accel,
+    camera,
+    integrator::{Integrator, RenderParams},
     sampler::{self, Sampler},
-    scene::ProcessedScene,
     types::{GenFloat, PixelValue},
 };
 use anyhow;
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
 
-/// The data a renderer requires to produce an image
+/// All of the information associated with the renderer required for generating an image from the
+/// scene
 ///
-/// The renderer struct stores data that the renderer requires to process the image. This struct
-/// also implements the methods necessary to produce an image.
+/// The `RendererContext` struct contains all of the information that an integrator needs to
+/// generate an image. This is generated from the input `Scene` struct that is primarily used for
+/// serializing and deserializing scene information from user input.
 #[derive(Debug)]
 pub struct Renderer<'a, T: GenFloat> {
-    /// A representation of the scene and lighting information
-    pub scene: ProcessedScene<'a, T>,
-
-    /// The width of the output image
-    pub width: u32,
-
-    /// The height of the output image
+    pub accel: Box<dyn Accel<T> + 'a>,
+    pub camera: Box<dyn camera::Camera<T> + 'a>,
+    pub background: PixelValue<T>,
+    pub samples_per_pixel: u32,
+    pub integrator: Box<dyn Integrator<T> + 'a>,
     pub height: u32,
+    pub width: u32,
 }
 
 impl<'a, T> Renderer<'a, T>
@@ -71,7 +73,7 @@ where
                     let mut sampler = sampler_generator();
                     let x = i % self.width;
                     let y = self.height - (i / self.width);
-                    let acc: PixelValue<T> = (0..self.scene.samples_per_pixel)
+                    let acc: PixelValue<T> = (0..self.samples_per_pixel)
                         .map(|_| {
                             let camera_samples = sampler.next(2).unwrap();
 
@@ -79,13 +81,13 @@ where
                                 / T::from(self.width).unwrap();
                             let v = (T::from(y).unwrap() + camera_samples[1])
                                 / T::from(self.height).unwrap();
-                            let ray = self.scene.camera.to_ray(u, v);
+                            let ray = self.camera.to_ray(u, v);
                             let params = RenderParams {
                                 origin: &ray,
-                                scene: &self.scene,
+                                context: &self,
                                 sampler: &mut sampler,
                             };
-                            let color = self.scene.integrator.render(params);
+                            let color = self.integrator.render(params);
                             color
                         })
                         .fold(
@@ -97,7 +99,7 @@ where
                             |acc, x| acc + x,
                         );
                     pb.inc(1);
-                    let spp = T::from(self.scene.samples_per_pixel).unwrap();
+                    let spp = T::from(self.samples_per_pixel).unwrap();
                     PixelValue::new(acc.x / spp, acc.y / spp, acc.z / spp)
                 },
             )

@@ -27,10 +27,4 @@ implementors["syn"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-
 implementors["tiff"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/std/error/trait.Error.html\" title=\"trait std::error::Error\">Error</a> for <a class=\"enum\" href=\"tiff/enum.TiffError.html\" title=\"enum tiff::TiffError\">TiffError</a>","synthetic":false,"types":["tiff::error::TiffError"]}];
 implementors["ucd_trie"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/std/error/trait.Error.html\" title=\"trait std::error::Error\">Error</a> for <a class=\"enum\" href=\"ucd_trie/enum.Error.html\" title=\"enum ucd_trie::Error\">Error</a>","synthetic":false,"types":["ucd_trie::owned::Error"]}];
 implementors["yaml_rust"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/std/error/trait.Error.html\" title=\"trait std::error::Error\">Error</a> for <a class=\"enum\" href=\"yaml_rust/emitter/enum.EmitError.html\" title=\"enum yaml_rust::emitter::EmitError\">EmitError</a>","synthetic":false,"types":["yaml_rust::emitter::EmitError"]},{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/std/error/trait.Error.html\" title=\"trait std::error::Error\">Error</a> for <a class=\"struct\" href=\"yaml_rust/scanner/struct.ScanError.html\" title=\"struct yaml_rust::scanner::ScanError\">ScanError</a>","synthetic":false,"types":["yaml_rust::scanner::ScanError"]}];
-
-            if (window.register_implementors) {
-                window.register_implementors(implementors);
-            } else {
-                window.pending_implementors = implementors;
-            }
-        })()
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

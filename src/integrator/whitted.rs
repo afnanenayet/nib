@@ -69,9 +69,9 @@ impl<T: GenFloat> Whitted<T> {
         // First, we check to see if the ray hit anything, if not, we return a black background.
         // TODO(afnan) change this to be more extensible, such as allowing for a gradient or
         // an environment map
-        if let Some(collision) = params.scene.accel.collision(&params.origin) {
+        if let Some(collision) = params.context.accel.collision(&params.origin) {
             if depth >= self.max_depth {
-                return params.scene.background;
+                return params.context.background;
             }
             let bsdf_record =
                 collision

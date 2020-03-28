@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["_IMPL_DESERIALIZE_FOR_AxisAlignedBoundingBox",""],["_IMPL_SERIALIZE_FOR_AxisAlignedBoundingBox",""]],"struct":[["AxisAlignedBoundingBox","The parameters for an axis aligned bounding box (AABB)"]]});

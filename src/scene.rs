@@ -4,11 +4,12 @@
 //! and the integrator.
 
 use crate::{
-    accel::{self, Accel},
-    camera::{self, Camera, SerializedCamera},
+    accel,
+    camera::{Camera, SerializedCamera},
     hittable::{Hittable, SerializedHittable, Textured},
     integrator::{Integrator, SerializedIntegrator},
     material::{SerializedMaterial, BSDF},
+    renderer::Renderer,
     types::{GenFloat, PixelValue},
 };
 use serde::{Deserialize, Serialize};
@@ -62,23 +63,7 @@ pub struct Scene<T: GenFloat> {
     pub width: u32,
 }
 
-/// A scene with objects, lighting information, and other configuration options for rendering
-///
-/// The `ProcessedScene` struct contains all of the information that an integrator needs to generate an
-/// image. This is generated from the input `Scene` struct that is primarily used for serializing
-/// and deserializing scene information from user input.
-#[derive(Debug)]
-pub struct ProcessedScene<'a, T: GenFloat> {
-    pub accel: Box<dyn Accel<T> + 'a>,
-    pub camera: Box<dyn camera::Camera<T> + 'a>,
-    pub background: PixelValue<T>,
-    pub samples_per_pixel: u32,
-    pub integrator: Box<dyn Integrator<T> + 'a>,
-    pub height: u32,
-    pub width: u32,
-}
-
-impl<'a, T> From<Scene<T>> for ProcessedScene<'a, T>
+impl<'a, T> From<Scene<T>> for Renderer<'a, T>
 where
     T: GenFloat + 'a,
 {
@@ -119,7 +104,7 @@ where
                 Box::new(accel::ObjectList::new(objects).unwrap())
             }
         };
-        ProcessedScene {
+        Renderer {
             camera,
             integrator,
             accel,
