@@ -5,6 +5,7 @@
 
 use crate::{
     hittable::{HitRecord, Hittable},
+    ray::Ray,
     types::{eta, GenFloat},
 };
 use cgmath::{InnerSpace, Vector3};
@@ -83,14 +84,14 @@ impl<T: GenFloat> TriangleParameters<T> {
     /// cross product of the two vectors.
     pub fn init(self) -> Triangle<T> {
         let a = self.vertices[2] - self.vertices[0];
-        let b = self.vertices[2] - self.vertices[0];
-        let normal = match self.handedness {
-            TriangleHandedness::Clockwise => a.cross(b).normalize(),
-            TriangleHandedness::CounterClockwise => b.cross(a).normalize(),
+        let b = self.vertices[1] - self.vertices[0];
+        let (normal, edges) = match self.handedness {
+            TriangleHandedness::Clockwise => (b.cross(a).normalize(), [b, a]),
+            TriangleHandedness::CounterClockwise => (a.cross(b).normalize(), [a, b]),
         };
         Triangle {
             vertices: self.vertices,
-            edges: [a, b],
+            edges,
             normal,
         }
     }
@@ -127,15 +128,17 @@ impl<T: GenFloat> Hittable<T> for Triangle<T> {
     ///
     /// This is an implementation of the [Moller-Trumbore algorithm]
     /// (http://webserver2.tecgraf.puc-rio.br/~mgattass/cg/trbRR/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf).
-    fn hit(&self, ray: &crate::ray::Ray<T>) -> Option<HitRecord<T>> {
+    fn hit(&self, ray: &Ray<T>) -> Option<HitRecord<T>> {
         // begin calculating the determinant
-        let p = ray.direction.cross(self.edges[1]);
-        let determinant = self.edges[0].dot(p);
+        // TODO remove the `dbg` macro calls
+        let p = dbg!(ray.direction.cross(self.edges[1]));
+        let determinant = dbg!(self.edges[0].dot(p));
 
         // This means that the ray and the plane that the triangle lies on are parallel. We exit
         // early because we know that there's no possible intersection, and also to avoid a
         // division by zero error.
         if determinant < eta() {
+            println!("determinant is less than `eta`, bailing");
             return None;
         }
 
@@ -174,5 +177,248 @@ impl<T: GenFloat> Hittable<T> for Triangle<T> {
             normal: self.normal,
             distance,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    struct TestCase<T: GenFloat> {
+        pub triangle: Triangle<T>,
+        pub ray: Ray<T>,
+        pub expected: Option<HitRecord<T>>,
+    }
+
+    /// A "fuzzy" equality test for `HitRecord`s
+    ///
+    /// Returns whether the difference between any components of two vectors or numbers is greater
+    /// than `eta`. This method also triggers assertions at each step so if a component is not
+    /// equal, the test will bail, showing you which component failed and its details.
+    fn fuzzy_eq<T: GenFloat>(expected: Option<HitRecord<T>>, actual: Option<HitRecord<T>>) {
+        if expected.is_none() {
+            assert!(actual.is_none());
+            return;
+        } else {
+            assert!(actual.is_some());
+        }
+        let a = expected.unwrap();
+        let b = actual.unwrap();
+
+        let p_a = a.p;
+        let p_b = b.p;
+        assert!((p_a.x - p_b.x).abs() < eta());
+        assert!((p_a.y - p_b.y).abs() < eta());
+        assert!((p_a.z - p_b.z).abs() < eta());
+
+        let n_a = a.normal;
+        let n_b = b.normal;
+        assert!((n_a.x - n_b.x).abs() < eta());
+        assert!((n_a.y - n_b.y).abs() < eta());
+        assert!((n_a.z - n_b.z).abs() < eta());
+
+        assert!((a.distance - b.distance).abs() < eta());
+    }
+
+    /// The ray is parallel to the triangle, which should not panic because of a division by zero,
+    /// and should not register as an intersection
+    #[test]
+    fn ray_parallel_to_triangle() {
+        let test_cases = vec![
+            TestCase {
+                triangle: TriangleParameters {
+                    vertices: [
+                        Vector3::new(0.0, 0.0, 0.0),
+                        Vector3::new(1.0, 0.0, 0.0),
+                        Vector3::new(0.0, 1.0, 0.0),
+                    ],
+                    handedness: TriangleHandedness::CounterClockwise,
+                }
+                .init(),
+                ray: Ray {
+                    origin: Vector3::new(-1.0, 0.5, 0.0),
+                    direction: Vector3::new(1.0, 0.0, 0.0),
+                },
+                expected: None,
+            },
+            TestCase {
+                triangle: TriangleParameters {
+                    vertices: [
+                        Vector3::new(0.0, 0.0, 0.0),
+                        Vector3::new(1.0, 0.0, 0.0),
+                        Vector3::new(0.0, 1.0, 0.0),
+                    ],
+                    handedness: TriangleHandedness::CounterClockwise,
+                }
+                .init(),
+                ray: Ray {
+                    origin: Vector3::new(2.0, 0.5, 0.0),
+                    direction: Vector3::new(-1.0, 0.0, 0.0),
+                },
+                expected: None,
+            },
+            TestCase {
+                triangle: TriangleParameters {
+                    vertices: [
+                        Vector3::new(0.0, 0.0, 0.0),
+                        Vector3::new(1.0, 0.0, 0.0),
+                        Vector3::new(0.0, 1.0, 0.0),
+                    ],
+                    handedness: TriangleHandedness::CounterClockwise,
+                }
+                .init(),
+                ray: Ray {
+                    origin: Vector3::new(0.5, 5.0, 0.0),
+                    direction: Vector3::new(0.0, -1.0, 0.0),
+                },
+                expected: None,
+            },
+        ];
+
+        for test_case in test_cases {
+            let result = test_case.triangle.hit(&test_case.ray);
+            fuzzy_eq(test_case.expected, result);
+        }
+    }
+
+    /// Case where the rays miss the triangle completely
+    #[test]
+    fn ray_misses_triangle() {
+        let test_cases = vec![
+            TestCase {
+                triangle: TriangleParameters {
+                    vertices: [
+                        Vector3::new(0.0, 0.0, 0.0),
+                        Vector3::new(1.0, 0.0, 0.0),
+                        Vector3::new(0.0, 1.0, 0.0),
+                    ],
+                    handedness: TriangleHandedness::CounterClockwise,
+                }
+                .init(),
+                ray: Ray {
+                    origin: Vector3::new(2.0, 2.5, 0.0),
+                    direction: Vector3::new(1.0, 0.0, 0.0),
+                },
+                expected: None,
+            },
+            TestCase {
+                triangle: TriangleParameters {
+                    vertices: [
+                        Vector3::new(0.0, 0.0, 0.0),
+                        Vector3::new(1.0, 0.0, 0.0),
+                        Vector3::new(0.0, 1.0, 0.0),
+                    ],
+                    handedness: TriangleHandedness::CounterClockwise,
+                }
+                .init(),
+                ray: Ray {
+                    origin: Vector3::new(2.0, 2.5, 100.0),
+                    direction: Vector3::new(1.0, 0.0, 1.0),
+                },
+                expected: None,
+            },
+        ];
+
+        for test_case in test_cases {
+            let result = test_case.triangle.hit(&test_case.ray);
+            fuzzy_eq(test_case.expected, result);
+        }
+    }
+
+    /// Case where the rays hit the triangle from behind. Since we've decided to enable culling,
+    /// rays that intersect the triangle from behind should not count as an intersection.
+    #[test]
+    fn ray_culling_triangle() {
+        let test_cases = vec![
+            TestCase {
+                triangle: TriangleParameters {
+                    vertices: [
+                        Vector3::new(0.0, 0.0, -1.0),
+                        Vector3::new(0.0, 3.0, -1.0),
+                        Vector3::new(3.0, 0.0, -1.0),
+                    ],
+                    handedness: TriangleHandedness::CounterClockwise,
+                }
+                .init(),
+                ray: Ray {
+                    origin: Vector3::new(1.0, 1.0, -2.0),
+                    direction: Vector3::new(0.0, 0.0, 1.0),
+                },
+                expected: None,
+            },
+            TestCase {
+                triangle: TriangleParameters {
+                    vertices: [
+                        Vector3::new(-1.0, 0.0, -1.0),
+                        Vector3::new(0.0, 2.0, -1.0),
+                        Vector3::new(1.0, 0.0, -1.0),
+                    ],
+                    handedness: TriangleHandedness::CounterClockwise,
+                }
+                .init(),
+                ray: Ray {
+                    origin: Vector3::new(0.0, 0.5, -2.0),
+                    direction: Vector3::new(0.0, 0.0, 1.0),
+                },
+                expected: None,
+            },
+        ];
+
+        for test_case in test_cases {
+            let result = test_case.triangle.hit(&test_case.ray);
+            fuzzy_eq(test_case.expected, result);
+        }
+    }
+
+    /// Basic case where the ray hits the triangle from the forward direction
+    #[test]
+    fn ray_intersects_triangle() {
+        let test_cases = vec![
+            TestCase {
+                triangle: TriangleParameters {
+                    vertices: [
+                        Vector3::new(0.0, 0.0, -1.0),
+                        Vector3::new(0.0, 3.0, -1.0),
+                        Vector3::new(3.0, 0.0, -1.0),
+                    ],
+                    handedness: TriangleHandedness::CounterClockwise,
+                }
+                .init(),
+                ray: Ray {
+                    origin: Vector3::new(1.0, 1.0, 0.0),
+                    direction: Vector3::new(0.0, 0.0, -1.0),
+                },
+                expected: Some(HitRecord {
+                    p: Vector3::new(1.0, 1.0, -1.0),
+                    distance: 1.0,
+                    normal: Vector3::new(0.0, 0.0, 1.0),
+                }),
+            },
+            TestCase {
+                triangle: TriangleParameters {
+                    vertices: [
+                        Vector3::new(-1.0, 0.0, -1.0),
+                        Vector3::new(0.0, 2.0, -1.0),
+                        Vector3::new(1.0, 0.0, -1.0),
+                    ],
+                    handedness: TriangleHandedness::CounterClockwise,
+                }
+                .init(),
+                ray: Ray {
+                    origin: Vector3::new(0.0, 0.5, 0.0),
+                    direction: Vector3::new(0.0, 0.0, -1.0),
+                },
+                expected: Some(HitRecord {
+                    p: Vector3::new(0.0, 0.5, -1.0),
+                    distance: 1.0,
+                    normal: Vector3::new(0.0, 0.0, 1.0),
+                }),
+            },
+        ];
+
+        for test_case in test_cases {
+            let result = test_case.triangle.hit(&test_case.ray);
+            fuzzy_eq(test_case.expected, result);
+        }
     }
 }
