@@ -67,6 +67,8 @@
 <span id="67">67</span>
 <span id="68">68</span>
 <span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! A module defining an interface for objects in a scene that a ray can intersect with</span>
 <span class="doccomment">//!</span>
@@ -83,8 +85,10 @@
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::<span class="ident">Debug</span>;
 
 <span class="kw">mod</span> <span class="ident">sphere</span>;
+<span class="kw">mod</span> <span class="ident">triangle</span>;
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sphere</span>::<span class="ident">Sphere</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">triangle</span>::<span class="ident">Triangle</span>;
 
 <span class="doccomment">/// An interface for any object that can intersect with a ray coming from the camera</span>
 <span class="doccomment">///</span>
