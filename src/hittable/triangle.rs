@@ -25,7 +25,7 @@ pub enum TriangleHandedness {
 ///
 /// These are the parameters for a triangle that may be input by a user. The initialization method
 /// will convert it into the `Triangle` struct, which can be used by the renderer at runtime.
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub struct TriangleParameters<T: GenFloat> {
     /// The coordinates defining the bounds of the triangle in real-world space
     pub vertices: [Vector3<T>; 3],

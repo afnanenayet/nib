@@ -80,6 +80,7 @@ where
                  }| {
                     let geometry: Box<dyn Hittable<T> + 'a> = match g {
                         SerializedHittable::Sphere(x) => Box::new(x.clone()),
+                        SerializedHittable::Triangle(x) => Box::new(x.init()),
                     };
                     let bsdf: Box<dyn BSDF<T> + 'a> = match m {
                         SerializedMaterial::Mirror(x) => Box::new(x.clone()),
