@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["_IMPL_DESERIALIZE_FOR_Dielectric",""],["_IMPL_SERIALIZE_FOR_Dielectric",""]],"fn":[["refract","Determine whether a ray will refract given the parameters"]],"struct":[["Dielectric","The BSDF model for a perfectly smooth dielectric material"]]});
+initSidebarItems({"fn":[["refract","Determine whether a ray will refract given the parameters"]],"struct":[["Dielectric","The BSDF model for a perfectly smooth dielectric material"]]});

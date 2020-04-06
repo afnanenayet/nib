@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/afnan/.cargo/registry/src/github.com-1ecc6299db9ec823/enum_dispatch-0.2.1/src/enum_dispatch_variant.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>enum_dispatch_variant.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="https://gitlab.com/antonok/enum_dispatch/raw/master/enum_dispatch.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../enum_dispatch/index.html'><div class='logo-container'><img src='https://gitlab.com/antonok/enum_dispatch/raw/master/enum_dispatch.svg' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1"> 1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/afnan/.cargo/registry/src/github.com-1ecc6299db9ec823/enum_dispatch-0.2.3/src/enum_dispatch_variant.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>enum_dispatch_variant.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="https://gitlab.com/antonok/enum_dispatch/raw/master/enum_dispatch.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../enum_dispatch/index.html'><div class='logo-container'><img src='https://gitlab.com/antonok/enum_dispatch/raw/master/enum_dispatch.svg' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1"> 1</span>
 <span id="2"> 2</span>
 <span id="3"> 3</span>
 <span id="4"> 4</span>
@@ -73,10 +73,6 @@
 <span id="73">73</span>
 <span id="74">74</span>
 <span id="75">75</span>
-<span id="76">76</span>
-<span id="77">77</span>
-<span id="78">78</span>
-<span id="79">79</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Provides an implementation of a `syn`- and `quote`-compatible syntax item describing a single</span>
 <span class="doccomment">//! variant for the shortened enum form used by `enum_dispatch`.</span>
@@ -87,9 +83,7 @@
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">iter</span>::<span class="ident">FromIterator</span>;
 
-<span class="kw">use</span> <span class="ident">syn</span>;
 <span class="kw">use</span> <span class="ident">quote</span>::<span class="ident">TokenStreamExt</span>;
-<span class="kw">use</span> <span class="ident">proc_macro2</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">filter_attrs</span>::<span class="ident">FilterAttrs</span>;
 
@@ -111,7 +105,9 @@
         } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">peek</span>(<span class="ident">syn</span>::<span class="ident">token</span>::<span class="ident">Paren</span>) {
             <span class="kw">let</span> <span class="ident">input</span>: <span class="ident">syn</span>::<span class="ident">FieldsUnnamed</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>;
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">fields</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">unnamed</span>.<span class="ident">iter</span>();
-            <span class="kw">let</span> <span class="ident">field_1</span> <span class="op">=</span> <span class="ident">fields</span>.<span class="ident">next</span>().<span class="ident">expect</span>(<span class="string">&quot;Named enum_dispatch variants must have one unnamed field&quot;</span>);
+            <span class="kw">let</span> <span class="ident">field_1</span> <span class="op">=</span> <span class="ident">fields</span>
+                .<span class="ident">next</span>()
+                .<span class="ident">expect</span>(<span class="string">&quot;Named enum_dispatch variants must have one unnamed field&quot;</span>);
             <span class="kw">if</span> <span class="ident">fields</span>.<span class="ident">next</span>().<span class="ident">is_some</span>() {
                 <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Named enum_dispatch variants can only have one unnamed field&quot;</span>);
             }
@@ -119,11 +115,7 @@
         } <span class="kw">else</span> {
             <span class="ident">into_type</span>(<span class="ident">ident</span>.<span class="ident">clone</span>())
         };
-        <span class="prelude-val">Ok</span>(<span class="ident">EnumDispatchVariant</span> {
-            <span class="ident">attrs</span>,
-            <span class="ident">ident</span>,
-            <span class="ident">ty</span>,
-        })
+        <span class="prelude-val">Ok</span>(<span class="ident">EnumDispatchVariant</span> { <span class="ident">attrs</span>, <span class="ident">ident</span>, <span class="ident">ty</span> })
     }
 }
 
@@ -151,10 +143,10 @@
             <span class="ident">leading_colon</span>: <span class="prelude-val">None</span>,
             <span class="ident">segments</span>: <span class="ident">syn</span>::<span class="ident">punctuated</span>::<span class="ident">Punctuated</span>::<span class="ident">from_iter</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">syn</span>::<span class="ident">PathSegment</span> {
                 <span class="ident">arguments</span>: <span class="ident">syn</span>::<span class="ident">PathArguments</span>::<span class="prelude-val">None</span>,
-                <span class="ident">ident</span>: <span class="ident">ident</span>.<span class="ident">to_owned</span>()
-            }])
+                <span class="ident">ident</span>,
+            }]),
         },
-        <span class="ident">qself</span>: <span class="prelude-val">None</span>
+        <span class="ident">qself</span>: <span class="prelude-val">None</span>,
     })
 }
 </pre></div>

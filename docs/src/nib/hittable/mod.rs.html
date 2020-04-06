@@ -68,7 +68,6 @@
 <span id="68">68</span>
 <span id="69">69</span>
 <span id="70">70</span>
-<span id="71">71</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! A module defining an interface for objects in a scene that a ray can intersect with</span>
 <span class="doccomment">//!</span>
@@ -95,7 +94,6 @@
 <span class="doccomment">/// NOTE: This method can be used with entire acceleration structures or individual geometric</span>
 <span class="doccomment">/// objects. It doesn&#39;t matter, as long as you have some way to resolve which object was hit by an</span>
 <span class="doccomment">/// outgoing ray.</span>
-<span class="attribute">#[<span class="ident">enum_dispatch</span>(<span class="ident">SerializedHittable</span>)]</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Hittable</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">GenFloat</span><span class="op">&gt;</span>: <span class="ident">Debug</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> {
     <span class="doccomment">/// A method that returns a hit record if the object was hit</span>
     <span class="kw">fn</span> <span class="ident">hit</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">ray</span>: <span class="kw-2">&amp;</span><span class="ident">Ray</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">HitRecord</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>;
@@ -105,10 +103,10 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// This is an enum type that exists for convenient use with serde, so we can create a serializable</span>
 <span class="doccomment">/// struct to expose as a scene description to the user.</span>
-<span class="attribute">#[<span class="ident">enum_dispatch</span>]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">SerializedHittable</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">GenFloat</span><span class="op">&gt;</span> {
     <span class="ident">Sphere</span>(<span class="ident">Sphere</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>),
+    <span class="ident">Triangle</span>(<span class="ident">triangle</span>::<span class="ident">TriangleParameters</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>),
 }
 
 <span class="doccomment">/// Information pertaining to a ray intersection</span>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/afnan/.cargo/registry/src/github.com-1ecc6299db9ec823/enum_dispatch-0.2.1/src/expansion.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>expansion.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="https://gitlab.com/antonok/enum_dispatch/raw/master/enum_dispatch.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../enum_dispatch/index.html'><div class='logo-container'><img src='https://gitlab.com/antonok/enum_dispatch/raw/master/enum_dispatch.svg' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/afnan/.cargo/registry/src/github.com-1ecc6299db9ec823/enum_dispatch-0.2.3/src/expansion.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>expansion.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="https://gitlab.com/antonok/enum_dispatch/raw/master/enum_dispatch.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../enum_dispatch/index.html'><div class='logo-container'><img src='https://gitlab.com/antonok/enum_dispatch/raw/master/enum_dispatch.svg' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -278,17 +278,38 @@
 <span id="278">278</span>
 <span id="279">279</span>
 <span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Provides a utility for generating `enum_dispatch` impl blocks given `EnumDispatchItem` and</span>
 <span class="doccomment">//! `syn::ItemTrait` definitions.</span>
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">proc_macro</span>;
-<span class="kw">use</span> <span class="ident">proc_macro2</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">cache</span>, <span class="ident">proc_macro</span>};
 <span class="kw">use</span> <span class="ident">quote</span>::{<span class="ident">quote</span>, <span class="ident">ToTokens</span>};
-<span class="kw">use</span> <span class="ident">syn</span>;
 <span class="kw">use</span> <span class="ident">syn</span>::<span class="ident">spanned</span>::<span class="ident">Spanned</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">enum_dispatch_item</span>::<span class="ident">EnumDispatchItem</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">enum_dispatch_variant</span>::<span class="ident">EnumDispatchVariant</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">syn_utils</span>::<span class="ident">plain_identifier_expr</span>;
 
 <span class="doccomment">/// Name bound to the single enum field in generated match statements. It doesn&#39;t really matter</span>
 <span class="doccomment">/// what this is, as long as it&#39;s consistent across the left and right sides of generated match</span>
@@ -304,7 +325,11 @@
     <span class="kw">let</span> <span class="ident">traitname</span> <span class="op">=</span> <span class="ident">traitdef</span>.<span class="ident">ident</span>;
     <span class="kw">let</span> <span class="ident">traitfns</span> <span class="op">=</span> <span class="ident">traitdef</span>.<span class="ident">items</span>;
 
-    <span class="kw">let</span> <span class="ident">generics</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">traitdef</span>.<span class="ident">generics</span>.<span class="ident">lt_token</span>.<span class="ident">is_some</span>() { <span class="kw-2">&amp;</span><span class="ident">traitdef</span>.<span class="ident">generics</span> } <span class="kw">else</span> { <span class="kw-2">&amp;</span><span class="ident">enum_def</span>.<span class="ident">generics</span> };
+    <span class="kw">let</span> <span class="ident">generics</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">traitdef</span>.<span class="ident">generics</span>.<span class="ident">lt_token</span>.<span class="ident">is_some</span>() {
+        <span class="kw-2">&amp;</span><span class="ident">traitdef</span>.<span class="ident">generics</span>
+    } <span class="kw">else</span> {
+        <span class="kw-2">&amp;</span><span class="ident">enum_def</span>.<span class="ident">generics</span>
+    };
     <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">enum_ty</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">traitdef</span>.<span class="ident">generics</span>.<span class="ident">split_for_impl</span>();
     <span class="kw">let</span> (<span class="ident">impl_generics</span>, <span class="ident">ty_generics</span>, <span class="ident">where_clause</span>) <span class="op">=</span> <span class="ident">generics</span>.<span class="ident">split_for_impl</span>();
     <span class="kw">let</span> <span class="ident">enumname</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">enum_def</span>.<span class="ident">ident</span>.<span class="ident">to_owned</span>();
@@ -320,21 +345,29 @@
     <span class="kw">let</span> <span class="ident">variants</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">EnumDispatchVariant</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">enum_def</span>.<span class="ident">variants</span>.<span class="ident">iter</span>().<span class="ident">collect</span>();
 
     <span class="kw">for</span> <span class="ident">trait_fn</span> <span class="kw">in</span> <span class="ident">traitfns</span> {
-        <span class="ident">trait_impl</span>
-            .<span class="ident">items</span>
-            .<span class="ident">push</span>(<span class="ident">create_trait_match</span>(<span class="ident">trait_fn</span>, <span class="kw-2">&amp;</span><span class="ident">enum_def</span>.<span class="ident">ident</span>, <span class="kw-2">&amp;</span><span class="ident">variants</span>));
+        <span class="ident">trait_impl</span>.<span class="ident">items</span>.<span class="ident">push</span>(<span class="ident">create_trait_match</span>(
+            <span class="ident">trait_fn</span>,
+            <span class="kw-2">&amp;</span><span class="ident">traitname</span>,
+            <span class="kw-2">&amp;</span><span class="ident">enum_def</span>.<span class="ident">ident</span>,
+            <span class="kw-2">&amp;</span><span class="ident">variants</span>,
+        ));
     }
-
-    <span class="kw">let</span> <span class="ident">from_impls</span> <span class="op">=</span> <span class="ident">generate_from_impls</span>(<span class="kw-2">&amp;</span><span class="ident">enum_def</span>.<span class="ident">ident</span>, <span class="kw-2">&amp;</span><span class="ident">variants</span>, <span class="kw-2">&amp;</span><span class="ident">generics</span>);
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">impls</span> <span class="op">=</span> <span class="ident">proc_macro2</span>::<span class="ident">TokenStream</span>::<span class="ident">new</span>();
-    <span class="kw">for</span> <span class="ident">from_impl</span> <span class="kw">in</span> <span class="ident">from_impls</span>.<span class="ident">iter</span>() {
-        <span class="ident">from_impl</span>.<span class="ident">to_tokens</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">impls</span>);
-    }
 
-    <span class="kw">let</span> <span class="ident">try_into_impls</span> <span class="op">=</span> <span class="ident">generate_try_into_impls</span>(<span class="kw-2">&amp;</span><span class="ident">enum_def</span>.<span class="ident">ident</span>, <span class="kw-2">&amp;</span><span class="ident">variants</span>, <span class="kw-2">&amp;</span><span class="ident">trait_impl</span>.<span class="ident">generics</span>);
-    <span class="kw">for</span> <span class="ident">try_into_impl</span> <span class="kw">in</span> <span class="ident">try_into_impls</span>.<span class="ident">iter</span>() {
-        <span class="ident">try_into_impl</span>.<span class="ident">to_tokens</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">impls</span>);
+    <span class="comment">// Only generate From impls once per enum_def</span>
+    <span class="kw">if</span> <span class="op">!</span><span class="ident">cache</span>::<span class="ident">conversion_impls_def_by_enum</span>(<span class="kw-2">&amp;</span><span class="ident">enum_def</span>.<span class="ident">ident</span>) {
+        <span class="kw">let</span> <span class="ident">from_impls</span> <span class="op">=</span> <span class="ident">generate_from_impls</span>(<span class="kw-2">&amp;</span><span class="ident">enum_def</span>.<span class="ident">ident</span>, <span class="kw-2">&amp;</span><span class="ident">variants</span>, <span class="kw-2">&amp;</span><span class="ident">generics</span>);
+        <span class="kw">for</span> <span class="ident">from_impl</span> <span class="kw">in</span> <span class="ident">from_impls</span>.<span class="ident">iter</span>() {
+            <span class="ident">from_impl</span>.<span class="ident">to_tokens</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">impls</span>);
+        }
+
+        <span class="kw">let</span> <span class="ident">try_into_impls</span> <span class="op">=</span>
+            <span class="ident">generate_try_into_impls</span>(<span class="kw-2">&amp;</span><span class="ident">enum_def</span>.<span class="ident">ident</span>, <span class="kw-2">&amp;</span><span class="ident">variants</span>, <span class="kw-2">&amp;</span><span class="ident">trait_impl</span>.<span class="ident">generics</span>);
+        <span class="kw">for</span> <span class="ident">try_into_impl</span> <span class="kw">in</span> <span class="ident">try_into_impls</span>.<span class="ident">iter</span>() {
+            <span class="ident">try_into_impl</span>.<span class="ident">to_tokens</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">impls</span>);
+        }
+        <span class="ident">cache</span>::<span class="ident">cache_enum_conversion_impls_defined</span>(<span class="ident">enum_def</span>.<span class="ident">ident</span>.<span class="ident">clone</span>());
     }
 
     <span class="ident">trait_impl</span>.<span class="ident">to_tokens</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">impls</span>);
@@ -342,7 +375,11 @@
 }
 
 <span class="doccomment">/// Generates impls of core::convert::From for each enum variant.</span>
-<span class="kw">fn</span> <span class="ident">generate_from_impls</span>(<span class="ident">enumname</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">Ident</span>, <span class="ident">enumvariants</span>: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="ident">EnumDispatchVariant</span>], <span class="ident">generics</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">Generics</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">syn</span>::<span class="ident">ItemImpl</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">generate_from_impls</span>(
+    <span class="ident">enumname</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">Ident</span>,
+    <span class="ident">enumvariants</span>: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="ident">EnumDispatchVariant</span>],
+    <span class="ident">generics</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">Generics</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">syn</span>::<span class="ident">ItemImpl</span><span class="op">&gt;</span> {
     <span class="kw">let</span> (<span class="ident">impl_generics</span>, <span class="ident">ty_generics</span>, <span class="ident">where_clause</span>) <span class="op">=</span> <span class="ident">generics</span>.<span class="ident">split_for_impl</span>();
     <span class="ident">enumvariants</span>
         .<span class="ident">iter</span>()
@@ -361,7 +398,11 @@
 }
 
 <span class="doccomment">/// Generates impls of core::convert::TryInto for each enum variant.</span>
-<span class="kw">fn</span> <span class="ident">generate_try_into_impls</span>(<span class="ident">enumname</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">Ident</span>, <span class="ident">enumvariants</span>: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="ident">EnumDispatchVariant</span>], <span class="ident">generics</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">Generics</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">syn</span>::<span class="ident">ItemImpl</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">generate_try_into_impls</span>(
+    <span class="ident">enumname</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">Ident</span>,
+    <span class="ident">enumvariants</span>: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="ident">EnumDispatchVariant</span>],
+    <span class="ident">generics</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">Generics</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">syn</span>::<span class="ident">ItemImpl</span><span class="op">&gt;</span> {
     <span class="kw">let</span> (<span class="ident">impl_generics</span>, <span class="ident">ty_generics</span>, <span class="ident">where_clause</span>) <span class="op">=</span> <span class="ident">generics</span>.<span class="ident">split_for_impl</span>();
     <span class="ident">enumvariants</span>
         .<span class="ident">iter</span>()
@@ -422,11 +463,15 @@
     <span class="kw">let</span> <span class="ident">new_args</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">syn</span>::<span class="ident">Ident</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">trait_args</span>
         .<span class="ident">iter</span>()
         .<span class="ident">filter_map</span>(<span class="op">|</span><span class="ident">arg</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">arg</span> {
-            <span class="ident">syn</span>::<span class="ident">FnArg</span>::<span class="ident">Receiver</span>(<span class="ident">syn</span>::<span class="ident">Receiver</span> { <span class="ident">reference</span>: <span class="prelude-val">Some</span>(<span class="kw">_</span>), .. }) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">syn</span>::<span class="ident">FnArg</span>::<span class="ident">Receiver</span>(<span class="ident">syn</span>::<span class="ident">Receiver</span> {
+                <span class="ident">reference</span>: <span class="prelude-val">Some</span>(<span class="kw">_</span>), ..
+            }) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="ident">method_type</span> <span class="op">=</span> <span class="ident">MethodType</span>::<span class="ident">ByReference</span>;
                 <span class="prelude-val">None</span>
             }
-            <span class="ident">syn</span>::<span class="ident">FnArg</span>::<span class="ident">Receiver</span>(<span class="ident">syn</span>::<span class="ident">Receiver</span> { <span class="ident">reference</span>: <span class="prelude-val">None</span>, .. }) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">syn</span>::<span class="ident">FnArg</span>::<span class="ident">Receiver</span>(<span class="ident">syn</span>::<span class="ident">Receiver</span> {
+                <span class="ident">reference</span>: <span class="prelude-val">None</span>, ..
+            }) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="ident">method_type</span> <span class="op">=</span> <span class="ident">MethodType</span>::<span class="ident">ByValue</span>;
                 <span class="prelude-val">None</span>
             }
@@ -437,7 +482,8 @@
                     <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Unsupported argument type&quot;</span>)
                 }
             }
-        }).<span class="ident">collect</span>();
+        })
+        .<span class="ident">collect</span>();
     <span class="kw">let</span> <span class="ident">args</span> <span class="op">=</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">args</span> <span class="op">=</span> <span class="ident">syn</span>::<span class="ident">punctuated</span>::<span class="ident">Punctuated</span>::<span class="ident">new</span>();
         <span class="ident">new_args</span>.<span class="ident">iter</span>().<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">arg</span><span class="op">|</span> {
@@ -450,9 +496,16 @@
 
 <span class="doccomment">/// Creates a method call that can be used in the match arms of all non-static method</span>
 <span class="doccomment">/// implementations.</span>
-<span class="kw">fn</span> <span class="ident">create_trait_fn_call</span>(<span class="ident">trait_method</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">TraitItemMethod</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">syn</span>::<span class="ident">ExprCall</span> {
+<span class="kw">fn</span> <span class="ident">create_trait_fn_call</span>(
+    <span class="ident">trait_method</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">TraitItemMethod</span>,
+    <span class="ident">trait_name</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">Ident</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">syn</span>::<span class="ident">ExprCall</span> {
     <span class="kw">let</span> <span class="ident">trait_args</span> <span class="op">=</span> <span class="ident">trait_method</span>.<span class="ident">to_owned</span>().<span class="ident">sig</span>.<span class="ident">inputs</span>;
-    <span class="kw">let</span> (<span class="ident">method_type</span>, <span class="ident">args</span>) <span class="op">=</span> <span class="ident">extract_fn_args</span>(<span class="ident">trait_args</span>);
+    <span class="kw">let</span> (<span class="ident">method_type</span>, <span class="kw-2">mut</span> <span class="ident">args</span>) <span class="op">=</span> <span class="ident">extract_fn_args</span>(<span class="ident">trait_args</span>);
+
+    <span class="comment">// Insert FIELDNAME at the beginning of the argument list for UCFS-style method calling</span>
+    <span class="kw">let</span> <span class="ident">explicit_self_arg</span> <span class="op">=</span> <span class="ident">syn</span>::<span class="ident">Ident</span>::<span class="ident">new</span>(<span class="ident">FIELDNAME</span>, <span class="ident">trait_method</span>.<span class="ident">span</span>());
+    <span class="ident">args</span>.<span class="ident">insert</span>(<span class="number">0</span>, <span class="ident">plain_identifier_expr</span>(<span class="ident">explicit_self_arg</span>));
 
     <span class="ident">syn</span>::<span class="ident">ExprCall</span> {
         <span class="ident">attrs</span>: <span class="macro">vec</span><span class="macro">!</span>[],
@@ -468,9 +521,8 @@
                     <span class="string">&quot;Static methods cannot be enum_dispatched (no self argument to match on)&quot;</span>
                 );
             } <span class="kw">else</span> {
-                <span class="kw">let</span> <span class="ident">fieldname</span> <span class="op">=</span> <span class="ident">syn</span>::<span class="ident">Ident</span>::<span class="ident">new</span>(<span class="ident">FIELDNAME</span>, <span class="ident">trait_method</span>.<span class="ident">span</span>());
                 <span class="kw">let</span> <span class="ident">trait_method_name</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">trait_method</span>.<span class="ident">sig</span>.<span class="ident">ident</span>;
-                <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">syn</span>::<span class="macro">parse_quote</span><span class="macro">!</span> { #<span class="ident">fieldname</span>.#<span class="ident">trait_method_name</span> })
+                <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">syn</span>::<span class="macro">parse_quote</span><span class="macro">!</span> { #<span class="ident">trait_name</span>::#<span class="ident">trait_method_name</span> })
             }
         },
         <span class="ident">paren_token</span>: <span class="ident">Default</span>::<span class="ident">default</span>(),
@@ -482,10 +534,11 @@
 <span class="doccomment">/// binding to their single field and calling the provided trait method on each.</span>
 <span class="kw">fn</span> <span class="ident">create_match_expr</span>(
     <span class="ident">trait_method</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">TraitItemMethod</span>,
+    <span class="ident">trait_name</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">Ident</span>,
     <span class="ident">enum_name</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">Ident</span>,
     <span class="ident">enumvariants</span>: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="ident">EnumDispatchVariant</span>],
 ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">syn</span>::<span class="ident">Expr</span> {
-    <span class="kw">let</span> <span class="ident">trait_fn_call</span> <span class="op">=</span> <span class="ident">create_trait_fn_call</span>(<span class="ident">trait_method</span>);
+    <span class="kw">let</span> <span class="ident">trait_fn_call</span> <span class="op">=</span> <span class="ident">create_trait_fn_call</span>(<span class="ident">trait_method</span>, <span class="ident">trait_name</span>);
 
     <span class="comment">// Creates a Vec containing a match arm for every enum variant</span>
     <span class="kw">let</span> <span class="ident">match_arms</span> <span class="op">=</span> <span class="ident">enumvariants</span>
@@ -503,27 +556,17 @@
                 <span class="ident">body</span>: <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">syn</span>::<span class="ident">Expr</span>::<span class="ident">from</span>(<span class="ident">trait_fn_call</span>.<span class="ident">to_owned</span>())),
                 <span class="ident">comma</span>: <span class="prelude-val">Some</span>(<span class="ident">Default</span>::<span class="ident">default</span>()),
             }
-        }).<span class="ident">collect</span>();
+        })
+        .<span class="ident">collect</span>();
 
     <span class="comment">// Creates the match expression</span>
     <span class="ident">syn</span>::<span class="ident">Expr</span>::<span class="ident">from</span>(<span class="ident">syn</span>::<span class="ident">ExprMatch</span> {
         <span class="ident">attrs</span>: <span class="macro">vec</span><span class="macro">!</span>[],
         <span class="ident">match_token</span>: <span class="ident">Default</span>::<span class="ident">default</span>(),
-        <span class="ident">expr</span>: <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">syn</span>::<span class="ident">Expr</span>::<span class="ident">from</span>(<span class="ident">syn</span>::<span class="ident">ExprPath</span> {
-            <span class="ident">attrs</span>: <span class="macro">vec</span><span class="macro">!</span>[],
-            <span class="ident">qself</span>: <span class="prelude-val">None</span>,
-            <span class="ident">path</span>: <span class="ident">syn</span>::<span class="ident">Path</span> {
-                <span class="ident">leading_colon</span>: <span class="prelude-val">None</span>,
-                <span class="ident">segments</span>: {
-                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">segments</span> <span class="op">=</span> <span class="ident">syn</span>::<span class="ident">punctuated</span>::<span class="ident">Punctuated</span>::<span class="ident">new</span>();
-                    <span class="ident">segments</span>.<span class="ident">push</span>(<span class="ident">syn</span>::<span class="ident">PathSegment</span> {
-                        <span class="ident">ident</span>: <span class="ident">syn</span>::<span class="ident">Ident</span>::<span class="ident">new</span>(<span class="string">&quot;self&quot;</span>, <span class="ident">syn</span>::<span class="ident">export</span>::<span class="ident">Span</span>::<span class="ident">call_site</span>()),
-                        <span class="ident">arguments</span>: <span class="ident">syn</span>::<span class="ident">PathArguments</span>::<span class="prelude-val">None</span>,
-                    });
-                    <span class="ident">segments</span>
-                },
-            },
-        })),
+        <span class="ident">expr</span>: <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">plain_identifier_expr</span>(<span class="ident">syn</span>::<span class="ident">Ident</span>::<span class="ident">new</span>(
+            <span class="string">&quot;self&quot;</span>,
+            <span class="ident">syn</span>::<span class="ident">export</span>::<span class="ident">Span</span>::<span class="ident">call_site</span>(),
+        ))),
         <span class="ident">brace_token</span>: <span class="ident">Default</span>::<span class="ident">default</span>(),
         <span class="ident">arms</span>: <span class="ident">match_arms</span>,
     })
@@ -532,12 +575,13 @@
 <span class="doccomment">/// Builds an implementation of the given trait function for the given enum type.</span>
 <span class="kw">fn</span> <span class="ident">create_trait_match</span>(
     <span class="ident">trait_item</span>: <span class="ident">syn</span>::<span class="ident">TraitItem</span>,
+    <span class="ident">trait_name</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">Ident</span>,
     <span class="ident">enum_name</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">Ident</span>,
     <span class="ident">enumvariants</span>: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="ident">EnumDispatchVariant</span>],
 ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">syn</span>::<span class="ident">ImplItem</span> {
     <span class="kw">match</span> <span class="ident">trait_item</span> {
         <span class="ident">syn</span>::<span class="ident">TraitItem</span>::<span class="ident">Method</span>(<span class="ident">trait_method</span>) <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="kw">let</span> <span class="ident">match_expr</span> <span class="op">=</span> <span class="ident">create_match_expr</span>(<span class="kw-2">&amp;</span><span class="ident">trait_method</span>, <span class="ident">enum_name</span>, <span class="ident">enumvariants</span>);
+            <span class="kw">let</span> <span class="ident">match_expr</span> <span class="op">=</span> <span class="ident">create_match_expr</span>(<span class="kw-2">&amp;</span><span class="ident">trait_method</span>, <span class="ident">trait_name</span>, <span class="ident">enum_name</span>, <span class="ident">enumvariants</span>);
 
             <span class="ident">syn</span>::<span class="ident">ImplItem</span>::<span class="ident">Method</span>(<span class="ident">syn</span>::<span class="ident">ImplItemMethod</span> {
                 <span class="ident">attrs</span>: <span class="macro">vec</span><span class="macro">!</span>[<span class="ident">syn</span>::<span class="ident">Attribute</span> {

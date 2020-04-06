@@ -450,7 +450,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// These are the parameters for a triangle that may be input by a user. The initialization method</span>
 <span class="doccomment">/// will convert it into the `Triangle` struct, which can be used by the renderer at runtime.</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">TriangleParameters</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">GenFloat</span><span class="op">&gt;</span> {
     <span class="doccomment">/// The coordinates defining the bounds of the triangle in real-world space</span>
     <span class="kw">pub</span> <span class="ident">vertices</span>: [<span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>; <span class="number">3</span>],

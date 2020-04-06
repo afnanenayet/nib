@@ -115,6 +115,7 @@
 <span id="115">115</span>
 <span id="116">116</span>
 <span id="117">117</span>
+<span id="118">118</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! A module providing definitions and methods for a scene. A scene contains most of the relevant</span>
 <span class="doccomment">//! information for an integrator, and it provides information such as lights, geometric objects,</span>
@@ -198,6 +199,7 @@
                  }<span class="op">|</span> {
                     <span class="kw">let</span> <span class="ident">geometry</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Hittable</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">g</span> {
                         <span class="ident">SerializedHittable</span>::<span class="ident">Sphere</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">x</span>.<span class="ident">clone</span>()),
+                        <span class="ident">SerializedHittable</span>::<span class="ident">Triangle</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">x</span>.<span class="ident">init</span>()),
                     };
                     <span class="kw">let</span> <span class="ident">bsdf</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">BSDF</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">m</span> {
                         <span class="ident">SerializedMaterial</span>::<span class="ident">Mirror</span>(<span class="ident">x</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">x</span>.<span class="ident">clone</span>()),
