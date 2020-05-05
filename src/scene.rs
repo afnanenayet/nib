@@ -4,25 +4,15 @@
 //! and the integrator.
 
 use crate::{
-    accel::{self, Accel},
-    camera::{self, Camera, SerializedCamera},
-    hittable::{self, Hittable, Textured},
+    accel,
+    camera::{Camera, SerializedCamera},
+    hittable::{Hittable, SerializedHittable, Textured},
     integrator::{Integrator, SerializedIntegrator},
     material::{SerializedMaterial, BSDF},
+    renderer::Renderer,
     types::{GenFloat, PixelValue},
 };
-use enum_dispatch::enum_dispatch;
 use serde::{Deserialize, Serialize};
-
-/// The different types of `Hittable` types that can be used as input objects
-///
-/// This is an enum type that exists for convenient use with serde, so we can create a serializable
-/// struct to expose as a scene description to the user.
-#[enum_dispatch]
-#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
-pub enum SerializedHittable<T: GenFloat> {
-    Sphere(hittable::Sphere<T>),
-}
 
 /// The different types of acceleration structures that can be used in the scene description
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
@@ -73,23 +63,7 @@ pub struct Scene<T: GenFloat> {
     pub width: u32,
 }
 
-/// A scene with objects, lighting information, and other configuration options for rendering
-///
-/// The `ProcessedScene` struct contains all of the information that an integrator needs to generate an
-/// image. This is generated from the input `Scene` struct that is primarily used for serializing
-/// and deserializing scene information from user input.
-#[derive(Debug)]
-pub struct ProcessedScene<'a, T: GenFloat> {
-    pub accel: Box<dyn Accel<T> + 'a>,
-    pub camera: Box<dyn camera::Camera<T> + 'a>,
-    pub background: PixelValue<T>,
-    pub samples_per_pixel: u32,
-    pub integrator: Box<dyn Integrator<T> + 'a>,
-    pub height: u32,
-    pub width: u32,
-}
-
-impl<'a, T> From<Scene<T>> for ProcessedScene<'a, T>
+impl<'a, T> From<Scene<T>> for Renderer<'a, T>
 where
     T: GenFloat + 'a,
 {
@@ -106,6 +80,7 @@ where
                  }| {
                     let geometry: Box<dyn Hittable<T> + 'a> = match g {
                         SerializedHittable::Sphere(x) => Box::new(x.clone()),
+                        SerializedHittable::Triangle(x) => Box::new(x.init()),
                     };
                     let bsdf: Box<dyn BSDF<T> + 'a> = match m {
                         SerializedMaterial::Mirror(x) => Box::new(x.clone()),
@@ -120,18 +95,20 @@ where
             )
             .collect();
         let camera: Box<dyn Camera<T>> = match scene.camera {
-            SerializedCamera::BasicPinhole(x) => Box::new(x),
             SerializedCamera::Pinhole(x) => Box::new(x.init(aspect_ratio)),
+            SerializedCamera::BasicPinhole(x) => Box::new(x),
             SerializedCamera::ThinLens(x) => Box::new(x),
         };
-        let integrator: Box<dyn Integrator<T>> = match scene.integrator {
-            SerializedIntegrator::Normal(x) => Box::new(x),
-            SerializedIntegrator::Whitted(x) => Box::new(x),
+        let integrator: Box<dyn Integrator<T>> = Box::new(scene.integrator);
+        let accel = match scene.acceleration_structure {
+            SerializedAccelerationStruct::ObjectList => {
+                Box::new(accel::ObjectList::new(objects).unwrap())
+            }
         };
-        ProcessedScene {
+        Renderer {
             camera,
             integrator,
-            accel: Box::new(accel::ObjectList::new(objects).unwrap()),
+            accel,
             background: scene.background,
             samples_per_pixel: scene.samples_per_pixel,
             height: scene.height,

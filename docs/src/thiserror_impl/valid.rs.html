@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/afnan/.cargo/registry/src/github.com-1ecc6299db9ec823/thiserror-impl-1.0.11/src/valid.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>valid.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../thiserror_impl/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/afnan/.cargo/registry/src/github.com-1ecc6299db9ec823/thiserror-impl-1.0.14/src/valid.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>valid.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../thiserror_impl/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -191,12 +191,39 @@
 <span id="191">191</span>
 <span id="192">192</span>
 <span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ast</span>::{<span class="ident">Enum</span>, <span class="ident">Field</span>, <span class="ident">Input</span>, <span class="ident">Struct</span>, <span class="ident">Variant</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">attr</span>::<span class="ident">Attrs</span>;
 <span class="kw">use</span> <span class="ident">quote</span>::<span class="ident">ToTokens</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">BTreeSet</span> <span class="kw">as</span> <span class="ident">Set</span>;
-<span class="kw">use</span> <span class="ident">syn</span>::{<span class="ident">Error</span>, <span class="ident">Member</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="ident">syn</span>::{<span class="ident">Error</span>, <span class="ident">GenericArgument</span>, <span class="ident">Member</span>, <span class="ident">PathArguments</span>, <span class="prelude-ty">Result</span>, <span class="ident">Type</span>};
 
 <span class="kw">impl</span> <span class="ident">Input</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">validate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
@@ -375,6 +402,14 @@
             ));
         }
     }
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">source_field</span>) <span class="op">=</span> <span class="ident">source_field</span>.<span class="ident">or</span>(<span class="ident">from_field</span>) {
+        <span class="kw">if</span> <span class="ident">contains_non_static_lifetime</span>(<span class="ident">source_field</span>) {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new_spanned</span>(
+                <span class="ident">source_field</span>.<span class="ident">original</span>,
+                <span class="string">&quot;non-static lifetimes are not allowed in the source of an error&quot;</span>,
+            ));
+        }
+    }
     <span class="prelude-val">Ok</span>(())
 }
 
@@ -384,6 +419,25 @@
         (<span class="ident">Member</span>::<span class="ident">Unnamed</span>(<span class="ident">one</span>), <span class="ident">Member</span>::<span class="ident">Unnamed</span>(<span class="ident">two</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">one</span>.<span class="ident">index</span> <span class="op">=</span><span class="op">=</span> <span class="ident">two</span>.<span class="ident">index</span>,
         <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
     }
+}
+
+<span class="kw">fn</span> <span class="ident">contains_non_static_lifetime</span>(<span class="ident">field</span>: <span class="kw-2">&amp;</span><span class="ident">Field</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">field</span>.<span class="ident">ty</span> {
+        <span class="ident">Type</span>::<span class="ident">Path</span>(<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ty</span>,
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="bool-val">false</span>, <span class="comment">// maybe implement later if there are common other cases</span>
+    };
+    <span class="kw">let</span> <span class="ident">bracketed</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">ty</span>.<span class="ident">path</span>.<span class="ident">segments</span>.<span class="ident">last</span>().<span class="ident">unwrap</span>().<span class="ident">arguments</span> {
+        <span class="ident">PathArguments</span>::<span class="ident">AngleBracketed</span>(<span class="ident">bracketed</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">bracketed</span>,
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="bool-val">false</span>,
+    };
+    <span class="kw">for</span> <span class="ident">arg</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">bracketed</span>.<span class="ident">args</span> {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">GenericArgument</span>::<span class="ident">Lifetime</span>(<span class="ident">lifetime</span>) <span class="op">=</span> <span class="ident">arg</span> {
+            <span class="kw">if</span> <span class="ident">lifetime</span>.<span class="ident">ident</span> <span class="op">!</span><span class="op">=</span> <span class="string">&quot;static&quot;</span> {
+                <span class="kw">return</span> <span class="bool-val">true</span>;
+            }
+        }
+    }
+    <span class="bool-val">false</span>
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "thiserror_impl";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

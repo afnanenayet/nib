@@ -69,7 +69,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">GenFloat</span><span class="op">&gt;</span> <span class="ident">Integrator</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Normal</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">render</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">params</span>: <span class="ident">RenderParams</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">PixelValue</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">accel_record</span>) <span class="op">=</span> <span class="ident">params</span>.<span class="ident">scene</span>.<span class="ident">accel</span>.<span class="ident">collision</span>(<span class="ident">params</span>.<span class="ident">origin</span>) {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">accel_record</span>) <span class="op">=</span> <span class="ident">params</span>.<span class="ident">context</span>.<span class="ident">accel</span>.<span class="ident">collision</span>(<span class="ident">params</span>.<span class="ident">origin</span>) {
             <span class="kw">let</span> <span class="ident">normal</span> <span class="op">=</span> <span class="ident">accel_record</span>.<span class="ident">hit_record</span>.<span class="ident">normal</span>;
             <span class="comment">// Normals can range from -1 to 1, and we need to change that window to [0, 1]. We use</span>
             <span class="comment">// the simple formula x&#39; = (0.5 * x) + 0.5</span>
@@ -78,7 +78,7 @@
             <span class="kw">let</span> <span class="ident">z</span> <span class="op">=</span> (<span class="ident">normal</span>.<span class="ident">z</span> <span class="op">*</span> <span class="ident">T</span>::<span class="ident">from</span>(<span class="number">0.5</span>).<span class="ident">unwrap</span>()) <span class="op">+</span> <span class="ident">T</span>::<span class="ident">from</span>(<span class="number">0.5</span>).<span class="ident">unwrap</span>();
             <span class="kw">return</span> <span class="ident">PixelValue</span>::<span class="ident">new</span>(<span class="ident">x</span>, <span class="ident">y</span>, <span class="ident">z</span>);
         }
-        <span class="ident">params</span>.<span class="ident">scene</span>.<span class="ident">background</span>
+        <span class="ident">params</span>.<span class="ident">context</span>.<span class="ident">background</span>
     }
 }
 </pre></div>

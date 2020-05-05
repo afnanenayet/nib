@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/afnan/.cargo/registry/src/github.com-1ecc6299db9ec823/enum_dispatch-0.2.1/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="https://gitlab.com/antonok/enum_dispatch/raw/master/enum_dispatch.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../enum_dispatch/index.html'><div class='logo-container'><img src='https://gitlab.com/antonok/enum_dispatch/raw/master/enum_dispatch.svg' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/afnan/.cargo/registry/src/github.com-1ecc6299db9ec823/enum_dispatch-0.2.3/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="https://gitlab.com/antonok/enum_dispatch/raw/master/enum_dispatch.svg"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../enum_dispatch/index.html'><div class='logo-container'><img src='https://gitlab.com/antonok/enum_dispatch/raw/master/enum_dispatch.svg' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -404,6 +404,11 @@
 <span id="404">404</span>
 <span id="405">405</span>
 <span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! `enum_dispatch` provides a set of macros that can be used to easily refactor dynamically</span>
 <span class="doccomment">//! dispatched trait accesses to improve their performance by up to 10x.</span>
@@ -721,15 +726,12 @@
 
 <span class="attribute">#![<span class="ident">doc</span>(
     <span class="ident">html_logo_url</span> <span class="op">=</span> <span class="string">&quot;https://gitlab.com/antonok/enum_dispatch/raw/master/enum_dispatch.svg&quot;</span>,
-    <span class="ident">html_favicon_url</span> <span class="op">=</span> <span class="string">&quot;https://gitlab.com/antonok/enum_dispatch/raw/master/enum_dispatch.svg&quot;</span>,
+    <span class="ident">html_favicon_url</span> <span class="op">=</span> <span class="string">&quot;https://gitlab.com/antonok/enum_dispatch/raw/master/enum_dispatch.svg&quot;</span>
 )]</span>
 
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">proc_macro</span>;
 
-<span class="kw">use</span> <span class="ident">proc_macro</span>::{
-    <span class="ident">TokenStream</span>,
-    <span class="ident">TokenTree</span>
-};
+<span class="kw">use</span> <span class="ident">proc_macro</span>::{<span class="ident">TokenStream</span>, <span class="ident">TokenTree</span>};
 <span class="kw">use</span> <span class="ident">quote</span>::{<span class="ident">ToTokens</span>, <span class="ident">TokenStreamExt</span>};
 
 <span class="doccomment">/// Used for converting a macro input into an ItemTrait or an EnumDispatchItem.</span>
@@ -744,6 +746,8 @@
 <span class="kw">mod</span> <span class="ident">expansion</span>;
 <span class="doccomment">/// Convenience trait for token parsing.</span>
 <span class="kw">mod</span> <span class="ident">filter_attrs</span>;
+<span class="doccomment">/// Convenience methods for constructing `syn` types.</span>
+<span class="kw">mod</span> <span class="ident">syn_utils</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">expansion</span>::<span class="ident">add_enum_impls</span>;
 
@@ -769,7 +773,9 @@
         }
         <span class="ident">attributed_parser</span>::<span class="ident">ParsedItem</span>::<span class="ident">EnumDispatch</span>(<span class="ident">enumdef</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">cache</span>::<span class="ident">cache_enum_dispatch</span>(<span class="ident">enumdef</span>.<span class="ident">clone</span>());
-            <span class="ident">syn</span>::<span class="ident">ItemEnum</span>::<span class="ident">from</span>(<span class="ident">enumdef</span>.<span class="ident">to_owned</span>()).<span class="ident">into_token_stream</span>().<span class="ident">into</span>()
+            <span class="ident">syn</span>::<span class="ident">ItemEnum</span>::<span class="ident">from</span>(<span class="ident">enumdef</span>.<span class="ident">to_owned</span>())
+                .<span class="ident">into_token_stream</span>()
+                .<span class="ident">into</span>()
         }
     };
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">expanded</span> <span class="op">=</span> <span class="ident">proc_macro2</span>::<span class="ident">TokenStream</span>::<span class="ident">from</span>(<span class="ident">expanded</span>);
@@ -788,26 +794,30 @@
             <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Too many arguments to enum_dispatch&quot;</span>);
         }
         <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">new_block</span> {
-            <span class="ident">attributed_parser</span>::<span class="ident">ParsedItem</span>::<span class="ident">Trait</span>(<span class="ident">traitdef</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">cache</span>::<span class="ident">defer_link</span>(<span class="kw-2">&amp;</span><span class="ident">attr_name</span>, <span class="kw-2">&amp;</span><span class="ident">traitdef</span>.<span class="ident">ident</span>),
-            <span class="ident">attributed_parser</span>::<span class="ident">ParsedItem</span>::<span class="ident">EnumDispatch</span>(<span class="ident">enumdef</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">cache</span>::<span class="ident">defer_link</span>(<span class="kw-2">&amp;</span><span class="ident">attr_name</span>, <span class="kw-2">&amp;</span><span class="ident">enumdef</span>.<span class="ident">ident</span>),
+            <span class="ident">attributed_parser</span>::<span class="ident">ParsedItem</span>::<span class="ident">Trait</span>(<span class="ident">traitdef</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">cache</span>::<span class="ident">defer_link</span>(<span class="kw-2">&amp;</span><span class="ident">attr_name</span>, <span class="kw-2">&amp;</span><span class="ident">traitdef</span>.<span class="ident">ident</span>)
+            }
+            <span class="ident">attributed_parser</span>::<span class="ident">ParsedItem</span>::<span class="ident">EnumDispatch</span>(<span class="ident">enumdef</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">cache</span>::<span class="ident">defer_link</span>(<span class="kw-2">&amp;</span><span class="ident">attr_name</span>, <span class="kw-2">&amp;</span><span class="ident">enumdef</span>.<span class="ident">ident</span>)
+            }
         }
     };
     <span class="comment">// It would be much simpler to just always retrieve both definitions from the cache.</span>
     <span class="comment">// However, span information is not stored in the cache. Saving the newly retrieved</span>
     <span class="comment">// definition prevents *all* of the span information from being lost.</span>
-    <span class="kw">match</span> <span class="ident">new_block</span>.<span class="ident">clone</span>() {
+    <span class="kw">match</span> <span class="ident">new_block</span> {
         <span class="ident">attributed_parser</span>::<span class="ident">ParsedItem</span>::<span class="ident">Trait</span>(<span class="ident">traitdef</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">let</span> <span class="ident">additional_enums</span> <span class="op">=</span> <span class="ident">cache</span>::<span class="ident">fulfilled_by_trait</span>(<span class="kw-2">&amp;</span><span class="ident">traitdef</span>.<span class="ident">ident</span>);
             <span class="kw">for</span> <span class="ident">enumdef</span> <span class="kw">in</span> <span class="ident">additional_enums</span> {
                 <span class="ident">expanded</span>.<span class="ident">append_all</span>(<span class="ident">add_enum_impls</span>(<span class="ident">enumdef</span>, <span class="ident">traitdef</span>.<span class="ident">clone</span>()));
             }
-        },
+        }
         <span class="ident">attributed_parser</span>::<span class="ident">ParsedItem</span>::<span class="ident">EnumDispatch</span>(<span class="ident">enumdef</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">let</span> <span class="ident">additional_traits</span> <span class="op">=</span> <span class="ident">cache</span>::<span class="ident">fulfilled_by_enum</span>(<span class="kw-2">&amp;</span><span class="ident">enumdef</span>.<span class="ident">ident</span>);
             <span class="kw">for</span> <span class="ident">traitdef</span> <span class="kw">in</span> <span class="ident">additional_traits</span> {
                 <span class="ident">expanded</span>.<span class="ident">append_all</span>(<span class="ident">add_enum_impls</span>(<span class="ident">enumdef</span>.<span class="ident">clone</span>(), <span class="ident">traitdef</span>));
             }
-        },
+        }
     }
     <span class="ident">expanded</span>.<span class="ident">into</span>()
 }

@@ -1,1 +1,1 @@
-initSidebarItems({"constant":[["_IMPL_DESERIALIZE_FOR_ThinLens",""],["_IMPL_SERIALIZE_FOR_ThinLens",""]],"struct":[["ThinLens","A thin lens camera model"]]});
+initSidebarItems({"struct":[["ThinLens","A thin lens camera model"]]});
