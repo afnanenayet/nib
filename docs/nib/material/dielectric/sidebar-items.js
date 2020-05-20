@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["refract","Determine whether a ray will refract given the parameters"]],"struct":[["Dielectric","The BSDF model for a perfectly smooth dielectric material"]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Ray","A standard ray with an origin point and a directional vector"]]});
