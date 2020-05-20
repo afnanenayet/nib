@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["BasicPinhole","The classic pinhole camera"],["Pinhole","A pinhole camera, much like `BasicPinhole`, that allows you to specify the aspect ratio and the field of view."]]});

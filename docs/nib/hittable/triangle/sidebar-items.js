@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["TriangleHandedness","The \"handedness\" of the coordinate system used to define the triangle"]],"fn":[["default_handedness","A helper method for serde to infer the default handedness of a triangle"]],"struct":[["Triangle","A geometric triangle"],["TriangleParameters","A geometric triangle"]]});

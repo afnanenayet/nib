@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["default_phantom","A helper method to supply phantom data by default"]],"struct":[["Whitted","The parameters for the Whitted integrator"]]});
