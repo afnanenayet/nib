@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["set_threads","Set the number of threads in the global threadpool"]],"struct":[["Renderer","All of the information associated with the renderer required for generating an image from the scene"]]});

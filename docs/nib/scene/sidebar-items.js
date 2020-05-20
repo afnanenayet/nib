@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["SerializedAccelerationStruct","The different types of acceleration structures that can be used in the scene description"]],"struct":[["Scene","A struct representing the scene description as the user will input it"],["SerializedTextured","A serializable wrapper for the"]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Normal","The parameters for the `Normal` integrator"]]});
