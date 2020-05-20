@@ -27,7 +27,7 @@ jobs:
         components: rustfmt, rust-src
 
     - name: Build Documentation
-      run: cargo doc --all --no-deps
+      run: cargo doc --all --no-deps; echo "<head><meta http-equiv='refresh' content='0;URL=https://afnan.io/nib/nib/index.html'></head>" > index.html
 
     - name: Deploy Docs
       uses: peaceiris/actions-gh-pages@8457ade3d7045b4842e5a10f733d4153b7d05238 # v3.6.1
