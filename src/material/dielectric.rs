@@ -21,6 +21,30 @@ use serde::{Deserialize, Serialize};
 pub struct Dielectric<T: GenFloat> {
     /// The refraction index of the material
     pub refraction_index: T,
+
+    /// The fraction of light absorbed in each color channel
+    ///
+    /// This is just the color/tint of the material. The default value for this is `[1.0, 1.0,
+    /// 1.0]`
+    #[serde(default = "default_albedo")]
+    pub albedo: Vector3<T>,
+}
+
+/// The default provider for `albedo` in `Dielectric`
+///
+/// This is the default value provider for serde so elements can deserialize a struct without
+/// support for this
+fn default_albedo<T: GenFloat>() -> Vector3<T> {
+    Vector3::from([T::from(1).unwrap(); 3])
+}
+
+impl<T: GenFloat> Default for Dielectric<T> {
+    fn default() -> Self {
+        Self {
+            refraction_index: T::from(1.0).unwrap(),
+            albedo: default_albedo(),
+        }
+    }
 }
 
 /// Determine whether a ray will refract given the parameters
