@@ -6,7 +6,7 @@
 use crate::{
     accel,
     camera::{Camera, SerializedCamera},
-    hittable::{Hittable, SerializedHittable, Textured},
+    hittable::{Hittable, SerializedHittable, SerializedTextured, Textured},
     integrator::{Integrator, SerializedIntegrator},
     material::{SerializedMaterial, BSDF},
     renderer::Renderer,
@@ -18,19 +18,6 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub enum SerializedAccelerationStruct {
     ObjectList,
-}
-
-/// A serializable wrapper for the
-#[derive(Debug, Serialize, Deserialize, Copy, Clone)]
-pub struct SerializedTextured<T>
-where
-    T: GenFloat,
-{
-    /// The geometric primitive that might be hit by the light ray or path
-    pub geometry: SerializedHittable<T>,
-
-    /// A reference to the BSDF method for
-    pub mat: SerializedMaterial<T>,
 }
 
 /// A struct representing the scene description as the user will input it
@@ -71,29 +58,7 @@ where
         let aspect_ratio = T::from(scene.height).unwrap() / T::from(scene.width).unwrap();
         // We just destructure the serialized struct and convert them to boxed dynamic
         // implementations
-        let objects: Vec<Textured<'a, T>> = (&scene.objects)
-            .iter()
-            .map(
-                |SerializedTextured {
-                     geometry: g,
-                     mat: m,
-                 }| {
-                    let geometry: Box<dyn Hittable<T> + 'a> = match g {
-                        SerializedHittable::Sphere(x) => Box::new(x.clone()),
-                        SerializedHittable::Triangle(x) => Box::new(x.init()),
-                    };
-                    let bsdf: Box<dyn BSDF<T> + 'a> = match m {
-                        SerializedMaterial::Mirror(x) => Box::new(x.clone()),
-                        SerializedMaterial::Diffuse(x) => Box::new(x.clone()),
-                        SerializedMaterial::Dielectric(x) => Box::new(x.clone()),
-                    };
-                    Textured {
-                        geometry,
-                        mat: bsdf,
-                    }
-                },
-            )
-            .collect();
+        let objects: Vec<Textured<'a, T>> = scene.objects.iter().map(|&x| x.into()).collect();
         let camera: Box<dyn Camera<T>> = match scene.camera {
             SerializedCamera::Pinhole(x) => Box::new(x.init(aspect_ratio)),
             SerializedCamera::BasicPinhole(x) => Box::new(x),
