@@ -6,7 +6,11 @@
 //! structures so that they can be used generically. It doesn't really matter, as long as you can
 //! yield which object was hit.
 
-use crate::{material::BSDF, ray::Ray, types::GenFloat};
+use crate::{
+    material::{SerializedMaterial, BSDF},
+    ray::Ray,
+    types::GenFloat,
+};
 use cgmath::Vector3;
 use enum_dispatch::enum_dispatch;
 use serde::{Deserialize, Serialize};
@@ -65,6 +69,37 @@ pub struct Textured<'a, T: GenFloat> {
     /// The geometric primitive that might be hit by the light ray or path
     pub geometry: Box<dyn Hittable<T> + 'a>,
 
-    /// A reference to the BSDF method for
+    /// A reference to the BSDF function that corresponds to the geometry
     pub mat: Box<dyn BSDF<T> + 'a>,
+}
+
+/// A serializable wrapper for the
+#[derive(Debug, Serialize, Deserialize, Copy, Clone)]
+pub struct SerializedTextured<T>
+where
+    T: GenFloat,
+{
+    /// The geometric primitive that might be hit by the light ray or path
+    pub geometry: SerializedHittable<T>,
+
+    /// A reference to the BSDF method for
+    pub mat: SerializedMaterial<T>,
+}
+
+impl<'a, T: GenFloat + 'a> From<SerializedTextured<T>> for Textured<'a, T> {
+    fn from(serialized: SerializedTextured<T>) -> Self {
+        let geometry: Box<dyn Hittable<T> + 'a> = match serialized.geometry {
+            SerializedHittable::Sphere(x) => Box::new(x.clone()),
+            SerializedHittable::Triangle(x) => Box::new(x.init()),
+        };
+        let bsdf: Box<dyn BSDF<T> + 'a> = match serialized.mat {
+            SerializedMaterial::Mirror(x) => Box::new(x.clone()),
+            SerializedMaterial::Diffuse(x) => Box::new(x.clone()),
+            SerializedMaterial::Dielectric(x) => Box::new(x.clone()),
+        };
+        Textured {
+            geometry,
+            mat: bsdf,
+        }
+    }
 }
