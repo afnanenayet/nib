@@ -6,9 +6,8 @@
 use crate::{
     accel,
     camera::{Camera, SerializedCamera},
-    hittable::{Hittable, SerializedHittable, SerializedTextured, Textured},
+    hittable::SerializedTextured,
     integrator::{Integrator, SerializedIntegrator},
-    material::{SerializedMaterial, BSDF},
     renderer::{Arena, Renderer},
     types::{GenFloat, PixelValue},
 };
