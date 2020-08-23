@@ -4,6 +4,7 @@ use crate::{
     accel::{Accel, AccelRecord, AccelResult},
     hittable::Textured,
     ray::Ray,
+    renderer::Arena,
     types::{eta, GenFloat},
 };
 use std::cmp::Ordering::Equal;
@@ -18,11 +19,11 @@ use std::cmp::Ordering::Equal;
 #[derive(Debug)]
 pub struct ObjectList<'a, T: GenFloat> {
     /// A list of every object in the scene
-    objects: Vec<Textured<'a, T>>,
+    objects: Arena<'a, T>,
 }
 
 impl<'a, T: GenFloat> ObjectList<'a, T> {
-    pub fn new(objects: Vec<Textured<'a, T>>) -> AccelResult<Self> {
+    pub fn new(objects: Arena<'a, T>) -> AccelResult<Self> {
         Ok(ObjectList { objects })
     }
 }
@@ -70,6 +71,7 @@ mod tests {
         material::Mirror,
     };
     use cgmath::Vector3;
+    use std::sync::Arc;
 
     // A convenience method to help create an ObjectList of references
     fn create_list<'a>(objects: Vec<Sphere<f32>>) -> ObjectList<'a, f32> {
@@ -80,7 +82,7 @@ mod tests {
                 mat: Box::new(Mirror::default()),
             })
             .collect();
-        ObjectList::new(box_objects).unwrap()
+        ObjectList::new(Arc::new(box_objects)).unwrap()
     }
 
     // Basic case where there are no objects, so we expect no collision
