@@ -9,10 +9,11 @@ use crate::{
     hittable::{Hittable, SerializedHittable, SerializedTextured, Textured},
     integrator::{Integrator, SerializedIntegrator},
     material::{SerializedMaterial, BSDF},
-    renderer::Renderer,
+    renderer::{Arena, Renderer},
     types::{GenFloat, PixelValue},
 };
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 
 /// The different types of acceleration structures that can be used in the scene description
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
@@ -58,7 +59,7 @@ where
         let aspect_ratio = T::from(scene.height).unwrap() / T::from(scene.width).unwrap();
         // We just destructure the serialized struct and convert them to boxed dynamic
         // implementations
-        let objects: Vec<Textured<'a, T>> = scene.objects.iter().map(|&x| x.into()).collect();
+        let arena: Arena<'a, T> = Arc::new(scene.objects.iter().map(|&x| x.into()).collect());
         let camera: Box<dyn Camera<T>> = match scene.camera {
             SerializedCamera::Pinhole(x) => Box::new(x.init(aspect_ratio)),
             SerializedCamera::BasicPinhole(x) => Box::new(x),
@@ -67,10 +68,11 @@ where
         let integrator: Box<dyn Integrator<T>> = Box::new(scene.integrator);
         let accel = match scene.acceleration_structure {
             SerializedAccelerationStruct::ObjectList => {
-                Box::new(accel::ObjectList::new(objects).unwrap())
+                Box::new(accel::ObjectList::new(arena.clone()).unwrap())
             }
         };
         Renderer {
+            arena,
             camera,
             integrator,
             accel,

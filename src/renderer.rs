@@ -6,6 +6,7 @@
 use crate::{
     accel::Accel,
     camera,
+    hittable::Textured,
     integrator::{Integrator, RenderParams},
     sampler::{self, Sampler},
     types::{GenFloat, PixelValue},
@@ -13,6 +14,9 @@ use crate::{
 use anyhow;
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
+use std::sync::Arc;
+
+pub type Arena<'a, T> = Arc<Vec<Textured<'a, T>>>;
 
 /// All of the information associated with the renderer required for generating an image from the
 /// scene
@@ -22,6 +26,7 @@ use rayon::prelude::*;
 /// serializing and deserializing scene information from user input.
 #[derive(Debug)]
 pub struct Renderer<'a, T: GenFloat> {
+    pub arena: Arena<'a, T>,
     pub accel: Box<dyn Accel<T> + 'a>,
     pub camera: Box<dyn camera::Camera<T> + 'a>,
     pub background: PixelValue<T>,
