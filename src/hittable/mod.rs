@@ -12,7 +12,7 @@ use crate::{
     types::GenFloat,
 };
 use cgmath::Vector3;
-use enum_dispatch::enum_dispatch;
+
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 

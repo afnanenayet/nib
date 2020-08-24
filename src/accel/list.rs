@@ -2,7 +2,6 @@
 
 use crate::{
     accel::{Accel, AccelRecord, AccelResult},
-    hittable::Textured,
     ray::Ray,
     renderer::Arena,
     types::{eta, GenFloat},
@@ -67,7 +66,7 @@ impl<'a, T: GenFloat> Accel<T> for ObjectList<'a, T> {
 mod tests {
     use super::*;
     use crate::{
-        hittable::{HitRecord, Sphere},
+        hittable::{HitRecord, Sphere, Textured},
         material::Mirror,
     };
     use cgmath::Vector3;
