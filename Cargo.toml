@@ -26,6 +26,9 @@ ron = "0.6"
 rayon = "1.4"
 mimalloc = { version = "0.1", default-features = false }
 
+[profile.dev]
+opt-level = 2 # some optimizations
+
 [profile.release]
 codegen-units = 1
 lto = "thin"
