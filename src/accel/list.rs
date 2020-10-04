@@ -16,18 +16,18 @@ use std::cmp::Ordering::Equal;
 /// scene and check whether the object was hit. This will return the intersection point that is
 /// closest to the origin point of the ray.
 #[derive(Debug)]
-pub struct ObjectList<'a> {
+pub struct ObjectList {
     /// A list of every object in the scene
-    objects: Arena<'a>,
+    objects: Arena,
 }
 
-impl<'a> ObjectList<'a> {
-    pub fn new(objects: Arena<'a>) -> AccelResult<Self> {
+impl ObjectList {
+    pub fn new(objects: Arena) -> AccelResult<Self> {
         Ok(ObjectList { objects })
     }
 }
 
-impl<'a> Accel for ObjectList<'a> {
+impl Accel for ObjectList {
     fn collision(&self, ray: &Ray) -> Option<AccelRecord> {
         // Collect every object that was hit so we can sort them out and find the closest
         // intersection to the origin point of the ray after every object has been traversed. We
@@ -73,7 +73,7 @@ mod tests {
     use std::sync::Arc;
 
     // A convenience method to help create an ObjectList of references
-    fn create_list<'a>(objects: Vec<Sphere>) -> ObjectList<'a> {
+    fn create_list(objects: Vec<Sphere>) -> ObjectList {
         let box_objects = objects
             .into_iter()
             .map(|geom| Textured {

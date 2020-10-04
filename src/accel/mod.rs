@@ -37,7 +37,7 @@ pub struct AccelRecord<'a> {
     pub hit_record: HitRecord,
 
     /// A reference to the textured object (a geometric primitive and a BSDF pairing)
-    pub object: &'a Textured<'a>,
+    pub object: &'a Textured,
 }
 
 /// A reference to an object that consists of a geometric form and a texture

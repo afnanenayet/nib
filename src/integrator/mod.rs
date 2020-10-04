@@ -35,7 +35,7 @@ pub struct RenderParams<'a, 'b, 'c> {
     pub origin: &'a Ray,
 
     /// A reference to the renderer itself
-    pub context: &'b Renderer<'b>,
+    pub context: &'b Renderer,
 
     /// A reference to the sampler to use with the integrator
     pub sampler: &'c mut dyn Sampler<Float>,

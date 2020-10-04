@@ -50,12 +50,12 @@ pub struct Scene {
     pub width: u32,
 }
 
-impl<'a> From<Scene> for Renderer<'a> {
+impl From<Scene> for Renderer {
     fn from(scene: Scene) -> Self {
         let aspect_ratio = (scene.height as Float) / (scene.width as Float);
         // We just destructure the serialized struct and convert them to boxed dynamic
         // implementations
-        let arena: Arena<'a> = Arc::new(scene.objects.iter().map(|&x| x.into()).collect());
+        let arena: Arena = Arc::new(scene.objects.iter().map(|&x| x.into()).collect());
         let camera: Box<dyn Camera> = match scene.camera {
             SerializedCamera::Pinhole(x) => Box::new(x.init(aspect_ratio)),
             SerializedCamera::BasicPinhole(x) => Box::new(x),

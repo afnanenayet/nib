@@ -75,12 +75,12 @@ impl Eq for HitRecord {}
 /// we can calculate the color value for a light bounce, and determine which direction the ray
 /// should go next.
 #[derive(Debug)]
-pub struct Textured<'a> {
+pub struct Textured {
     /// The geometric primitive that might be hit by the light ray or path
-    pub geometry: Box<dyn Hittable + 'a>,
+    pub geometry: Box<dyn Hittable>,
 
     /// A reference to the BSDF function that corresponds to the geometry
-    pub mat: Box<dyn BSDF + 'a>,
+    pub mat: Box<dyn BSDF>,
 }
 
 /// A serializable wrapper for the
@@ -93,13 +93,13 @@ pub struct SerializedTextured {
     pub mat: SerializedMaterial,
 }
 
-impl<'a> From<SerializedTextured> for Textured<'a> {
+impl From<SerializedTextured> for Textured {
     fn from(serialized: SerializedTextured) -> Self {
-        let geometry: Box<dyn Hittable + 'a> = match serialized.geometry {
+        let geometry: Box<dyn Hittable> = match serialized.geometry {
             SerializedHittable::Sphere(x) => Box::new(x.clone()),
             SerializedHittable::Triangle(x) => Box::new(x.init()),
         };
-        let bsdf: Box<dyn BSDF + 'a> = match serialized.mat {
+        let bsdf: Box<dyn BSDF> = match serialized.mat {
             SerializedMaterial::Mirror(x) => Box::new(x.clone()),
             SerializedMaterial::Diffuse(x) => Box::new(x.clone()),
             SerializedMaterial::Dielectric(x) => Box::new(x.clone()),

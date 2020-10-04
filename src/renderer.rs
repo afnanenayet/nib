@@ -16,7 +16,7 @@ use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
 use std::sync::Arc;
 
-pub type Arena<'a> = Arc<Vec<Textured<'a>>>;
+pub type Arena = Arc<Vec<Textured>>;
 
 /// All of the information associated with the renderer required for generating an image from the
 /// scene
@@ -25,9 +25,9 @@ pub type Arena<'a> = Arc<Vec<Textured<'a>>>;
 /// generate an image. This is generated from the input `Scene` struct that is primarily used for
 /// serializing and deserializing scene information from user input.
 #[derive(Debug)]
-pub struct Renderer<'a> {
-    pub arena: Arena<'a>,
-    pub accel: Box<dyn Accel + 'a>,
+pub struct Renderer {
+    pub arena: Arena,
+    pub accel: Box<dyn Accel>,
     pub camera: Box<dyn camera::Camera>,
     pub background: PixelValue<Float>,
     pub samples_per_pixel: u32,
@@ -36,7 +36,7 @@ pub struct Renderer<'a> {
     pub width: u32,
 }
 
-impl<'a> Renderer<'a> {
+impl Renderer {
     /// A small convenience method to generate the progress bar for the CLI
     fn create_progress_bar(&self) -> ProgressBar {
         let n = (self.width * self.height).into();
