@@ -25,6 +25,7 @@ anyhow = "1.0"
 ron = "0.6"
 rayon = "1.4"
 mimalloc = { version = "0.1", default-features = false }
+float-cmp = "0.8"
 
 [profile.dev]
 opt-level = 2 # some optimizations

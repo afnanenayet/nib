@@ -2,7 +2,8 @@
 
 use crate::{
     camera::{BasicPinhole, Camera},
-    types::GenFloat,
+    ray::Ray,
+    types::Float,
 };
 use cgmath::Vector3;
 use serde::{Deserialize, Serialize};
@@ -13,24 +14,24 @@ use serde::{Deserialize, Serialize};
 /// allows for effects like depth of field and adjustable apertures, without the cost of simulating
 /// light refracting through len(ses).
 #[derive(Serialize, Deserialize, Debug, Copy, Clone)]
-pub struct ThinLens<T: GenFloat> {
+pub struct ThinLens {
     /// The internal basic pinhole camera that we keep around for precomputed values
-    basic_pinhole: Option<BasicPinhole<T>>,
+    basic_pinhole: Option<BasicPinhole>,
 
     /// The target that the camera is pointing towards from the origin
-    pub target: Vector3<T>,
+    pub target: Vector3<Float>,
     /// The origin point of the camera
-    pub origin: Vector3<T>,
+    pub origin: Vector3<Float>,
     /// The vertical field of view of the camera
-    pub vfov: T,
+    pub vfov: Float,
     /// Which direction you consider up for the camera
-    pub up: Vector3<T>,
+    pub up: Vector3<Float>,
     /// The aspect ratio of the camera
-    pub aspect: T,
+    pub aspect: Float,
 }
 
-impl<T: GenFloat> Camera<T> for ThinLens<T> {
-    fn to_ray(&self, _u: T, _v: T) -> crate::ray::Ray<T> {
+impl Camera for ThinLens {
+    fn to_ray(&self, _u: Float, _v: Float) -> Ray {
         unimplemented!()
     }
 }

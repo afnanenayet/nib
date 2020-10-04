@@ -3,7 +3,7 @@
 //! Once you have rendered an image, you have a buffer of RGB values. This module provides
 //! interfaces to export that framebuffer to a file, such as a PNG or PPM.
 
-use crate::types::{GenFloat, PixelValue};
+use crate::types::{Float, PixelValue};
 use image::{self, save_buffer_with_format};
 use num::traits::*;
 use std::{fs::File, io::prelude::*, path::Path};
@@ -68,17 +68,17 @@ pub trait FramebufferExporter {
     ///
     /// This method expects a framebuffer of pixel values between 0 and 1, that haven't been
     /// converted to some specific color format yet.
-    fn export<T: GenFloat>(&self, buffer: &[PixelValue<T>], path: &Path) -> ExporterResult<()>;
+    fn export(&self, buffer: &[PixelValue<Float>], path: &Path) -> ExporterResult<()>;
 }
 
 impl<T: FramebufferExporterBase> FramebufferExporter for T {
-    fn export<F: GenFloat>(&self, buffer: &[PixelValue<F>], path: &Path) -> ExporterResult<()> {
+    fn export(&self, buffer: &[PixelValue<Float>], path: &Path) -> ExporterResult<()> {
         // Convert the floating point color values to proper N-bit integer color values, based on
         // the `MAX_COLOR` value
         let int_buffer: Vec<PixelValue<u32>> = buffer
             .iter()
             .map(|pixel| {
-                let max_value = F::from(T::MAX_COLOR).unwrap();
+                let max_value = num::NumCast::from(T::MAX_COLOR).unwrap();
                 (pixel * max_value).map(|x| x.to_u32().unwrap())
             })
             .collect();

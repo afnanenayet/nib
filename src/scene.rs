@@ -9,7 +9,7 @@ use crate::{
     hittable::SerializedTextured,
     integrator::{Integrator, SerializedIntegrator},
     renderer::{Arena, Renderer},
-    types::{GenFloat, PixelValue},
+    types::{Float, PixelValue},
 };
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
@@ -24,24 +24,24 @@ pub enum SerializedAccelerationStruct {
 ///
 /// This struct exists solely for serialization and deserialization
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Scene<T: GenFloat> {
+pub struct Scene {
     /// A list of all of the geometric objects in the scene
-    pub objects: Vec<SerializedTextured<T>>,
+    pub objects: Vec<SerializedTextured>,
 
     /// The acceleration structure to use with the scene
     pub acceleration_structure: SerializedAccelerationStruct,
 
     /// The camera to use with the scene
-    pub camera: SerializedCamera<T>,
+    pub camera: SerializedCamera,
 
     /// The background color to return when no objects are hit
-    pub background: PixelValue<T>,
+    pub background: PixelValue<Float>,
 
     /// The number of samples to take per pixel. This is effectively the anti-aliasing factor.
     pub samples_per_pixel: u32,
 
     /// The integrator to use to render the scene
-    pub integrator: SerializedIntegrator<T>,
+    pub integrator: SerializedIntegrator,
 
     /// The vertical resolution of the scene, in pixels
     pub height: u32,
@@ -50,21 +50,18 @@ pub struct Scene<T: GenFloat> {
     pub width: u32,
 }
 
-impl<'a, T> From<Scene<T>> for Renderer<'a, T>
-where
-    T: GenFloat + 'a,
-{
-    fn from(scene: Scene<T>) -> Self {
-        let aspect_ratio = T::from(scene.height).unwrap() / T::from(scene.width).unwrap();
+impl<'a> From<Scene> for Renderer<'a> {
+    fn from(scene: Scene) -> Self {
+        let aspect_ratio = (scene.height as Float) / (scene.width as Float);
         // We just destructure the serialized struct and convert them to boxed dynamic
         // implementations
-        let arena: Arena<'a, T> = Arc::new(scene.objects.iter().map(|&x| x.into()).collect());
-        let camera: Box<dyn Camera<T>> = match scene.camera {
+        let arena: Arena<'a> = Arc::new(scene.objects.iter().map(|&x| x.into()).collect());
+        let camera: Box<dyn Camera> = match scene.camera {
             SerializedCamera::Pinhole(x) => Box::new(x.init(aspect_ratio)),
             SerializedCamera::BasicPinhole(x) => Box::new(x),
             SerializedCamera::ThinLens(x) => Box::new(x),
         };
-        let integrator: Box<dyn Integrator<T>> = Box::new(scene.integrator);
+        let integrator: Box<dyn Integrator> = Box::new(scene.integrator);
         let accel = match scene.acceleration_structure {
             SerializedAccelerationStruct::ObjectList => {
                 Box::new(accel::ObjectList::new(arena.clone()).unwrap())

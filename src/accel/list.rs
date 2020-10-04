@@ -4,7 +4,7 @@ use crate::{
     accel::{Accel, AccelRecord, AccelResult},
     ray::Ray,
     renderer::Arena,
-    types::{eta, GenFloat},
+    types::eta,
 };
 use std::cmp::Ordering::Equal;
 
@@ -16,23 +16,23 @@ use std::cmp::Ordering::Equal;
 /// scene and check whether the object was hit. This will return the intersection point that is
 /// closest to the origin point of the ray.
 #[derive(Debug)]
-pub struct ObjectList<'a, T: GenFloat> {
+pub struct ObjectList<'a> {
     /// A list of every object in the scene
-    objects: Arena<'a, T>,
+    objects: Arena<'a>,
 }
 
-impl<'a, T: GenFloat> ObjectList<'a, T> {
-    pub fn new(objects: Arena<'a, T>) -> AccelResult<Self> {
+impl<'a> ObjectList<'a> {
+    pub fn new(objects: Arena<'a>) -> AccelResult<Self> {
         Ok(ObjectList { objects })
     }
 }
 
-impl<'a, T: GenFloat> Accel<T> for ObjectList<'a, T> {
-    fn collision(&self, ray: &Ray<T>) -> Option<AccelRecord<T>> {
+impl<'a> Accel for ObjectList<'a> {
+    fn collision(&self, ray: &Ray) -> Option<AccelRecord> {
         // Collect every object that was hit so we can sort them out and find the closest
         // intersection to the origin point of the ray after every object has been traversed. We
         // also filter out any collisions that are less than the margin of error.
-        let mut intersections: Vec<AccelRecord<T>> = self
+        let mut intersections: Vec<AccelRecord> = self
             .objects
             .iter()
             .filter_map(|obj| {
@@ -51,8 +51,8 @@ impl<'a, T: GenFloat> Accel<T> for ObjectList<'a, T> {
         // If the list is empty, then the sort method will be a no-op. We don't need to preserve
         // the order of elements, so we can use the fast unstable sort.
         intersections.sort_unstable_by(|a, b| {
-            let a_dist: T = a.hit_record.distance;
-            let b_dist: T = b.hit_record.distance;
+            let a_dist = a.hit_record.distance;
+            let b_dist = b.hit_record.distance;
             // We treat NaN values as equal. If we hit NaNs by this point the entire list is likely
             // useless anyway and there are other issues that have propagated to this point.
             a_dist.partial_cmp(&b_dist).unwrap_or(Equal)
@@ -73,7 +73,7 @@ mod tests {
     use std::sync::Arc;
 
     // A convenience method to help create an ObjectList of references
-    fn create_list<'a>(objects: Vec<Sphere<f32>>) -> ObjectList<'a, f32> {
+    fn create_list<'a>(objects: Vec<Sphere>) -> ObjectList<'a> {
         let box_objects = objects
             .into_iter()
             .map(|geom| Textured {
@@ -88,7 +88,10 @@ mod tests {
     #[test]
     fn no_objects() {
         let list = create_list(vec![]);
-        let ray = Ray::<f32>::new(Vector3::new(0.0, 0.0, 0.0), Vector3::new(0.0, 0.0, 0.0));
+        let ray = Ray {
+            origin: Vector3::new(0.0, 0.0, 0.0),
+            direction: Vector3::new(0.0, 0.0, 0.0),
+        };
         assert!(list.collision(&ray).is_none());
     }
 
@@ -109,7 +112,10 @@ mod tests {
                 radius: 1.0,
             },
         ]);
-        let ray = Ray::<f32>::new(Vector3::new(0.0, 0.0, -1.0), Vector3::new(0.0, 0.0, -1.0));
+        let ray = Ray {
+            origin: Vector3::new(0.0, 0.0, -1.0),
+            direction: Vector3::new(0.0, 0.0, -1.0),
+        };
         assert!(list.collision(&ray).is_none());
     }
 
@@ -121,7 +127,10 @@ mod tests {
             center: Vector3::new(0.0, 0.0, 0.0),
             radius: 1.0,
         }]);
-        let ray = Ray::<f32>::new(Vector3::new(0.0, -2.0, 0.0), Vector3::new(0.0, 1.0, 0.0));
+        let ray = Ray {
+            origin: Vector3::new(0.0, -2.0, 0.0),
+            direction: Vector3::new(0.0, 1.0, 0.0),
+        };
         assert!(list.collision(&ray).is_some());
     }
 
@@ -146,7 +155,10 @@ mod tests {
                 radius: 2.0,
             },
         ]);
-        let ray = Ray::<f32>::new(Vector3::new(0.0, -2.0, 0.0), Vector3::new(0.0, 1.0, 0.0));
+        let ray = Ray {
+            origin: Vector3::new(0.0, -2.0, 0.0),
+            direction: Vector3::new(0.0, 1.0, 0.0),
+        };
         let expected = HitRecord {
             p: Vector3::new(0.0, -1.0, 0.0),
             distance: 1.0,

@@ -3,37 +3,37 @@
 use crate::{
     hittable::{HitRecord, Hittable},
     ray::Ray,
-    types::GenFloat,
+    types::Float,
 };
 use cgmath::{prelude::*, Vector3};
 use serde::{Deserialize, Serialize};
 
 /// A sphere primitive
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
-pub struct Sphere<T: GenFloat> {
+pub struct Sphere {
     /// The center of the sphere in spatial coordinates
-    pub center: Vector3<T>,
+    pub center: Vector3<Float>,
 
     /// The radius of the sphere
-    pub radius: T,
+    pub radius: Float,
 }
 
-impl<T: GenFloat> Hittable<T> for Sphere<T> {
-    fn hit(&self, ray: &Ray<T>) -> Option<HitRecord<T>> {
+impl Hittable for Sphere {
+    fn hit(&self, ray: &Ray) -> Option<HitRecord> {
         let oc = ray.origin - self.center;
         let a = ray.direction.magnitude2();
-        let b = T::from(2.0).unwrap() * oc.dot(ray.direction);
+        let b = 2.0 * oc.dot(ray.direction);
         let c = oc.magnitude2() - (self.radius * self.radius);
-        let discriminant = (b * b) - (T::from(4).unwrap() * a * c);
+        let discriminant = (b * b) - (4.0 * a * c);
 
         // Otherwise we'll get a NaN
-        if discriminant < T::from(0).unwrap() {
+        if discriminant < 0.0 {
             return None;
         }
-        let t = ((T::from(-1).unwrap() * b) - discriminant.sqrt()) / (T::from(2).unwrap() * a);
+        let t = ((-1.0 * b) - discriminant.sqrt()) / (2.0 * a);
 
         // A collision can't have a negative distance
-        if t < T::from(0).unwrap() {
+        if t < 0.0 {
             return None;
         }
         let p = ray.origin + (ray.direction * t);
@@ -54,13 +54,13 @@ mod tests {
     /// expected result, an optional `HitRecord`.
     struct TestCase {
         /// The outgoing ray
-        pub ray: Ray<f32>,
+        pub ray: Ray,
 
         /// The sphere configuration being used in this case
-        pub sphere: Sphere<f32>,
+        pub sphere: Sphere,
 
         /// The expected result
-        pub expected: Option<HitRecord<f32>>,
+        pub expected: Option<HitRecord>,
     }
 
     /// Unit tests for when the outgoing ray should completely miss the sphere
