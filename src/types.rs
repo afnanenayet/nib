@@ -2,6 +2,7 @@
 //! integers or floating point numbers.
 
 use cgmath::{BaseFloat, BaseNum, Vector3};
+use float_cmp::approx_eq;
 use num;
 use std::fmt::{Debug, Display};
 
@@ -50,4 +51,11 @@ pub const ETA: Float = 0.000001;
 /// will automatically convert it to whatever numeric type you want.
 pub fn eta<T: GenFloat>() -> T {
     T::from(ETA).unwrap()
+}
+
+/// Compare two floating point vectors
+pub fn approx_eq_vec(left: &Vector3<Float>, right: &Vector3<Float>) -> bool {
+    approx_eq!(Float, left.x, right.x)
+        && approx_eq!(Float, left.y, right.y)
+        && approx_eq!(Float, left.z, right.z)
 }

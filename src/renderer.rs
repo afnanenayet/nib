@@ -9,14 +9,14 @@ use crate::{
     hittable::Textured,
     integrator::{Integrator, RenderParams},
     sampler::{self, Sampler},
-    types::{GenFloat, PixelValue},
+    types::{Float, PixelValue},
 };
 use anyhow;
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
 use std::sync::Arc;
 
-pub type Arena<'a, T> = Arc<Vec<Textured<'a, T>>>;
+pub type Arena = Arc<Vec<Textured>>;
 
 /// All of the information associated with the renderer required for generating an image from the
 /// scene
@@ -25,22 +25,18 @@ pub type Arena<'a, T> = Arc<Vec<Textured<'a, T>>>;
 /// generate an image. This is generated from the input `Scene` struct that is primarily used for
 /// serializing and deserializing scene information from user input.
 #[derive(Debug)]
-pub struct Renderer<'a, T: GenFloat> {
-    pub arena: Arena<'a, T>,
-    pub accel: Box<dyn Accel<T> + 'a>,
-    pub camera: Box<dyn camera::Camera<T> + 'a>,
-    pub background: PixelValue<T>,
+pub struct Renderer {
+    pub arena: Arena,
+    pub accel: Box<dyn Accel>,
+    pub camera: Box<dyn camera::Camera>,
+    pub background: PixelValue<Float>,
     pub samples_per_pixel: u32,
-    pub integrator: Box<dyn Integrator<T> + 'a>,
+    pub integrator: Box<dyn Integrator>,
     pub height: u32,
     pub width: u32,
 }
 
-impl<'a, T> Renderer<'a, T>
-where
-    rand::distributions::Standard: rand::distributions::Distribution<T>,
-    T: GenFloat,
-{
+impl Renderer {
     /// A small convenience method to generate the progress bar for the CLI
     fn create_progress_bar(&self) -> ProgressBar {
         let n = (self.width * self.height).into();
@@ -59,13 +55,18 @@ where
     /// You can optionally specify the number of threads you'd like to use. If this is unset or set
     /// to 0, Rayon will automatically infer the number of threads to use based on the number of
     /// logical CPUs detected on the system.
-    pub fn render(&mut self, num_threads: Option<usize>) -> anyhow::Result<Vec<PixelValue<T>>> {
+    pub fn render(&mut self, num_threads: Option<usize>) -> anyhow::Result<Vec<PixelValue<Float>>> {
         let pb = self.create_progress_bar();
         let sampler = sampler::Random::default();
 
         if let Some(n) = num_threads {
             set_threads(n)?;
         }
+
+        // So we can avoid recomputing these with every pixel
+        let width_float = self.width as Float;
+        let height_float = self.height as Float;
+        let spp_float = self.samples_per_pixel as Float;
 
         // We use a sampler per thread rather than sharing a sampler over all threads because the
         // lock contention causes a large performance hit.
@@ -76,16 +77,14 @@ where
                 || sampler.clone(),
                 |sampler_generator, i| {
                     let mut sampler = sampler_generator();
-                    let x = i % self.width;
-                    let y = self.height - (i / self.width);
-                    let acc: PixelValue<T> = (0..self.samples_per_pixel)
+                    let x = (i % self.width) as Float;
+                    let y = (self.height - (i / self.width)) as Float;
+                    let acc: PixelValue<Float> = (0..self.samples_per_pixel)
                         .map(|_| {
                             let camera_samples = sampler.next(2).unwrap();
 
-                            let u = (T::from(x).unwrap() + camera_samples[0])
-                                / T::from(self.width).unwrap();
-                            let v = (T::from(y).unwrap() + camera_samples[1])
-                                / T::from(self.height).unwrap();
+                            let u = (x + camera_samples[0]) / width_float;
+                            let v = (y + camera_samples[1]) / height_float;
                             let ray = self.camera.to_ray(u, v);
                             let params = RenderParams {
                                 origin: &ray,
@@ -95,17 +94,9 @@ where
                             let color = self.integrator.render(params);
                             color
                         })
-                        .fold(
-                            PixelValue::new(
-                                T::from(0).unwrap(),
-                                T::from(0).unwrap(),
-                                T::from(0).unwrap(),
-                            ),
-                            |acc, x| acc + x,
-                        );
+                        .fold(PixelValue::new(0.0, 0.0, 0.0), |acc, x| acc + x);
                     pb.inc(1);
-                    let spp = T::from(self.samples_per_pixel).unwrap();
-                    PixelValue::new(acc.x / spp, acc.y / spp, acc.z / spp)
+                    PixelValue::new(acc.x / spp_float, acc.y / spp_float, acc.z / spp_float)
                 },
             )
             .collect_into_vec(&mut buffer);

@@ -18,8 +18,6 @@ mod types;
 use crate::{
     image_exporter::{FramebufferExporter, PPMExporter},
     renderer::Renderer,
-    scene::Scene,
-    types::Float,
 };
 use anyhow;
 use cli::{dispatch_scene_parse, Args};
@@ -29,9 +27,9 @@ use structopt::StructOpt;
 
 fn main() -> anyhow::Result<()> {
     let args = Args::from_args();
-    let scene: Scene<Float> = dispatch_scene_parse(&args.scene, args.filetype.as_deref())?;
+    let scene = dispatch_scene_parse(&args.scene, args.filetype.as_deref())?;
     let (height, width) = (scene.height, scene.width);
-    let mut renderer: Renderer<Float> = scene.into();
+    let mut renderer = Renderer::from(scene);
     let buffer = renderer.render(args.threads)?;
     let exporter = PPMExporter { width, height };
     let output_str = &args.output.unwrap_or("out.ppm".to_string());

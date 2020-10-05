@@ -59,7 +59,7 @@ pub struct Args {
 /// I would recommend using RON since it's the most expressive give that we are using Rust data
 /// structures, and it has full support for all of serde's data types, which is what we're using to
 /// serialize.
-pub fn dispatch_scene_parse(path: &PathBuf, ext: Option<&str>) -> anyhow::Result<Scene<f32>> {
+pub fn dispatch_scene_parse(path: &PathBuf, ext: Option<&str>) -> anyhow::Result<Scene> {
     if !path.exists() {
         return Err(format_err!(
             "Path to scene file \"{}\" does not exist",

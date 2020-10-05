@@ -9,10 +9,10 @@
 use crate::{
     material::{SerializedMaterial, BSDF},
     ray::Ray,
-    types::GenFloat,
+    types::{approx_eq_vec, Float},
 };
 use cgmath::Vector3;
-
+use float_cmp::approx_eq;
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 
@@ -27,9 +27,9 @@ pub use triangle::Triangle;
 /// NOTE: This method can be used with entire acceleration structures or individual geometric
 /// objects. It doesn't matter, as long as you have some way to resolve which object was hit by an
 /// outgoing ray.
-pub trait Hittable<T: GenFloat>: Debug + Send + Sync {
+pub trait Hittable: Debug + Send + Sync {
     /// A method that returns a hit record if the object was hit
-    fn hit(&self, ray: &Ray<T>) -> Option<HitRecord<T>>;
+    fn hit(&self, ray: &Ray) -> Option<HitRecord>;
 }
 
 /// The different types of `Hittable` types that can be used as input objects
@@ -37,26 +37,36 @@ pub trait Hittable<T: GenFloat>: Debug + Send + Sync {
 /// This is an enum type that exists for convenient use with serde, so we can create a serializable
 /// struct to expose as a scene description to the user.
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
-pub enum SerializedHittable<T: GenFloat> {
-    Sphere(Sphere<T>),
-    Triangle(triangle::TriangleParameters<T>),
+pub enum SerializedHittable {
+    Sphere(Sphere),
+    Triangle(triangle::TriangleParameters),
 }
 
 /// Information pertaining to a ray intersection
 ///
 /// The hit record has information on where the object was hit and the normal for that hit. This is
 /// the record struct specifically for geometric collisions.
-#[derive(Clone, Debug, Eq, PartialEq, Copy)]
-pub struct HitRecord<T: GenFloat> {
+#[derive(Clone, Debug, Copy)]
+pub struct HitRecord {
     /// The point in space where the object was hit
-    pub p: Vector3<T>,
+    pub p: Vector3<Float>,
 
     /// The normal vector for the intersection
-    pub normal: Vector3<T>,
+    pub normal: Vector3<Float>,
 
     /// The distance from the origin ray to the point of collision
-    pub distance: T,
+    pub distance: Float,
 }
+
+impl PartialEq for HitRecord {
+    fn eq(&self, other: &Self) -> bool {
+        approx_eq_vec(&self.p, &other.p)
+            && approx_eq_vec(&self.normal, &other.normal)
+            && approx_eq!(Float, self.distance, other.distance)
+    }
+}
+
+impl Eq for HitRecord {}
 
 /// The struct for some object in the scene that can be intersected geometrically that also
 /// provides a BSDF function for texture.
@@ -65,34 +75,31 @@ pub struct HitRecord<T: GenFloat> {
 /// we can calculate the color value for a light bounce, and determine which direction the ray
 /// should go next.
 #[derive(Debug)]
-pub struct Textured<'a, T: GenFloat> {
+pub struct Textured {
     /// The geometric primitive that might be hit by the light ray or path
-    pub geometry: Box<dyn Hittable<T> + 'a>,
+    pub geometry: Box<dyn Hittable>,
 
     /// A reference to the BSDF function that corresponds to the geometry
-    pub mat: Box<dyn BSDF<T> + 'a>,
+    pub mat: Box<dyn BSDF>,
 }
 
 /// A serializable wrapper for the
 #[derive(Debug, Serialize, Deserialize, Copy, Clone)]
-pub struct SerializedTextured<T>
-where
-    T: GenFloat,
-{
+pub struct SerializedTextured {
     /// The geometric primitive that might be hit by the light ray or path
-    pub geometry: SerializedHittable<T>,
+    pub geometry: SerializedHittable,
 
     /// A reference to the BSDF method for
-    pub mat: SerializedMaterial<T>,
+    pub mat: SerializedMaterial,
 }
 
-impl<'a, T: GenFloat + 'a> From<SerializedTextured<T>> for Textured<'a, T> {
-    fn from(serialized: SerializedTextured<T>) -> Self {
-        let geometry: Box<dyn Hittable<T> + 'a> = match serialized.geometry {
+impl From<SerializedTextured> for Textured {
+    fn from(serialized: SerializedTextured) -> Self {
+        let geometry: Box<dyn Hittable> = match serialized.geometry {
             SerializedHittable::Sphere(x) => Box::new(x.clone()),
             SerializedHittable::Triangle(x) => Box::new(x.init()),
         };
-        let bsdf: Box<dyn BSDF<T> + 'a> = match serialized.mat {
+        let bsdf: Box<dyn BSDF> = match serialized.mat {
             SerializedMaterial::Mirror(x) => Box::new(x.clone()),
             SerializedMaterial::Diffuse(x) => Box::new(x.clone()),
             SerializedMaterial::Dielectric(x) => Box::new(x.clone()),

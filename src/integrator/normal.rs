@@ -6,34 +6,23 @@
 
 use crate::{
     integrator::{Integrator, RenderParams},
-    types::{GenFloat, PixelValue},
+    types::{Float, PixelValue},
 };
 use serde::{Deserialize, Serialize};
-use std::marker::PhantomData;
 
 /// The parameters for the `Normal` integrator
-#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
-pub struct Normal<T: GenFloat> {
-    phantom: PhantomData<T>,
-}
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, Default)]
+pub struct Normal {}
 
-impl<T: GenFloat> Default for Normal<T> {
-    fn default() -> Self {
-        Self {
-            phantom: PhantomData,
-        }
-    }
-}
-
-impl<T: GenFloat> Integrator<T> for Normal<T> {
-    fn render(&self, params: RenderParams<T>) -> PixelValue<T> {
+impl Integrator for Normal {
+    fn render(&self, params: RenderParams) -> PixelValue<Float> {
         if let Some(accel_record) = params.context.accel.collision(params.origin) {
             let normal = accel_record.hit_record.normal;
             // Normals can range from -1 to 1, and we need to change that window to [0, 1]. We use
             // the simple formula x' = (0.5 * x) + 0.5
-            let x = (normal.x * T::from(0.5).unwrap()) + T::from(0.5).unwrap();
-            let y = (normal.y * T::from(0.5).unwrap()) + T::from(0.5).unwrap();
-            let z = (normal.z * T::from(0.5).unwrap()) + T::from(0.5).unwrap();
+            let x = (normal.x * 0.5) + 0.5;
+            let y = (normal.y * 0.5) + 0.5;
+            let z = (normal.z * 0.5) + 0.5;
             return PixelValue::new(x, y, z);
         }
         params.context.background

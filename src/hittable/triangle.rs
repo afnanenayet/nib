@@ -6,7 +6,7 @@
 use crate::{
     hittable::{HitRecord, Hittable},
     ray::Ray,
-    types::{eta, GenFloat},
+    types::{Float, ETA},
 };
 use cgmath::{InnerSpace, Vector3};
 use serde::{Deserialize, Serialize};
@@ -26,9 +26,9 @@ pub enum TriangleHandedness {
 /// These are the parameters for a triangle that may be input by a user. The initialization method
 /// will convert it into the `Triangle` struct, which can be used by the renderer at runtime.
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
-pub struct TriangleParameters<T: GenFloat> {
+pub struct TriangleParameters {
     /// The coordinates defining the bounds of the triangle in real-world space
-    pub vertices: [Vector3<T>; 3],
+    pub vertices: [Vector3<Float>; 3],
 
     /// The direction in which the vertices of the triangle are evaluated to compute the normal
     /// vector
@@ -48,7 +48,7 @@ fn default_handedness() -> TriangleHandedness {
     TriangleHandedness::CounterClockwise
 }
 
-impl<T: GenFloat> Default for TriangleParameters<T> {
+impl Default for TriangleParameters {
     /// The default implementation of a triangle defines the default handedness of the vertices
     ///
     /// If you use this method, you will need to define the vertices on your own, since this
@@ -68,8 +68,7 @@ impl<T: GenFloat> Default for TriangleParameters<T> {
     /// };
     /// ```
     fn default() -> Self {
-        let zero = T::from(0).unwrap();
-        let zeroes = Vector3::new(zero, zero, zero);
+        let zeroes = Vector3::new(0.0, 0.0, 0.0);
         TriangleParameters {
             vertices: [zeroes, zeroes, zeroes],
             handedness: TriangleHandedness::CounterClockwise,
@@ -77,12 +76,12 @@ impl<T: GenFloat> Default for TriangleParameters<T> {
     }
 }
 
-impl<T: GenFloat> TriangleParameters<T> {
+impl TriangleParameters {
     /// Initialize a `Triangle` from its parameters
     ///
     /// This will compute the normal vector by getting two sides of the triangle and computing the
     /// cross product of the two vectors.
-    pub fn init(self) -> Triangle<T> {
+    pub fn init(self) -> Triangle {
         let a = self.vertices[2] - self.vertices[0];
         let b = self.vertices[1] - self.vertices[0];
         let (normal, edges) = match self.handedness {
@@ -104,31 +103,31 @@ impl<T: GenFloat> TriangleParameters<T> {
 /// about here:
 /// http://webserver2.tecgraf.puc-rio.br/~mgattass/cg/trbRR/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Triangle<T: GenFloat> {
+pub struct Triangle {
     /// The coordinates defining the bounds of the triangle relative to the origin
     ///
     /// These are the "real-world" coordinates of the vertices
-    pub vertices: [Vector3<T>; 3],
+    pub vertices: [Vector3<Float>; 3],
 
     /// The edges of the triangle
     ///
     /// This is precomputed for the intersection calculation, so we don't have to repeat it for
     /// every collision.
-    pub edges: [Vector3<T>; 2],
+    pub edges: [Vector3<Float>; 2],
 
     /// The normal vector relative to the supporting plane of the triangle
     ///
     /// Any collision of the triangle will yield the same normal, since the triangle lies on a
     /// normal plane. We can precompute this and avoid wasting CPU cycles on every collision.
-    pub normal: Vector3<T>,
+    pub normal: Vector3<Float>,
 }
 
-impl<T: GenFloat> Hittable<T> for Triangle<T> {
+impl Hittable for Triangle {
     /// An implementation of the Moller-Trumbore algorithm for ray-triangle intersection detection
     ///
     /// This is an implementation of the [Moller-Trumbore algorithm]
     /// (http://webserver2.tecgraf.puc-rio.br/~mgattass/cg/trbRR/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf).
-    fn hit(&self, ray: &Ray<T>) -> Option<HitRecord<T>> {
+    fn hit(&self, ray: &Ray) -> Option<HitRecord> {
         // begin calculating the determinant
         // TODO remove the `dbg` macro calls
         let p = dbg!(ray.direction.cross(self.edges[1]));
@@ -137,8 +136,8 @@ impl<T: GenFloat> Hittable<T> for Triangle<T> {
         // This means that the ray and the plane that the triangle lies on are parallel. We exit
         // early because we know that there's no possible intersection, and also to avoid a
         // division by zero error.
-        if determinant < eta() {
-            println!("determinant is less than `eta`, bailing");
+        if determinant < ETA {
+            eprintln!("determinant is less than `eta`, bailing");
             return None;
         }
 
@@ -149,25 +148,25 @@ impl<T: GenFloat> Hittable<T> for Triangle<T> {
         let u = t.dot(p);
 
         // Short circuit if u isn't within the bounds of the triangle
-        if u < T::from(0).unwrap() || u > determinant {
+        if u < 0.0 || u > determinant {
             return None;
         }
         let q = t.cross(self.edges[0]);
         let v = ray.direction.dot(q);
 
         // Check it the barycentric coordinates are outside of the bounds of the triangle
-        if v < T::from(0).unwrap() || u + v > determinant {
+        if v < 0.0 || u + v > determinant {
             return None;
         }
 
         // Now we know the ray intersects the triangle, and we can calculate `t`,
-        let inverse_determinant = T::from(1).unwrap() / determinant;
+        let inverse_determinant = 1.0 / determinant;
         let distance = self.edges[1].dot(q) * inverse_determinant;
 
         // Scale the barycentric coordinates
         let u = u * inverse_determinant;
         let v = v * inverse_determinant;
-        let w = T::from(1).unwrap() - u - v;
+        let w = 1.0 - u - v;
 
         // Convert the barycentric coordinates to a real world coordinate
         let intersection_point =
@@ -184,10 +183,10 @@ impl<T: GenFloat> Hittable<T> for Triangle<T> {
 mod tests {
     use super::*;
 
-    struct TestCase<T: GenFloat> {
-        pub triangle: Triangle<T>,
-        pub ray: Ray<T>,
-        pub expected: Option<HitRecord<T>>,
+    struct TestCase {
+        pub triangle: Triangle,
+        pub ray: Ray,
+        pub expected: Option<HitRecord>,
     }
 
     /// A "fuzzy" equality test for `HitRecord`s
@@ -195,7 +194,7 @@ mod tests {
     /// Returns whether the difference between any components of two vectors or numbers is greater
     /// than `eta`. This method also triggers assertions at each step so if a component is not
     /// equal, the test will bail, showing you which component failed and its details.
-    fn fuzzy_eq<T: GenFloat>(expected: Option<HitRecord<T>>, actual: Option<HitRecord<T>>) {
+    fn fuzzy_eq(expected: Option<HitRecord>, actual: Option<HitRecord>) {
         if expected.is_none() {
             assert!(actual.is_none());
             return;
@@ -207,17 +206,17 @@ mod tests {
 
         let p_a = a.p;
         let p_b = b.p;
-        assert!((p_a.x - p_b.x).abs() < eta());
-        assert!((p_a.y - p_b.y).abs() < eta());
-        assert!((p_a.z - p_b.z).abs() < eta());
+        assert!((p_a.x - p_b.x).abs() < ETA);
+        assert!((p_a.y - p_b.y).abs() < ETA);
+        assert!((p_a.z - p_b.z).abs() < ETA);
 
         let n_a = a.normal;
         let n_b = b.normal;
-        assert!((n_a.x - n_b.x).abs() < eta());
-        assert!((n_a.y - n_b.y).abs() < eta());
-        assert!((n_a.z - n_b.z).abs() < eta());
+        assert!((n_a.x - n_b.x).abs() < ETA);
+        assert!((n_a.y - n_b.y).abs() < ETA);
+        assert!((n_a.z - n_b.z).abs() < ETA);
 
-        assert!((a.distance - b.distance).abs() < eta());
+        assert!((a.distance - b.distance).abs() < ETA);
     }
 
     /// The ray is parallel to the triangle, which should not panic because of a division by zero,
