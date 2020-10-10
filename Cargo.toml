@@ -16,7 +16,7 @@ thiserror = "1.0"
 rand = { version = "0.7", features = ["log", "serde1"] }
 image = "0.23"
 typetag = "0.1"
-enum_dispatch = "0.3.2"
+enum_dispatch = "0.3.3"
 indicatif = "0.15"
 serde_json = "1.0"
 serde_yaml = "0.8"
