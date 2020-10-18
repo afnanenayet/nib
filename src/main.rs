@@ -22,14 +22,14 @@ use crate::{
 use anyhow;
 use cli::{dispatch_scene_parse, Args};
 use mimalloc::MiMalloc;
-use std::path::Path;
+use std::{convert::TryFrom, path::Path};
 use structopt::StructOpt;
 
 fn main() -> anyhow::Result<()> {
     let args = Args::from_args();
     let scene = dispatch_scene_parse(&args.scene, args.filetype.as_deref())?;
     let (height, width) = (scene.height, scene.width);
-    let mut renderer = Renderer::from(scene);
+    let mut renderer = Renderer::try_from(scene)?;
     let buffer = renderer.render(args.threads)?;
     let exporter = PPMExporter { width, height };
     let output_str = &args.output.unwrap_or("out.ppm".to_string());
