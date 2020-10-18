@@ -11,8 +11,9 @@ use crate::{
     renderer::{Arena, Renderer},
     types::{Float, PixelValue},
 };
+use anyhow;
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
+use std::{convert::TryFrom, sync::Arc};
 
 /// A struct representing the scene description as the user will input it
 ///
@@ -44,8 +45,10 @@ pub struct Scene {
     pub width: u32,
 }
 
-impl From<Scene> for Renderer {
-    fn from(scene: Scene) -> Self {
+impl TryFrom<Scene> for Renderer {
+    type Error = anyhow::Error;
+
+    fn try_from(scene: Scene) -> Result<Self, Self::Error> {
         let aspect_ratio = (scene.height as Float) / (scene.width as Float);
         // We just destructure the serialized struct and convert them to boxed dynamic
         // implementations
@@ -56,11 +59,8 @@ impl From<Scene> for Renderer {
             SerializedCamera::ThinLens(x) => Box::new(x),
         };
         let integrator: Box<dyn Integrator> = Box::new(scene.integrator);
-        let accel = scene
-            .acceleration_structure
-            .to_accel(arena.clone())
-            .expect("Unable to construct acceleration structure");
-        Renderer {
+        let accel = scene.acceleration_structure.to_accel(arena.clone())?;
+        Ok(Renderer {
             arena,
             camera,
             integrator,
@@ -69,6 +69,6 @@ impl From<Scene> for Renderer {
             samples_per_pixel: scene.samples_per_pixel,
             height: scene.height,
             width: scene.width,
-        }
+        })
     }
 }
