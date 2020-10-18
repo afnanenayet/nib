@@ -5,13 +5,15 @@
 
 mod list;
 
-pub use list::ObjectList;
+pub use list::{ObjectList, ObjectListParams};
 
 use crate::{
     hittable::{HitRecord, Hittable, Textured},
     material::BSDF,
     ray::Ray,
+    renderer::Arena,
 };
+use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 use thiserror::Error;
 
@@ -20,6 +22,27 @@ use thiserror::Error;
 pub enum AccelError {
     #[error("There must be at least one object passed to the constructor")]
     NoObjects,
+}
+
+/// The different types of acceleration structures that can be used in the scene description
+///
+/// This enum maps parameters to acceleration structures and implements a method to construct the
+/// acceleration structure from the given parameters in a unified manner for all acceleration
+/// structures to make deserialization easier.
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum SerializedAccelerationStruct {
+    ObjectList(ObjectListParams),
+}
+
+impl SerializedAccelerationStruct {
+    /// Construct an acceleration structure from a list of parameters and a reference to the object
+    /// arena
+    pub fn to_accel(self, arena: Arena) -> AccelResult<Box<dyn Accel>> {
+        let accel = match self {
+            SerializedAccelerationStruct::ObjectList(_params) => Box::new(ObjectList::new(arena)?),
+        };
+        Ok(accel)
+    }
 }
 
 /// A result that can return an `AccelError`

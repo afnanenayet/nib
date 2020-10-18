@@ -4,7 +4,7 @@
 //! and the integrator.
 
 use crate::{
-    accel,
+    accel::SerializedAccelerationStruct,
     camera::{Camera, SerializedCamera},
     hittable::SerializedTextured,
     integrator::{Integrator, SerializedIntegrator},
@@ -13,12 +13,6 @@ use crate::{
 };
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-
-/// The different types of acceleration structures that can be used in the scene description
-#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
-pub enum SerializedAccelerationStruct {
-    ObjectList,
-}
 
 /// A struct representing the scene description as the user will input it
 ///
@@ -62,11 +56,10 @@ impl From<Scene> for Renderer {
             SerializedCamera::ThinLens(x) => Box::new(x),
         };
         let integrator: Box<dyn Integrator> = Box::new(scene.integrator);
-        let accel = match scene.acceleration_structure {
-            SerializedAccelerationStruct::ObjectList => {
-                Box::new(accel::ObjectList::new(arena.clone()).unwrap())
-            }
-        };
+        let accel = scene
+            .acceleration_structure
+            .to_accel(arena.clone())
+            .expect("Unable to construct acceleration structure");
         Renderer {
             arena,
             camera,

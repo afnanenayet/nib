@@ -6,7 +6,14 @@ use crate::{
     renderer::Arena,
     types::eta,
 };
+use serde::{Deserialize, Serialize};
 use std::cmp::Ordering::Equal;
+
+/// The parameters for a basic object list
+///
+/// This one in particular isn't very interesting because the object list has no parameters.
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
+pub struct ObjectListParams {}
 
 /// A naive list "acceleration structure" for computing ray intersections in a scene
 ///
@@ -15,7 +22,7 @@ use std::cmp::Ordering::Equal;
 /// structures off the bat. To compute the intersection, this will traverse every object in the
 /// scene and check whether the object was hit. This will return the intersection point that is
 /// closest to the origin point of the ray.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ObjectList {
     /// A list of every object in the scene
     objects: Arena,
