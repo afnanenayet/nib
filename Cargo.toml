@@ -9,7 +9,7 @@ license = "mit"
 
 [dependencies]
 num = "0.3"
-cgmath = { version = "0.17", features = ["serde"] }
+cgmath = { version = "0.18", features = ["serde"] }
 structopt = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 thiserror = "1.0"
