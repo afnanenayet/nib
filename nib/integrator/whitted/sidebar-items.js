@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Whitted","The parameters for the Whitted integrator"]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["ObjectList","A naive list \"acceleration structure\" for computing ray intersections in a scene"],["ObjectListParams","The parameters for a basic object list"]]});

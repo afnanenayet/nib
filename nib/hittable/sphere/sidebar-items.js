@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Sphere","A sphere primitive"]]});

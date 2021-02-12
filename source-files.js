@@ -1,0 +1,3 @@
+var N = null;var sourcesIndex = {};
+sourcesIndex["nib"] = {"name":"","dirs":[{"name":"accel","files":["list.rs","mod.rs"]},{"name":"camera","files":["mod.rs","pinhole.rs","thin_lens.rs"]},{"name":"hittable","files":["mod.rs","sphere.rs","triangle.rs"]},{"name":"integrator","files":["mod.rs","normal.rs","whitted.rs"]},{"name":"material","files":["blinn_phong.rs","dielectric.rs","diffuse.rs","mirror.rs","mod.rs"]},{"name":"sampler","files":["mod.rs","primitives.rs","random.rs"]}],"files":["cli.rs","image_exporter.rs","main.rs","math.rs","ray.rs","renderer.rs","scene.rs","types.rs"]};
+createSourceSidebar();

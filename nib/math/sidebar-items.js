@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["mirror","Mirror a vector about a unit direction"],["schlick","Schlick's algorithm for computing a reflection coefficient"]]});

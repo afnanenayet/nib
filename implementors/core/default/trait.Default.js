@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["nib"] = [{"text":"impl Default for BasicPinhole","synthetic":false,"types":[]},{"text":"impl Default for TriangleParameters","synthetic":false,"types":[]},{"text":"impl Default for Normal","synthetic":false,"types":[]},{"text":"impl Default for Whitted","synthetic":false,"types":[]},{"text":"impl Default for Dielectric","synthetic":false,"types":[]},{"text":"impl Default for Mirror","synthetic":false,"types":[]},{"text":"impl&lt;T&gt; Default for Random&lt;T&gt; <span class=\"where fmt-newline\">where<br>&nbsp;&nbsp;&nbsp;&nbsp;T: GenFloat,&nbsp;</span>","synthetic":false,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

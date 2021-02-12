@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Scene","A struct representing the scene description as the user will input it"]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["sample_disk","Generate a random sample in the unit disk"],["sample_unit_sphere","Generate a random sample in the unit sphere"]]});

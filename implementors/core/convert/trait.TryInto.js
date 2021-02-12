@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["nib"] = [{"text":"impl TryInto&lt;Normal&gt; for SerializedIntegrator","synthetic":false,"types":[]},{"text":"impl TryInto&lt;Whitted&gt; for SerializedIntegrator","synthetic":false,"types":[]},{"text":"impl TryInto&lt;Diffuse&gt; for SerializedMaterial","synthetic":false,"types":[]},{"text":"impl TryInto&lt;Mirror&gt; for SerializedMaterial","synthetic":false,"types":[]},{"text":"impl TryInto&lt;Dielectric&gt; for SerializedMaterial","synthetic":false,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

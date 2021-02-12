@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Diffuse","A diffuse BSDF function"]]});
