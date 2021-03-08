@@ -8,7 +8,7 @@ documentation = "https://afnan.io/nib"
 license = "mit"
 
 [dependencies]
-num = "0.3"
+num = "0.4"
 cgmath = { version = "0.18", features = ["serde"] }
 structopt = "0.3"
 serde = { version = "1.0", features = ["derive"] }
