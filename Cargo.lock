@@ -143,15 +143,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cmake"
-version = "0.1.45"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eb6210b637171dfba4cda12e579ac6dc73f5165ad56133e5d72ef3131f320855"
-dependencies = [
- "cc",
-]
-
-[[package]]
 name = "color_quant"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -468,11 +459,11 @@ checksum = "7ccac4b00700875e6a07c6cde370d44d32fa01c5a65cdd2fca6858c479d28bb3"
 
 [[package]]
 name = "libmimalloc-sys"
-version = "0.1.20"
+version = "0.1.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e58f42b6424a0ed536678c65fd97cd64b4344bcf86251e284f7c0ce9eee40e64"
+checksum = "1d1b8479c593dba88c2741fc50b92e13dbabbbe0bd504d979f244ccc1a5b1c01"
 dependencies = [
- "cmake",
+ "cc",
 ]
 
 [[package]]
@@ -507,9 +498,9 @@ dependencies = [
 
 [[package]]
 name = "mimalloc"
-version = "0.1.24"
+version = "0.1.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "757efec188b3d2088949d912e01ea2fe87164ed6376b6c5d7dd4f3ce1668a93d"
+checksum = "fb74897ce508e6c49156fd1476fc5922cbc6e75183c65e399c765a09122e5130"
 dependencies = [
  "libmimalloc-sys",
 ]
