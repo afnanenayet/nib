@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["ETA"],"fn":["approx_eq_vec","eta"],"macro":["aggregate_trait"],"trait":["GenFloat","GenInteger","GenReal"],"type":["Float","Integer","PixelValue","Unsigned"]};

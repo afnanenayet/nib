@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["TriangleHandedness"],"fn":["default_handedness"],"struct":["Triangle","TriangleParameters"]};

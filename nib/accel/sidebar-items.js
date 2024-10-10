@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AccelError","SerializedAccelerationStruct"],"mod":["list"],"struct":["AccelRecord","TexturedRef"],"trait":["Accel"],"type":["AccelResult"]};
