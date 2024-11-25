@@ -14,7 +14,7 @@ use crate::{
 use anyhow;
 use indicatif::{ProgressBar, ProgressStyle};
 use rayon::prelude::*;
-use std::sync::Arc;
+use std::{sync::Arc, time::Duration};
 
 pub type Arena = Arc<Vec<Textured>>;
 
@@ -44,9 +44,10 @@ impl Renderer {
         pb.set_style(
             ProgressStyle::default_bar()
                 .template("{elapsed_precise}/{eta_precise} [{wide_bar}] {percent}%")
+                .unwrap()
                 .progress_chars("=> "),
         );
-        pb.set_draw_delta(n / 100);
+        pb.enable_steady_tick(Duration::from_millis(300));
         pb
     }
 

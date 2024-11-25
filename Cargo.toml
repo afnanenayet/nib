@@ -8,24 +8,24 @@ documentation = "https://afnan.io/nib"
 license = "mit"
 
 [dependencies]
-num = "0.3"
+num = "0.4"
 cgmath = { version = "0.18", features = ["serde"] }
 structopt = "0.3"
 serde = { version = "1.0", features = ["derive"] }
-thiserror = "1.0"
+thiserror = "2.0"
 rand = { version = "0.8", features = ["log", "serde1"] }
-image = "0.23"
-typetag = "0.1"
+image = "0.25"
+typetag = "0.2"
 enum_dispatch = "0.3.13"
-indicatif = "0.15"
+indicatif = "0.17"
 serde_json = "1.0"
-serde_yaml = "0.8"
-json5 = "0.3"
+serde_yaml = "0.9"
+json5 = "0.4"
 anyhow = "1.0"
-ron = "0.6"
+ron = "0.8"
 rayon = "1.10"
 mimalloc = { version = "0.1", default-features = false }
-float-cmp = "0.8"
+float-cmp = "0.10"
 
 [profile.dev]
 opt-level = 2 # some optimizations
