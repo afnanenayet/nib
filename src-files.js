@@ -1,0 +1,3 @@
+var srcIndex = new Map(JSON.parse('[["nib",["",[["accel",[],["list.rs","mod.rs"]],["camera",[],["mod.rs","pinhole.rs","thin_lens.rs"]],["hittable",[],["mod.rs","sphere.rs","triangle.rs"]],["integrator",[],["mod.rs","normal.rs","whitted.rs"]],["material",[],["blinn_phong.rs","dielectric.rs","diffuse.rs","mirror.rs","mod.rs"]],["sampler",[],["mod.rs","primitives.rs","random.rs"]]],["cli.rs","image_exporter.rs","main.rs","math.rs","ray.rs","renderer.rs","scene.rs","types.rs"]]]]'));
+createSrcSidebar();
+//{"start":36,"fragment_lengths":[443]}

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["SerializedCamera"],"mod":["pinhole","thin_lens"],"trait":["Camera"]};

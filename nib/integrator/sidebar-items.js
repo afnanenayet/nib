@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["SerializedIntegrator"],"mod":["normal","whitted"],"struct":["RenderParams"],"trait":["Integrator"]};

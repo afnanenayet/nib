@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["SerializedMaterial"],"mod":["blinn_phong","dielectric","diffuse","mirror"],"struct":["BSDFRecord"],"trait":["BSDF"]};
